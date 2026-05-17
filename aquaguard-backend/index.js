@@ -1,0 +1,44 @@
+const express = require("express");
+const cors = require("cors");
+const env = require("./src/config/env");
+
+// Import routes
+const authRoutes = require("./src/routes/authRoutes");
+// const sosRoutes = require("./src/routes/sosRoutes");
+// const alertRoutes = require("./src/routes/alertRoutes");
+// const shelterRoutes = require("./src/routes/shelterRoutes");
+// const notificationRoutes = require("./src/routes/notificationRoutes");
+// const adminRoutes = require("./src/routes/adminRoutes");
+// const floodRoutes = require("./src/routes/floodRoutes");
+
+// Import middleware
+const errorMiddleware = require("./src/middlewares/errorMiddleware");
+
+const app = express();
+
+// Middleware toàn cục
+app.use(cors()); //cho phép Angular gọi API từ domain khác
+app.use(express.json()); //đọc được body dạng JSON từ request
+app.use(express.urlencoded({ extended: true }));
+
+// Routes
+app.use("/api/auth", authRoutes);
+// app.use("/api/sos", sosRoutes);
+// app.use("/api/alerts", alertRoutes);
+// app.use("/api/shelters", shelterRoutes);
+// app.use("/api/notifications", notificationRoutes);
+// app.use("/api/admin", adminRoutes);
+// app.use("/api/flood", floodRoutes);
+
+// Health check
+app.get("/", (req, res) => {
+  res.json({ message: "AquaGuard API is running!" });
+});
+
+// Error handler — phải để cuối cùng
+app.use(errorMiddleware);
+
+// Khởi động server
+app.listen(env.port, () => {
+  console.log(`Server đang chạy tại http://localhost:${env.port}`);
+});
