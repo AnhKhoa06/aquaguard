@@ -54,23 +54,35 @@ const authController = {
   // Đăng nhập
   login: async (req, res, next) => {
     try {
-      const { email, password } = req.body;
+      const { phone, password } = req.body;
 
       // Kiểm tra đủ thông tin
-      if (!email || !password) {
-        return errorResponse(res, "Vui lòng điền email và mật khẩu!", 400);
+      if (!phone || !password) {
+        return errorResponse(
+          res,
+          "Vui lòng điền số điện thoại và mật khẩu!",
+          400,
+        );
       }
 
-      // Tìm user theo email
-      const user = await userModel.findByEmail(email);
+      // Tìm user theo phone
+      const user = await userModel.findByPhone(phone);
       if (!user) {
-        return errorResponse(res, "Email hoặc mật khẩu không đúng!", 401);
+        return errorResponse(
+          res,
+          "Số điện thoại hoặc mật khẩu không đúng!",
+          401,
+        );
       }
 
       // Kiểm tra password
-      const isMatch = await bcrypt.compare(password, user.password_hash); //so sánh password nhập vào với hash trong DB
+      const isMatch = await bcrypt.compare(password, user.password_hash);
       if (!isMatch) {
-        return errorResponse(res, "Email hoặc mật khẩu không đúng!", 401);
+        return errorResponse(
+          res,
+          "Số điện thoại hoặc mật khẩu không đúng!",
+          401,
+        );
       }
 
       // Tạo payload
