@@ -46,6 +46,15 @@ const rescueTeamModel = {
     return rows;
   },
 
+  // Tìm đội của responder
+  findTeamByUserId: async (user_id) => {
+    const [rows] = await db.query(
+      `SELECT team_id FROM rescue_team_members WHERE user_id = ?`,
+      [user_id],
+    );
+    return rows[0];
+  },
+
   // Xoá đội
   delete: async (id) => {
     await db.query("DELETE FROM rescue_teams WHERE id = ?", [id]);

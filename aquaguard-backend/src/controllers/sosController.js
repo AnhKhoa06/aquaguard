@@ -166,6 +166,41 @@ const sosController = {
       next(err);
     }
   },
+
+  // Responder tự nhận SOS
+  accept: async (req, res, next) => {
+    try {
+      const sos = await sosModel.findById(req.params.id);
+      if (!sos) {
+        return errorResponse(res, "Không tìm thấy yêu cầu SOS!", 404);
+      }
+
+      if (sos.status !== "pending") {
+        return errorResponse(res, "Yêu cầu này đã được xử lý!", 400);
+      }
+
+      // Kiểm tra responder có thuộc đội nào chưa
+      const rescueTeamModel = require("../models/rescueTeamModel");
+      const teamMember = await rescueTeamModel.findTeamByUserId(req.user.id);
+      if (!teamMember) {
+        return errorResponse(
+          res,
+          "Bạn chưa có nhóm cứu hộ, không thể nhận nhiệm vụ!",
+          403,
+        );
+      }
+
+      await sosModel.assignResponder(
+        req.params.id,
+        req.user.id,
+        teamMember.team_id,
+      );
+
+      return successResponse(res, null, "Nhận nhiệm vụ thành công!");
+    } catch (err) {
+      next(err);
+    }
+  },
 };
 
 module.exports = sosController;

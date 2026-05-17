@@ -14,14 +14,32 @@ const adminController = {
       const teams = await rescueTeamModel.findAll();
       const sosByStatus = await sosModel.countByStatus();
 
+      const total_citizens = users.filter((u) => u.role === "citizen").length;
+      const total_rescuers = users.filter((u) => u.role === "responder").length;
+      const total_admins = users.filter((u) => u.role === "admin").length;
+      const pending_sos = sosList.filter((s) => s.status === "pending").length;
+
+      const today = new Date().toISOString().slice(0, 10);
+      const resolved_today = sosList.filter(
+        (s) =>
+          s.status === "resolved" &&
+          s.updated_at?.toISOString().slice(0, 10) === today,
+      ).length;
+
       return successResponse(
         res,
         {
           total_users: users.length,
+          total_citizens,
+          total_rescuers,
+          total_admins,
           total_sos: sosList.length,
+          pending_sos,
+          resolved_today,
           total_alerts: alerts.length,
           total_teams: teams.length,
           sos_by_status: sosByStatus,
+          rescue_teams: teams,
         },
         "Lấy thống kê thành công!",
       );

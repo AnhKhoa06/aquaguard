@@ -51,4 +51,12 @@ router.patch(
   sosController.updateStatus,
 );
 
+// Responder tự nhận SOS
+router.patch(
+  "/:id/accept",
+  authMiddleware,
+  authorizeRoles("responder"),
+  sosController.accept,
+);
+
 module.exports = router;
