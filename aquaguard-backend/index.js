@@ -6,6 +6,7 @@ const path = require("path");
 // Import routes
 const authRoutes = require("./src/routes/authRoutes");
 const sosRoutes = require("./src/routes/sosRoutes");
+const familyRoutes = require("./src/routes/familyRoutes");
 // const alertRoutes = require("./src/routes/alertRoutes");
 // const shelterRoutes = require("./src/routes/shelterRoutes");
 // const notificationRoutes = require("./src/routes/notificationRoutes");
@@ -28,6 +29,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/sos", sosRoutes);
+app.use("/api/family", familyRoutes);
 // app.use("/api/alerts", alertRoutes);
 // app.use("/api/shelters", shelterRoutes);
 // app.use("/api/notifications", notificationRoutes);
