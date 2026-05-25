@@ -12,6 +12,7 @@ const alertRoutes = require("./src/routes/alertRoutes");
 const shelterRoutes = require("./src/routes/shelterRoutes");
 const notificationRoutes = require("./src/routes/notificationRoutes");
 const adminRoutes = require("./src/routes/adminRoutes");
+const userStatusRoutes = require("./src/routes/userStatusRoutes");
 // const floodRoutes = require("./src/routes/floodRoutes");
 
 // Import middleware
@@ -36,6 +37,7 @@ app.use("/api/alerts", alertRoutes);
 app.use("/api/shelters", shelterRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/status", userStatusRoutes);
 // app.use("/api/flood", floodRoutes);
 
 // Health check

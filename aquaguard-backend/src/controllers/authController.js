@@ -13,29 +13,19 @@ const authController = {
   // Đăng ký
   register: async (req, res, next) => {
     try {
-      let {
-        full_name,
-        phone,
-        password,
-        gender,
-        date_of_birth,
-        role,
-        role_password,
-      } = req.body;
+      const { full_name, email, phone, password } = req.body;
+      const normalizedEmail = email?.trim() || null;
 
+      // Kiểm tra đủ thông tin
       if (!full_name || !phone || !password) {
         return errorResponse(res, "Vui lòng điền đầy đủ thông tin!", 400);
       }
 
-      // Chuẩn hóa phone — đổi +84 thành 0
-      if (phone.startsWith("+84")) {
-        phone = "0" + phone.slice(3);
-      }
-
-      // Kiểm tra mật khẩu vai trò nếu đăng ký cứu hộ
-      if (role === "responder") {
-        if (!role_password || role_password !== process.env.RESPONDER_SECRET) {
-          return errorResponse(res, "Mật khẩu vai trò không đúng!", 403);
+      // Kiểm tra email đã tồn tại chưa
+      if (normalizedEmail) {
+        const existingEmail = await userModel.findByEmail(normalizedEmail);
+        if (existingEmail) {
+          return errorResponse(res, "Email đã được sử dụng!", 400);
         }
       }
 
@@ -51,36 +41,31 @@ const authController = {
       // Tạo user mới
       const userId = await userModel.create({
         full_name,
+        email: normalizedEmail,
         phone,
         password_hash,
-        gender,
-        date_of_birth,
-        role: role || "citizen",
       });
 
       const newUser = await userModel.findById(userId);
+
       return successResponse(res, newUser, "Đăng ký thành công!", 201);
     } catch (err) {
-      next(err);
+      next(err); //đẩy lỗi xuống errorMiddleware xử lý
     }
   },
 
   // Đăng nhập
   login: async (req, res, next) => {
     try {
-      let { phone, password } = req.body;
+      const { phone, password } = req.body;
 
+      // Kiểm tra đủ thông tin
       if (!phone || !password) {
         return errorResponse(
           res,
           "Vui lòng điền số điện thoại và mật khẩu!",
           400,
         );
-      }
-
-      // Chuẩn hóa phone — đổi +84 thành 0
-      if (phone.startsWith("+84")) {
-        phone = "0" + phone.slice(3);
       }
 
       // Tìm user theo phone
@@ -125,6 +110,7 @@ const authController = {
           user: {
             id: user.id,
             full_name: user.full_name,
+            email: user.email,
             phone: user.phone,
             role: user.role,
           },

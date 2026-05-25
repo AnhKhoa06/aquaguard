@@ -1,6 +1,14 @@
 const db = require("../config/db");
 
 const userModel = {
+  // Tìm user theo email
+  findByEmail: async (email) => {
+    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [
+      email,
+    ]);
+    return rows[0];
+  },
+
   // Tìm user theo phone
   findByPhone: async (phone) => {
     const [rows] = await db.query("SELECT * FROM users WHERE phone = ?", [
@@ -12,10 +20,7 @@ const userModel = {
   // Tìm user theo id
   findById: async (id) => {
     const [rows] = await db.query(
-      `SELECT id, full_name, phone, role, gender,
-     DATE_FORMAT(date_of_birth, '%Y-%m-%d') AS date_of_birth,
-     health_status, health_note, latitude, longitude, created_at 
-     FROM users WHERE id = ?`,
+      "SELECT id, full_name, email, phone, role, latitude, longitude, created_at FROM users WHERE id = ?",
       [id],
     );
     return rows[0];
@@ -24,20 +29,14 @@ const userModel = {
   // Tạo user mới
   create: async ({
     full_name,
+    email,
     phone,
     password_hash,
-    gender,
-    date_of_birth,
     role = "citizen",
   }) => {
-    // Lấy thẳng string YYYY-MM-DD, không qua new Date()
-    const formattedDate = date_of_birth ? date_of_birth.split("T")[0] : null;
-
     const [result] = await db.query(
-      `INSERT INTO users 
-        (full_name, phone, password_hash, gender, date_of_birth, role) 
-      VALUES (?, ?, ?, ?, ?, ?)`,
-      [full_name, phone, password_hash, gender, formattedDate, role],
+      "INSERT INTO users (full_name, email, phone, password_hash, role) VALUES (?, ?, ?, ?, ?)",
+      [full_name, email, phone, password_hash, role],
     );
     return result.insertId;
   },
@@ -50,27 +49,10 @@ const userModel = {
     );
   },
 
-  // Cập nhật trạng thái sức khỏe
-  updateHealthStatus: async (id, health_status, health_note) => {
-    await db.query(
-      "UPDATE users SET health_status = ?, health_note = ? WHERE id = ?",
-      [health_status, health_note, id],
-    );
-  },
-
-  // Cập nhật thông tin cá nhân
-  updateProfile: async (id, { full_name, gender, date_of_birth }) => {
-    await db.query(
-      "UPDATE users SET full_name = ?, gender = ?, date_of_birth = ? WHERE id = ?",
-      [full_name, gender, date_of_birth, id],
-    );
-  },
-
   // Lấy tất cả users (admin)
   findAll: async () => {
     const [rows] = await db.query(
-      `SELECT id, full_name, phone, role, gender, 
-       health_status, created_at FROM users`,
+      "SELECT id, full_name, email, phone, role, created_at FROM users",
     );
     return rows;
   },
