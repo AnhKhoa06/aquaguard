@@ -1,0 +1,265 @@
+@use '../login/login.scss';
+
+// Step indicator
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  gap: 0;
+
+  .step {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #8899aa;
+    transition: all 0.3s;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    &.active {
+      background: #11a0b6;
+      border-color: #11a0b6;
+      color: white;
+    }
+
+    &.done {
+      background: #11a0b6;
+      border-color: #11a0b6;
+      color: white;
+    }
+  }
+
+  .step-line {
+    flex: 1;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    max-width: 80px;
+    transition: all 0.3s;
+
+    &.done {
+      background: #11a0b6;
+    }
+  }
+}
+
+// Gender buttons
+.gender-group {
+  display: flex;
+  gap: 10px;
+
+  .gender-btn {
+    flex: 1;
+    padding: 12px 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #8899aa;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    &.active {
+      background: rgba(17, 160, 182, 0.15);
+      border-color: #11a0b6;
+      color: #11a0b6;
+    }
+
+    &:hover:not(.active) {
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+  }
+}
+
+// Role buttons
+.role-group {
+  display: flex;
+  gap: 10px;
+
+  .role-btn {
+    flex: 1;
+    padding: 14px 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #8899aa;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    &.active {
+      background: rgba(17, 160, 182, 0.15);
+      border-color: #11a0b6;
+      color: #11a0b6;
+    }
+
+    &:hover:not(.active) {
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+  }
+}
+
+// Summary
+.summary {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 20px;
+
+  .summary-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #556677;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+
+  .summary-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      color: #11a0b6;
+      flex-shrink: 0;
+    }
+
+    .summary-label {
+      font-size: 13px;
+      color: #8899aa;
+      min-width: 100px;
+    }
+
+    .summary-value {
+      font-size: 13px;
+      color: #ffffff;
+      font-weight: 500;
+    }
+  }
+}
+
+// Button group
+.btn-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+
+  .btn-secondary {
+    flex: 1;
+    padding: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  .btn-primary {
+    flex: 1;
+    margin-bottom: 0;
+  }
+}
+
+// Override auth-right cho register — cho scroll
+.auth-right {
+  justify-content: flex-start;
+  padding: 20px 160px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 100vh;
+}
+
+// Override auth-card cho register — nhích lên trên
+.auth-card {
+  padding: 30px 34px 24px 34px;
+  margin-top: 0px;
+  margin-bottom: 16px;
+}
+
+.role-password-group {
+  margin-top: 12px;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 14px;
+  padding: 14px 16px;
+
+  .role-password-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #f59e0b;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 10px;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .input-wrapper {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 0 14px;
+
+    input {
+      padding: 12px 0;
+    }
+  }
+}

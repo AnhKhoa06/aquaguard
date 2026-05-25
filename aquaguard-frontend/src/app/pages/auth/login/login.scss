@@ -1,0 +1,481 @@
+// Nút chuyển ngôn ngữ
+.lang-switcher {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    color: var(--text-primary);
+    padding: 8px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+@keyframes float1 {
+  0%,
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translate(20px, -30px);
+    opacity: 0.8;
+  }
+}
+
+@keyframes float2 {
+  0%,
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(-20px, 20px);
+    opacity: 0.7;
+  }
+}
+
+@keyframes float3 {
+  0%,
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translate(15px, 25px);
+    opacity: 0.6;
+  }
+}
+
+.glow-1,
+.glow-2,
+.glow-3 {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.glow-1 {
+  top: -150px;
+  left: -200px;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(0, 188, 212, 0.4) 0%, transparent 70%);
+  animation: float1 8s ease-in-out infinite;
+}
+
+.glow-2 {
+  bottom: -170px;
+  left: 30%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(0, 150, 136, 0.45) 0%, transparent 70%);
+  animation: float2 10s ease-in-out infinite;
+}
+
+.glow-3 {
+  top: 20%;
+  right: -100px;
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(0, 188, 212, 0.25) 0%, transparent 70%);
+  animation: float3 12s ease-in-out infinite;
+}
+
+.auth-wrapper {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  z-index: 1000;
+  background: transparent;
+  overflow: hidden;
+  align-items: center;
+
+  // Đốm sáng background
+  &::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    left: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0, 188, 212, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -200px;
+    right: 300px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(0, 150, 136, 0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+}
+
+// Left side
+.auth-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 80px 60px 180px;
+  position: relative;
+  z-index: 1;
+
+  .brand {
+    margin-bottom: 48px;
+    flex-shrink: 0;
+
+    .logo {
+      height: 125px;
+      width: auto;
+      position: relative;
+      left: 20px;
+      top: 20px;
+    }
+  }
+
+  .hero-text {
+    margin-bottom: 48px;
+
+    h1 {
+      font-size: 37.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 20px;
+      color: #ffffff;
+
+      .highlight {
+        color: #00bcd4;
+      }
+    }
+
+    p {
+      font-size: 16px;
+      color: #8899aa;
+      line-height: 1.7;
+      max-width: 460px;
+    }
+  }
+
+  .features {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #8899aa;
+      font-size: 15px;
+
+      .feature-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: rgba(0, 188, 212, 0.08);
+        border: 1px solid rgba(0, 188, 212, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #00bcd4;
+        flex-shrink: 0;
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+  }
+}
+
+// Right side
+.auth-right {
+  width: 821px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 160px;
+  position: relative;
+  z-index: 1;
+
+  // Đốm sáng bên phải
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50px;
+    right: -100px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(0, 188, 212, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 450px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 24px;
+  padding: 40px 34px 30px 34px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(24px);
+  margin-bottom: 16px;
+
+  .card-header {
+    text-align: center;
+    margin-bottom: 34px;
+
+    h2 {
+      font-size: 24.5px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    p {
+      font-size: 14px;
+      color: #8899aa;
+    }
+  }
+}
+
+.tab-group {
+  display: flex;
+  margin-bottom: 28px;
+  gap: 4px;
+
+  .tab {
+    flex: 1;
+    padding: 4px 8px 10px 8px;
+    text-align: center;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 8px;
+    color: #8899aa;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+
+    &.active {
+      color: #11a0b6;
+      border-bottom: 2px solid #11a0b6;
+      border-radius: 0 0 15px 15px;
+    }
+
+    &:hover:not(.active) {
+      color: #ffffff;
+    }
+  }
+}
+
+// Form
+.form-group {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #ffffff;
+    margin-bottom: 8px;
+  }
+
+  .hint {
+    display: block;
+    font-size: 12px;
+    color: #556677;
+    margin-top: 6px;
+  }
+
+  .error-text {
+    display: block;
+    font-size: 12px;
+    color: #ef5350;
+    margin-top: 6px;
+  }
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 25px;
+  padding: 0 16px;
+  gap: 10px;
+  transition: border-color 0.2s;
+
+  &:focus-within {
+    border-color: rgba(0, 188, 212, 0.5);
+    box-shadow: 0 0 0 1px rgba(0, 188, 212, 0.3);
+  }
+
+  &.error {
+    border-color: rgba(239, 83, 80, 0.6);
+  }
+
+  .input-icon {
+    color: #556677;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .prefix {
+    color: #8899aa;
+    font-size: 14px;
+    flex-shrink: 0;
+    padding-right: 4px;
+  }
+
+  input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    font-size: 14px;
+    padding: 14px 0;
+
+    &::placeholder {
+      color: #556677;
+      font-size: 14px;
+    }
+  }
+
+  .toggle-password {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #556677;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    transition: color 0.2s;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    &:hover {
+      color: #8899aa;
+    }
+  }
+}
+
+.forgot-password {
+  text-align: right;
+  margin-top: 8px;
+
+  a {
+    font-size: 13px;
+    color: #00bcd4;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.error-message {
+  background: rgba(239, 83, 80, 0.1);
+  border: 1px solid rgba(239, 83, 80, 0.3);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #ef5350;
+  margin-bottom: 16px;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  background: #11a0b6;
+  border: none;
+  border-radius: 14px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+  margin-bottom: 20px;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover:not(:disabled) {
+    background: #0097a7;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.switch-auth {
+  text-align: center;
+  font-size: 14px;
+  color: #8899aa;
+
+  a {
+    color: #00bcd4;
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.copyright {
+  font-size: 12px;
+  color: #556677;
+  text-align: center;
+}

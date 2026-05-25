@@ -1,0 +1,132 @@
+<div class="glow-1"></div>
+<div class="glow-2"></div>
+<div class="glow-3"></div>
+
+<div class="auth-wrapper">
+  <div class="auth-left">
+    <div class="brand">
+      <img src="logo.png" alt="AquaGuard" class="logo" />
+    </div>
+    <div class="hero-text">
+      <h1>
+        <span data-vi="Hệ thống quản lý" data-en="Flood disaster">Hệ thống quản lý</span>
+        <br />
+        <span class="highlight" data-vi="thiên tai lũ lụt" data-en="management system"
+          >thiên tai lũ lụt</span
+        >
+      </h1>
+      <p
+        data-vi="Theo dõi mực nước, nhận cảnh báo sớm, phối hợp cứu hộ và bảo vệ cộng đồng trong thời gian thực."
+        data-en="Monitor water levels, receive early warnings, coordinate rescue and protect the community in real time."
+      >
+        Theo dõi mực nước, nhận cảnh báo sớm, phối hợp cứu hộ và bảo vệ cộng đồng trong thời gian
+        thực.
+      </p>
+    </div>
+    <div class="features">
+      <div class="feature-item">
+        <div class="feature-icon"><mat-icon>map</mat-icon></div>
+        <span data-vi="Bản đồ lũ lụt thời gian thực" data-en="Real-time flood map"
+          >Bản đồ lũ lụt thời gian thực</span
+        >
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon"><mat-icon>bolt</mat-icon></div>
+        <span data-vi="Phối hợp cứu hộ nhanh chóng" data-en="Quick rescue coordination"
+          >Phối hợp cứu hộ nhanh chóng</span
+        >
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon"><mat-icon>notifications</mat-icon></div>
+        <span data-vi="Cảnh báo sớm 24/7" data-en="Early warning 24/7">Cảnh báo sớm 24/7</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-card">
+      <div class="card-header">
+        <h2 data-vi="Chào mừng trở lại" data-en="Welcome back">Chào mừng trở lại</h2>
+        <p
+          data-vi="Đăng nhập để truy cập hệ thống quản lý"
+          data-en="Sign in to access the management system"
+        >
+          Đăng nhập để truy cập hệ thống quản lý
+        </p>
+      </div>
+
+      <div class="tab-group">
+        <button class="tab active" data-vi="Đăng nhập" data-en="Login">Đăng nhập</button>
+        <a routerLink="/auth/register" class="tab" data-vi="Đăng ký" data-en="Register">Đăng ký</a>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+        <div class="form-group">
+          <label data-vi="Số điện thoại" data-en="Phone number">Số điện thoại</label>
+          <div class="input-wrapper" [class.error]="phone?.invalid && phone?.touched">
+            <mat-icon class="input-icon">phone</mat-icon>
+            <input type="tel" formControlName="phone" placeholder="+84 901 234 567" />
+          </div>
+          <small
+            class="hint"
+            data-vi="Ví dụ: +84 901 234 567 hoặc 0901234567"
+            data-en="Example: +84 901 234 567 or 0901234567"
+          >
+            Ví dụ: +84 901 234 567 hoặc 0901234567
+          </small>
+          <small
+            class="error-text"
+            *ngIf="phone?.invalid && phone?.touched"
+            data-vi="Vui lòng nhập số điện thoại hợp lệ!"
+            data-en="Please enter a valid phone number!"
+          >
+            Vui lòng nhập số điện thoại hợp lệ!
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label data-vi="Mật khẩu" data-en="Password">Mật khẩu</label>
+          <div class="input-wrapper" [class.error]="password?.invalid && password?.touched">
+            <mat-icon class="input-icon">lock</mat-icon>
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="Nhập mật khẩu"
+            />
+            <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
+              <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </div>
+          <small
+            class="error-text"
+            *ngIf="password?.invalid && password?.touched"
+            data-vi="Mật khẩu tối thiểu 6 ký tự!"
+            data-en="Password must be at least 6 characters!"
+          >
+            Mật khẩu tối thiểu 6 ký tự!
+          </small>
+          <div class="forgot-password">
+            <a href="#" data-vi="Quên mật khẩu?" data-en="Forgot password?">Quên mật khẩu?</a>
+          </div>
+        </div>
+
+        <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+        <button type="submit" class="btn-primary" [disabled]="isLoading">
+          <mat-icon>login</mat-icon>
+          <span data-vi="Đăng nhập" data-en="Login">
+            {{ isLoading ? 'Đang đăng nhập...' : 'Đăng nhập' }}
+          </span>
+        </button>
+      </form>
+
+      <p class="switch-auth">
+        <span data-vi="Chưa có tài khoản?" data-en="Don't have an account?"
+          >Chưa có tài khoản?</span
+        >
+        <a routerLink="/auth/register" data-vi="Đăng ký" data-en="Register">Đăng ký</a>
+      </p>
+    </div>
+    <p class="copyright">© 2026 AquaGuard Emergency System. Bảo lưu mọi quyền.</p>
+  </div>
+</div>

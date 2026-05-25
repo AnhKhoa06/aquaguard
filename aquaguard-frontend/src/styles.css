@@ -1,1 +1,240 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary: #00bcd4;
+  --primary-dark: #0097a7;
+  --bg-dark: #0a1628;
+  --bg-card: #0f1f35;
+  --bg-input: #1a2f4a;
+  --bg-input-hover: #1e3555;
+  --text-primary: #ffffff;
+  --text-secondary: #8899aa;
+  --text-muted: #556677;
+  --border: #1e3555;
+  --border-focus: #00bcd4;
+  --error: #ef5350;
+  --success: #26a69a;
+}
+
+html,
+body {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #071c1f;
+  color: #ffffff;
+  min-height: 100vh;
+}
+
+input,
+button {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Toast custom style */
+.toast-container .ngx-toastr {
+  background: rgba(15, 23, 42, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  padding: 14px 18px 14px 54px !important;
+  font-family: 'Inter', sans-serif !important;
+  min-width: 280px !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+.toast-container .ngx-toastr .toast-title {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  margin-bottom: 4px !important;
+  color: #ffffff !important;
+}
+
+.toast-container .ngx-toastr .toast-message {
+  font-size: 12px !important;
+  color: #94a3b8 !important;
+}
+
+.toast-success::before {
+  content: '✓';
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  background: rgba(0, 188, 212, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00bcd4;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 24px;
+  text-align: center;
+}
+
+.toast-container .ngx-toastr.toast-error {
+  background: rgba(239, 83, 80, 0.15) !important;
+  border-left: 3px solid #ef5350 !important;
+  background-image: none !important;
+}
+
+.toast-container .ngx-toastr.toast-success {
+  background: rgba(34, 197, 94, 0.15) !important;
+  border-left: 3px solid #22c55e !important;
+  background-image: none !important;
+}
+
+.toast-container .ngx-toastr.toast-warning {
+  background: rgba(245, 158, 11, 0.15) !important;
+  border-left: 3px solid #f59e0b !important;
+  background-image: none !important;
+}
+
+.toast-container .ngx-toastr.toast-info {
+  background: rgba(59, 130, 246, 0.15) !important;
+  border-left: 3px solid #3b82f6 !important;
+  background-image: none !important;
+}
+
+.toast-success::before {
+  content: 'check_circle';
+  font-family: 'Material Icons';
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #22c55e;
+  font-size: 22px;
+}
+
+.toast-error::before {
+  content: 'cancel';
+  font-family: 'Material Icons';
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ef5350;
+  font-size: 22px;
+}
+
+.toast-warning::before {
+  content: 'warning';
+  font-family: 'Material Icons';
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #f59e0b;
+  font-size: 22px;
+}
+
+.toast-info::before {
+  content: 'info';
+  font-family: 'Material Icons';
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #3b82f6;
+  font-size: 22px;
+}
+
+.toast-container .ngx-toastr.toast-success .toast-progress {
+  background: #22c55e !important;
+}
+
+.toast-container .ngx-toastr.toast-error .toast-progress {
+  background: #ef5350 !important;
+}
+
+.toast-container .ngx-toastr.toast-warning .toast-progress {
+  background: #f59e0b !important;
+}
+
+.toast-container .ngx-toastr.toast-info .toast-progress {
+  background: #3b82f6 !important;
+}
+
+.toast-container .ngx-toastr .toast-close-button {
+  pointer-events: all !important;
+  cursor: pointer !important;
+  background: transparent !important;
+  color: #94a3b8 !important;
+  opacity: 1 !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  text-shadow: none !important;
+  border: none !important;
+}
+
+.toast-container .ngx-toastr .toast-close-button:hover {
+  color: #ffffff !important;
+  background: transparent !important;
+  opacity: 1 !important;
+}
+
+.toast-container .ngx-toastr {
+  pointer-events: none !important;
+}
+
+/* Hiệu ứng lò xo */
+@keyframes toastBounceIn {
+  0% {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  55% {
+    transform: translateX(-8px);
+    opacity: 1;
+  }
+  75% {
+    transform: translateX(4px);
+  }
+  90% {
+    transform: translateX(-2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes toastFadeOut {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  20% {
+    transform: translateX(-20px);
+    opacity: 1;
+  }
+  21% {
+    transform: translateX(-20px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(150%);
+    opacity: 0;
+  }
+}
+
+.toast-container .ngx-toastr {
+  animation: toastBounceIn 0.37s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+}
+
+.toast-container .ngx-toastr.ng-animating {
+  animation: toastFadeOut 0.5s ease-in forwards !important;
+}

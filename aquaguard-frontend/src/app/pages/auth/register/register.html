@@ -1,0 +1,284 @@
+<div class="glow-1"></div>
+<div class="glow-2"></div>
+<div class="glow-3"></div>
+
+<div class="auth-wrapper">
+  <div class="auth-left">
+    <div class="brand">
+      <img src="logo.png" alt="AquaGuard" class="logo" />
+    </div>
+    <div class="hero-text">
+      <h1>
+        <span data-vi="Hệ thống quản lý" data-en="Flood disaster">Hệ thống quản lý</span>
+        <br />
+        <span class="highlight" data-vi="thiên tai lũ lụt" data-en="management system"
+          >thiên tai lũ lụt</span
+        >
+      </h1>
+      <p
+        data-vi="Theo dõi mực nước, nhận cảnh báo sớm, phối hợp cứu hộ và bảo vệ cộng đồng trong thời gian thực."
+        data-en="Monitor water levels, receive early warnings, coordinate rescue and protect the community in real time."
+      >
+        Theo dõi mực nước, nhận cảnh báo sớm, phối hợp cứu hộ và bảo vệ cộng đồng trong thời gian
+        thực.
+      </p>
+    </div>
+    <div class="features">
+      <div class="feature-item">
+        <div class="feature-icon"><mat-icon>map</mat-icon></div>
+        <span data-vi="Bản đồ lũ lụt thời gian thực" data-en="Real-time flood map"
+          >Bản đồ lũ lụt thời gian thực</span
+        >
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon"><mat-icon>bolt</mat-icon></div>
+        <span data-vi="Phối hợp cứu hộ nhanh chóng" data-en="Quick rescue coordination"
+          >Phối hợp cứu hộ nhanh chóng</span
+        >
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon"><mat-icon>notifications</mat-icon></div>
+        <span data-vi="Cảnh báo sớm 24/7" data-en="Early warning 24/7">Cảnh báo sớm 24/7</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-card">
+      <div class="card-header">
+        <h2 data-vi="Tạo tài khoản" data-en="Create account">Tạo tài khoản</h2>
+        <p data-vi="Đăng ký bằng số điện thoại" data-en="Register with phone number">
+          Đăng ký bằng số điện thoại
+        </p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tab-group">
+        <a routerLink="/auth/login" class="tab" data-vi="Đăng nhập" data-en="Login">Đăng nhập</a>
+        <button class="tab active" data-vi="Đăng ký" data-en="Register">Đăng ký</button>
+      </div>
+
+      <!-- Step indicator -->
+      <div class="step-indicator">
+        <div class="step" [class.active]="currentStep === 1" [class.done]="currentStep > 1">
+          <span>{{ currentStep > 1 ? '' : '1' }}</span>
+          <mat-icon *ngIf="currentStep > 1">check</mat-icon>
+        </div>
+        <div class="step-line" [class.done]="currentStep > 1"></div>
+        <div class="step" [class.active]="currentStep === 2" [class.done]="currentStep > 2">
+          <span *ngIf="currentStep <= 2">2</span>
+          <mat-icon *ngIf="currentStep > 2">check</mat-icon>
+        </div>
+        <div class="step-line" [class.done]="currentStep > 2"></div>
+        <div class="step" [class.active]="currentStep === 3">
+          <span>3</span>
+        </div>
+      </div>
+
+      <!-- Step 1 -->
+      <form *ngIf="currentStep === 1" [formGroup]="step1Form">
+        <div class="form-group">
+          <label data-vi="Tên hiển thị" data-en="Display name">Tên hiển thị</label>
+          <div class="input-wrapper" [class.error]="full_name?.invalid && full_name?.touched">
+            <mat-icon class="input-icon">badge</mat-icon>
+            <input type="text" formControlName="full_name" placeholder="Tên của bạn" />
+          </div>
+          <small class="error-text" *ngIf="full_name?.invalid && full_name?.touched">
+            Vui lòng nhập tên hiển thị!
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label data-vi="Số điện thoại" data-en="Phone number">Số điện thoại</label>
+          <div class="input-wrapper" [class.error]="phone?.invalid && phone?.touched">
+            <mat-icon class="input-icon">phone</mat-icon>
+            <input type="tel" formControlName="phone" placeholder="+84" />
+          </div>
+          <small class="hint">Ví dụ: +84 901 234 567 hoặc 0901234567</small>
+          <small class="error-text" *ngIf="phone?.invalid && phone?.touched">
+            Vui lòng nhập số điện thoại hợp lệ!
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label data-vi="Mật khẩu" data-en="Password">Mật khẩu</label>
+          <div class="input-wrapper" [class.error]="password?.invalid && password?.touched">
+            <mat-icon class="input-icon">lock</mat-icon>
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="Tối thiểu 6 ký tự"
+            />
+            <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
+              <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </div>
+          <small class="error-text" *ngIf="password?.invalid && password?.touched">
+            Mật khẩu tối thiểu 6 ký tự!
+          </small>
+        </div>
+
+        <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+        <button type="button" class="btn-primary" (click)="nextStep()">
+          <span data-vi="Tiếp theo" data-en="Next">Tiếp theo</span>
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </form>
+
+      <!-- Step 2 -->
+      <form *ngIf="currentStep === 2" [formGroup]="step2Form">
+        <div class="form-group">
+          <label data-vi="Giới tính" data-en="Gender">Giới tính</label>
+          <div class="gender-group">
+            <button
+              type="button"
+              class="gender-btn"
+              [class.active]="selectedGender === 'male'"
+              (click)="selectGender('male')"
+            >
+              <mat-icon>male</mat-icon>
+              <span data-vi="Nam" data-en="Male">Nam</span>
+            </button>
+            <button
+              type="button"
+              class="gender-btn"
+              [class.active]="selectedGender === 'female'"
+              (click)="selectGender('female')"
+            >
+              <mat-icon>female</mat-icon>
+              <span data-vi="Nữ" data-en="Female">Nữ</span>
+            </button>
+            <button
+              type="button"
+              class="gender-btn"
+              [class.active]="selectedGender === 'other'"
+              (click)="selectGender('other')"
+            >
+              <mat-icon>transgender</mat-icon>
+              <span data-vi="Khác" data-en="Other">Khác</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label data-vi="Ngày sinh" data-en="Date of birth">Ngày sinh</label>
+          <div
+            class="input-wrapper"
+            [class.error]="date_of_birth?.invalid && date_of_birth?.touched"
+          >
+            <mat-icon class="input-icon">calendar_month</mat-icon>
+            <input type="date" formControlName="date_of_birth" />
+          </div>
+          <small class="error-text" *ngIf="date_of_birth?.invalid && date_of_birth?.touched">
+            Vui lòng chọn ngày sinh!
+          </small>
+        </div>
+
+        <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+        <div class="btn-group">
+          <button type="button" class="btn-secondary" (click)="prevStep()">
+            <mat-icon>arrow_back</mat-icon>
+            <span data-vi="Quay lại" data-en="Back">Quay lại</span>
+          </button>
+          <button type="button" class="btn-primary" (click)="nextStep()">
+            <span data-vi="Tiếp theo" data-en="Next">Tiếp theo</span>
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+      </form>
+
+      <!-- Step 3 -->
+      <div *ngIf="currentStep === 3">
+        <div class="form-group">
+          <label data-vi="Vai trò" data-en="Role">Vai trò</label>
+          <div class="role-group">
+            <button
+              type="button"
+              class="role-btn"
+              [class.active]="selectedRole === 'citizen'"
+              (click)="selectRole('citizen')"
+            >
+              <mat-icon>person</mat-icon>
+              <span data-vi="Công dân" data-en="Citizen">Công dân</span>
+            </button>
+            <button
+              type="button"
+              class="role-btn"
+              [class.active]="selectedRole === 'responder'"
+              (click)="selectRole('responder')"
+            >
+              <mat-icon>local_fire_department</mat-icon>
+              <span data-vi="Cứu hộ" data-en="Rescue">Cứu hộ</span>
+            </button>
+          </div>
+
+          <!-- Hiện ô nhập mã khi chọn Cứu hộ -->
+          <div class="form-group role-password-group" *ngIf="selectedRole === 'responder'">
+            <div class="role-password-label">
+              <mat-icon>lock</mat-icon>
+              <span>Yêu cầu mật khẩu vai trò</span>
+            </div>
+            <div class="input-wrapper">
+              <input
+                type="password"
+                (input)="rolePassword = $any($event.target).value"
+                [value]="rolePassword"
+                placeholder="Nhập mật khẩu vai trò"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Tóm tắt -->
+        <div class="summary">
+          <p class="summary-title">TÓM TẮT</p>
+          <div class="summary-item">
+            <mat-icon>phone</mat-icon>
+            <span class="summary-label" data-vi="Số điện thoại" data-en="Phone">Số điện thoại</span>
+            <span class="summary-value">{{ step1Form.value.phone }}</span>
+          </div>
+          <div class="summary-item">
+            <mat-icon>badge</mat-icon>
+            <span class="summary-label" data-vi="Tên hiển thị" data-en="Display name"
+              >Tên hiển thị</span
+            >
+            <span class="summary-value">{{ step1Form.value.full_name }}</span>
+          </div>
+          <div class="summary-item">
+            <mat-icon>male</mat-icon>
+            <span class="summary-label" data-vi="Giới tính" data-en="Gender">Giới tính</span>
+            <span class="summary-value">{{ getGenderLabel() }}</span>
+          </div>
+          <div class="summary-item">
+            <mat-icon>calendar_month</mat-icon>
+            <span class="summary-label" data-vi="Ngày sinh" data-en="Date of birth">Ngày sinh</span>
+            <span class="summary-value">{{ step2Form.value.date_of_birth }}</span>
+          </div>
+        </div>
+
+        <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+        <div class="btn-group">
+          <button type="button" class="btn-secondary" (click)="prevStep()">
+            <mat-icon>arrow_back</mat-icon>
+            <span data-vi="Quay lại" data-en="Back">Quay lại</span>
+          </button>
+          <button type="button" class="btn-primary" (click)="onRegister()" [disabled]="isLoading">
+            <mat-icon>person_add</mat-icon>
+            <span data-vi="Tạo tài khoản" data-en="Create account">
+              {{ isLoading ? 'Đang tạo...' : 'Tạo tài khoản' }}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <p class="switch-auth">
+        <span data-vi="Đã có tài khoản?" data-en="Already have an account?">Đã có tài khoản?</span>
+        <a routerLink="/auth/login" data-vi="Đăng nhập" data-en="Login">Đăng nhập</a>
+      </p>
+    </div>
+    <p class="copyright">© 2026 AquaGuard Emergency System. Bảo lưu mọi quyền.</p>
+  </div>
+</div>
