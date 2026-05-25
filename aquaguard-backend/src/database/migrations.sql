@@ -6,11 +6,10 @@ USE aquaguard;
 CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   full_name VARCHAR(100) NOT NULL,
-  email VARCHAR(100) UNIQUE,
+  email VARCHAR(100) UNIQUE NOT NULL,
   phone VARCHAR(20) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   role ENUM('citizen', 'responder', 'admin') DEFAULT 'citizen',
-  status ENUM('online', 'offline', 'busy') DEFAULT 'offline',
   health_status ENUM('safe', 'danger', 'injured', 'unknown') DEFAULT 'unknown',
   health_note TEXT,
   age INT,
