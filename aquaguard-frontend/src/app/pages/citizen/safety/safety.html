@@ -1,6 +1,70 @@
-<div class="coming-soon">
-  <span class="material-symbols-outlined">security</span>
-  <h2>Quy trình an toàn</h2>
-  <p>Tính năng đang được phát triển</p>
-  <span class="badge">Coming Soon</span>
+<div class="safety-page">
+  <div class="page-header">
+    <h1>Quy trình An toàn</h1>
+    <p>Thông tin liên hệ khẩn cấp và hướng dẫn an toàn cho thiên tai lũ lụt.</p>
+  </div>
+
+  <!-- Hỗ trợ khẩn cấp -->
+  <div class="section-title">Hỗ trợ Khẩn cấp</div>
+  <div class="emergency-grid">
+    <a href="tel:113" class="emergency-card">
+      <div class="emergency-icon-wrap">
+        <span class="material-symbols-outlined">shield</span>
+      </div>
+      <div class="emergency-info">
+        <div class="emergency-name">Công an</div>
+        <div class="emergency-number">113</div>
+      </div>
+    </a>
+    <a href="tel:114" class="emergency-card">
+      <div class="emergency-icon-wrap">
+        <span class="material-symbols-outlined">local_fire_department</span>
+      </div>
+      <div class="emergency-info">
+        <div class="emergency-name">Cứu hỏa</div>
+        <div class="emergency-number">114</div>
+      </div>
+    </a>
+    <a href="tel:115" class="emergency-card">
+      <div class="emergency-icon-wrap">
+        <span class="material-symbols-outlined">medical_services</span>
+      </div>
+      <div class="emergency-info">
+        <div class="emergency-name">Cấp cứu</div>
+        <div class="emergency-number">115</div>
+      </div>
+    </a>
+  </div>
+
+  <!-- Hướng dẫn an toàn -->
+  <div class="section-title">Hướng dẫn An toàn</div>
+  <div class="safety-list">
+    <div class="safety-item" *ngFor="let item of safetyItems" [class.open]="item.isOpen">
+      <div class="safety-header" (click)="toggle(item)">
+        <div class="safety-left">
+          <div class="safety-icon" [style.background]="item.iconBg">
+            <span class="material-symbols-outlined">{{ item.icon }}</span>
+          </div>
+          <div class="safety-meta">
+            <div class="safety-title">{{ item.title }}</div>
+            <span class="badge badge-{{ item.badgeColor }}">{{ item.badge }}</span>
+          </div>
+        </div>
+        <div class="toggle-btn">
+          <span class="material-symbols-outlined">
+            {{ item.isOpen ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="safety-body">
+        <ul>
+          <li *ngFor="let tip of item.tips">
+            <span class="tip-dot"></span>
+            {{ tip }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>
