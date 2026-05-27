@@ -1,6 +1,330 @@
-<div class="coming-soon">
-  <span class="material-symbols-outlined">sos</span>
-  <h2>Yêu cầu SOS</h2>
-  <p>Tính năng đang được phát triển</p>
-  <span class="badge">Coming Soon</span>
+<div class="sos-page">
+  <section class="hero-card">
+    <div class="hero-copy">
+      <div class="eyebrow">
+        <span class="dot"></span>
+        <span>SOS</span>
+      </div>
+      <h1>Yêu cầu SOS</h1>
+      <p>Gửi yêu cầu cứu hộ và theo dõi trạng thái theo thời gian thực.</p>
+    </div>
+
+    <div class="hero-actions">
+      <button class="secondary-btn" type="button" (click)="refreshNow()" [class.is-loading]="syncing">
+        <span class="material-symbols-outlined">refresh</span>
+        <span>{{ syncing ? 'Đang cập nhật' : 'Làm mới' }}</span>
+      </button>
+
+      <button class="primary-btn" type="button" (click)="openForm()">
+        <span class="material-symbols-outlined">add_circle</span>
+        <span>Gửi SOS</span>
+      </button>
+    </div>
+  </section>
+
+  <div class="toast" *ngIf="feedbackMessage" [class.success]="feedbackType === 'success'" [class.error]="feedbackType === 'error'">
+    <span class="material-symbols-outlined">{{ feedbackType === 'success' ? 'check_circle' : 'error' }}</span>
+    <span>{{ feedbackMessage }}</span>
+  </div>
+
+  <section class="stats-grid">
+    <article class="stat-card accent">
+      <span class="stat-label">GPS</span>
+      <strong>{{ gpsLabel }}</strong>
+      <small>{{ locating ? 'Đang định vị...' : (locationError || 'Sẵn sàng gửi SOS') }}</small>
+    </article>
+
+    <article class="stat-card">
+      <span class="stat-label">Yêu cầu của tôi</span>
+      <strong>{{ totalRequests }}</strong>
+      <small>Đã tạo trong hệ thống</small>
+    </article>
+
+    <article class="stat-card">
+      <span class="stat-label">Trạng thái hiện tại</span>
+      <strong [class]="statusTone">{{ statusLabel }}</strong>
+      <small>{{ activeRequest ? 'Có yêu cầu đang theo dõi' : 'Chưa có SOS đang mở' }}</small>
+    </article>
+  </section>
+
+  <div class="content-grid">
+    <section class="panel request-panel">
+      <div class="panel-head">
+        <div>
+          <span class="panel-kicker">YÊU CẦU CỦA TÔI</span>
+          <h2>{{ totalRequests || 0 }} yêu cầu</h2>
+        </div>
+
+        <button class="chip-btn" type="button" (click)="refreshNow()">
+          <span class="material-symbols-outlined">sync</span>
+          <span>{{ syncing ? 'Đồng bộ...' : 'Cập nhật realtime' }}</span>
+        </button>
+      </div>
+
+      <div class="loading-state" *ngIf="loading">
+        <div class="skeleton-card" *ngFor="let _ of [1, 2]"></div>
+      </div>
+
+      <ng-container *ngIf="!loading">
+        <article class="active-request" *ngIf="activeRequest; else emptyRequest">
+          <div class="request-top">
+            <span class="status-pill" [ngClass]="getStatusTone(activeRequest.status)">
+              <span class="dot"></span>
+              {{ getStatusLabel(activeRequest.status) }}
+            </span>
+            <span class="request-date">{{ activeRequest.created_at | date: 'd/M/yyyy' }}</span>
+          </div>
+
+          <div class="request-body">
+            <div class="request-meta">
+              <span class="meta-line">
+                <span class="material-symbols-outlined">person</span>
+                <strong>Bạn</strong>
+                <span>{{ currentUser?.full_name || 'Ẩn danh' }}</span>
+              </span>
+
+              <span class="meta-line">
+                <span class="material-symbols-outlined">place</span>
+                <span>{{ activeRequest.address || 'Chưa có địa chỉ' }}</span>
+              </span>
+
+              <span class="meta-line secondary">
+                <span>{{ activeRequest.num_people }} người</span>
+                <span>•</span>
+                <span>{{ getUrgencyLabel(activeRequest.urgency_level) }}</span>
+              </span>
+            </div>
+
+            <div class="request-side">
+              <div class="mini-card">
+                <span class="mini-title">Đội cứu hộ</span>
+                <strong>{{ activeRequest.team_name || 'Đang điều phối' }}</strong>
+              </div>
+
+              <div class="mini-card">
+                <span class="mini-title">Người nhận</span>
+                <strong>{{ activeRequest.responder_name || 'Chưa có người nhận' }}</strong>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <ng-template #emptyRequest>
+          <div class="empty-state">
+            <span class="material-symbols-outlined">sos</span>
+            <h3>Chưa có yêu cầu SOS đang hoạt động</h3>
+            <p>Nhấn nút Gửi SOS để tạo một yêu cầu mới khi bạn cần hỗ trợ khẩn cấp.</p>
+          </div>
+        </ng-template>
+
+        <div class="request-list" *ngIf="sosRequests.length > 0">
+          <article class="request-item" *ngFor="let sos of sosRequests">
+            <div class="item-left">
+              <span class="item-icon">
+                <span class="material-symbols-outlined">sos</span>
+              </span>
+
+              <div class="item-copy">
+                <strong>Yêu cầu SOS #{{ sos.id }}</strong>
+                <span class="item-address" *ngIf="sos.address">{{ sos.address }}</span>
+                <span class="item-time">{{ sos.created_at | date: 'HH:mm - d/M/yyyy' }}</span>
+              </div>
+            </div>
+
+            <div class="item-right">
+              <span class="urgency-chip urgency-{{ sos.urgency_level }}">{{ getUrgencyLabel(sos.urgency_level) }}</span>
+              <span class="status-pill" [ngClass]="getStatusTone(sos.status)">{{ getStatusLabel(sos.status) }}</span>
+            </div>
+          </article>
+        </div>
+      </ng-container>
+    </section>
+
+    <aside class="panel tracking-panel">
+      <div class="panel-head compact">
+        <div>
+          <span class="panel-kicker">THEO DÕI REAL-TIME</span>
+          <h2>Thông tin cứu hộ đang đến</h2>
+        </div>
+
+        <span class="sync-badge" [class.live]="syncing || isTracking">
+          <span class="pulse"></span>
+          <span>{{ syncing ? 'Đang đồng bộ' : 'Trực tuyến' }}</span>
+        </span>
+      </div>
+
+      <ng-container *ngIf="activeRequest; else noTracking">
+        <div class="tracking-summary">
+          <div class="ring" [style.--ring-fill]="progressPercent + '%'">
+            <div class="ring-inner">
+              <strong>{{ progressPercent }}%</strong>
+              <span>{{ getStatusLabel(activeRequest.status) }}</span>
+            </div>
+          </div>
+
+          <div class="tracking-copy">
+            <p class="tracking-title">{{ getResponderLabel() }}</p>
+            <p class="tracking-sub">{{ activeRequest.team_name || 'Đội cứu hộ đang được điều phối' }}</p>
+            <div class="tracking-location">
+              <span class="material-symbols-outlined">location_on</span>
+              <span>{{ activeRequest.address || 'Chưa có địa chỉ cụ thể' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline">
+          <div class="timeline-item" *ngFor="let step of getTimelineSteps(); let index = index" [class.active]="index + 1 <= currentProgress">
+            <span class="timeline-dot"></span>
+            <div>
+              <strong>{{ step.label }}</strong>
+              <p>{{ step.description }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tracking-footer">
+          <div>
+            <span class="footer-label">Lần đồng bộ gần nhất</span>
+            <strong>{{ lastSyncedAt || '--:--:--' }}</strong>
+          </div>
+
+          <button class="ghost-btn" type="button" (click)="refreshNow()">
+            <span class="material-symbols-outlined">refresh</span>
+            <span>Cập nhật</span>
+          </button>
+        </div>
+      </ng-container>
+
+      <ng-template #noTracking>
+        <div class="empty-tracking">
+          <span class="material-symbols-outlined">radar</span>
+          <h3>Chưa có SOS để theo dõi</h3>
+          <p>Khi gửi yêu cầu, trạng thái cứu hộ sẽ xuất hiện ở đây và tự làm mới theo thời gian thực.</p>
+        </div>
+      </ng-template>
+    </aside>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="showForm" (click)="closeForm()">
+    <section class="sos-modal" (click)="$event.stopPropagation()">
+      <header class="modal-header">
+        <div>
+          <span class="panel-kicker">YÊU CẦU CỨU HỘ MỚI</span>
+          <h2>Cung cấp thông tin chi tiết để đội cứu hộ hỗ trợ nhanh nhất có thể.</h2>
+        </div>
+
+        <button class="close-btn" type="button" (click)="closeForm()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </header>
+
+      <div class="gps-banner" [class.error]="!!locationError">
+        <span class="material-symbols-outlined">my_location</span>
+        <span>{{ locationError || gpsLabel }}</span>
+        <button type="button" class="gps-retry" (click)="retryLocation()" [disabled]="locating">
+          {{ locating ? 'Đang lấy GPS...' : 'Lấy lại' }}
+        </button>
+      </div>
+
+      <form class="sos-form" [formGroup]="form" (ngSubmit)="submitSos()">
+        <label class="field-group">
+          <span class="field-label">
+            <span class="material-symbols-outlined">place</span>
+            <span>Vị trí hiện tại</span>
+          </span>
+          <textarea
+            rows="2"
+            formControlName="address"
+            placeholder="Hẻm, đường, phường/xã, quận/huyện, tỉnh/thành phố..."
+          ></textarea>
+          <small *ngIf="addressControl?.touched && addressControl?.invalid">Vui lòng nhập địa chỉ rõ ràng.</small>
+        </label>
+
+        <label class="field-group">
+          <span class="field-label">
+            <span class="material-symbols-outlined">description</span>
+            <span>Mô tả tình huống</span>
+          </span>
+          <textarea
+            rows="5"
+            formControlName="description"
+            placeholder="Mô tả tình huống hiện tại: mức nước, số người cần cứu hộ, tình trạng sức khỏe..."
+          ></textarea>
+          <small *ngIf="descriptionControl?.touched && descriptionControl?.invalid">Hãy mô tả ngắn gọn nhưng đủ ý.</small>
+        </label>
+
+        <div class="field-group">
+          <span class="field-label">
+            <span class="material-symbols-outlined">priority_high</span>
+            <span>Mức độ khẩn cấp</span>
+          </span>
+          <div class="urgency-grid">
+            <button
+              *ngFor="let urgency of urgencyOptions"
+              type="button"
+              class="urgency-btn"
+              [ngClass]="[urgency.tone, 'urgency-btn', form.value.urgency_level === urgency.value ? 'active' : '']"
+              (click)="setUrgency(urgency.value)"
+            >
+              {{ urgency.label }}
+            </button>
+          </div>
+        </div>
+
+        <div class="field-grid">
+          <label class="field-group compact-field">
+            <span class="field-label">
+              <span class="material-symbols-outlined">groups</span>
+              <span>Số người cần cứu hộ</span>
+            </span>
+            <input type="number" min="1" max="99" formControlName="num_people" />
+          </label>
+
+          <div class="field-group compact-field read-only-field">
+            <span class="field-label">
+              <span class="material-symbols-outlined">sos</span>
+              <span>Mức độ đã chọn</span>
+            </span>
+            <strong>{{ urgencyLabel }}</strong>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label">
+            <span class="material-symbols-outlined">photo_camera</span>
+            <span>Hình ảnh hiện trường</span>
+            <small>(tối đa 5 hình)</small>
+          </span>
+
+          <div class="upload-zone" (click)="fileInput.click()" (drop)="onDrop($event)" (dragover)="onDragOver($event)">
+            <input #fileInput type="file" accept="image/*" multiple hidden (change)="onFilesSelected($event)" />
+            <span class="material-symbols-outlined">cloud_upload</span>
+            <p>Kéo thả hình ảnh vào đây hoặc <strong>chọn tệp</strong></p>
+            <small>PNG, JPG, WEBP - tối đa 10MB/hình</small>
+          </div>
+
+          <div class="preview-grid" *ngIf="imagePreviews.length > 0">
+            <div class="preview-item" *ngFor="let preview of imagePreviews; let index = index">
+              <img [src]="preview" alt="Ảnh hiện trường" />
+              <button type="button" class="remove-preview" (click)="removeFile(index)">
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <footer class="modal-actions">
+          <button type="button" class="cancel-btn" (click)="closeForm()">Hủy</button>
+          <button type="submit" class="submit-btn" [disabled]="!canSubmit">
+            <span class="material-symbols-outlined">sos</span>
+            <span>{{ submitting ? 'Đang gửi...' : 'Gửi yêu cầu cứu hộ' }}</span>
+          </button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <ng-template #loadingCards>
+    <div></div>
+  </ng-template>
 </div>
