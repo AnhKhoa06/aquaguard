@@ -1,0 +1,775 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.dashboard-wrapper {
+  padding: 40px 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1400px;
+  background: rgba(15, 23, 42, 0.5); // ← thêm dòng này
+}
+
+// ========== HEADER ==========
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.welcome-text {
+  font-size: 14px;
+  color: #8899aa;
+  margin-bottom: 2px;
+}
+
+.user-name {
+  font-size: 27px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-label {
+  font-size: 13px;
+  color: #8899aa;
+}
+
+.status-badges {
+  border-radius: 20px; // wrapper lớn hơn nút 1 chút
+  padding: 6px;
+  gap: 4px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  display: flex;
+  align-items: center;
+}
+
+.status-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 14px;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  background: transparent;
+  transition: all 0.2s;
+  color: #556677; // ← màu mặc định
+
+  .material-symbols-outlined {
+    font-size: 18px;
+    color: #556677; // ← icon mặc định
+  }
+
+  // ===== INACTIVE =====
+  &.safe {
+    color: rgba(16, 185, 129, 0.6);
+    background: rgba(16, 185, 129, 0.06); // nhạt hơn hover
+    .material-symbols-outlined {
+      color: rgba(16, 185, 129, 0.6);
+    }
+    &:hover {
+      color: #10b981;
+      background: rgba(16, 185, 129, 0.12);
+      .material-symbols-outlined {
+        color: #10b981;
+      }
+    }
+  }
+
+  &.danger {
+    color: rgba(239, 68, 68, 0.6);
+    background: rgba(239, 68, 68, 0.06);
+    .material-symbols-outlined {
+      color: rgba(239, 68, 68, 0.6);
+    }
+    &:hover {
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.12);
+      .material-symbols-outlined {
+        color: #ef4444;
+      }
+    }
+  }
+
+  &.injured {
+    color: rgba(249, 115, 22, 0.6);
+    background: rgba(249, 115, 22, 0.06);
+    .material-symbols-outlined {
+      color: rgba(249, 115, 22, 0.6);
+    }
+    &:hover {
+      color: #f97316;
+      background: rgba(249, 115, 22, 0.12);
+      .material-symbols-outlined {
+        color: #f97316;
+      }
+    }
+  }
+
+  // ===== ACTIVE =====
+  &.safe.active {
+    background: #10b981;
+    color: #ffffff;
+    .material-symbols-outlined {
+      color: #ffffff;
+    }
+  }
+
+  &.danger.active {
+    background: #ef4444;
+    color: #ffffff;
+    .material-symbols-outlined {
+      color: #ffffff;
+    }
+  }
+
+  &.injured.active {
+    background: #f97316;
+    color: #ffffff;
+    .material-symbols-outlined {
+      color: #ffffff;
+    }
+  }
+}
+
+// ========== ACTIVE SOS BANNER ==========
+.active-sos-banner {
+  width: 100%;
+  background: rgba(0, 188, 212, 0.05);
+  border: 1.67px solid rgba(0, 188, 212, 0.2);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.3s;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+
+    .sos-arrow {
+      color: #00bcd4;
+      transform: translateX(3px);
+    }
+  }
+}
+
+.sos-icon-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.sos-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(0, 188, 212, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .material-symbols-outlined {
+    font-size: 28px;
+    color: #00bcd4;
+    font-variation-settings: 'FILL' 1;
+  }
+}
+
+.sos-pulse-dot {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 14px;
+  height: 14px;
+  background: #00bcd4;
+  border-radius: 50%;
+  border: 2px solid #0f172a;
+  animation: sos-dot-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes sos-dot-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+.sos-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sos-content-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.sos-red-icon {
+  font-size: 22px;
+  color: #ef4444;
+  font-variation-settings: 'FILL' 1;
+}
+
+.sos-banner-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #94a3b8;
+}
+
+.sos-banner-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sos-status-chip {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(0, 188, 212, 0.1);
+  color: #00bcd4;
+  border: 1px solid rgba(0, 188, 212, 0.2);
+}
+
+.sos-responder {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #64748b;
+
+  .material-symbols-outlined {
+    font-size: 14px;
+  }
+}
+
+.sos-date {
+  font-size: 12px;
+  color: #475569;
+}
+
+.sos-banner-address {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin: 4px 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  .material-symbols-outlined {
+    font-size: 22px;
+    color: #ef4444;
+    flex-shrink: 0;
+    font-variation-settings: 'FILL' 1;
+  }
+}
+
+.sos-arrow {
+  color: #475569;
+  font-size: 26px;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+
+// ========== STATUS CHIPS ==========
+.sos-status-chip {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+
+  &.status-pending {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+  }
+  &.status-assigned {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+  }
+  &.status-progress {
+    background: rgba(0, 188, 212, 0.15);
+    color: #00bcd4;
+  }
+  &.status-resolved {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+  }
+  &.status-cancelled {
+    background: rgba(100, 116, 139, 0.15);
+    color: #64748b;
+  }
+}
+
+// ========== MAIN GRID ==========
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr; // ← "An toàn gia đình" rộng gấp đôi
+  gap: 20px;
+  align-items: start;
+}
+
+// ========== CARD ==========
+.card {
+  background: transparent; // không có background
+  border: none; // không có border
+  border-radius: 16px;
+  padding: 0;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 22px;
+  padding: 0 4px;
+  margin-top: 10px;
+}
+
+.card-body {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px dashed #334155;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.card-icon {
+  font-size: 22px;
+  color: #00bcd4;
+}
+
+.card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+// ========== FAMILY CARD ==========
+.family-card {
+  flex: 1;
+}
+
+// ========== EMPTY STATE ==========
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  gap: 8px;
+  text-align: center;
+  // xóa hết background, border, border-radius ở đây
+}
+
+.empty-icon {
+  font-size: 40px;
+  color: #1e3555;
+}
+
+.loading-icon {
+  font-size: 32px;
+  color: #00bcd4;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.empty-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #8899aa;
+}
+
+.empty-sub {
+  font-size: 12px;
+  color: #556677;
+  max-width: 220px;
+}
+
+// ========== BUTTONS ==========
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #00bcd4;
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 188, 212, 0.2);
+
+  .material-symbols-outlined {
+    font-size: 24px;
+  }
+
+  &:hover {
+    background: #0097a7;
+  }
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: #00bcd4;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1.5px solid rgba(0, 188, 212, 0.3);
+  cursor: pointer;
+  transition: all 0.2s;
+
+  .material-symbols-outlined {
+    font-size: 15px;
+  }
+
+  &:hover {
+    background: rgba(0, 188, 212, 0.08);
+    border-color: #00bcd4;
+  }
+}
+
+// ========== FAMILY LIST ==========
+.family-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.family-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  border: 1px solid #1e3555;
+}
+
+.member-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(0, 188, 212, 0.15);
+  color: #00bcd4;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.member-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.member-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.member-phone {
+  font-size: 11px;
+  color: #556677;
+}
+
+.health-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+
+  &.health-safe {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+  }
+  &.health-danger {
+    background: rgba(239, 83, 80, 0.15);
+    color: #ef5350;
+  }
+  &.health-injured {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+  }
+  &.health-unknown {
+    background: rgba(100, 116, 139, 0.15);
+    color: #64748b;
+  }
+}
+
+.add-member-btn {
+  margin-top: 4px;
+  align-self: flex-start;
+}
+
+// ========== QUICK ACTIONS ==========
+.quick-actions-card {
+  flex-shrink: 0;
+}
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  grid-auto-rows: 1fr; // ← thêm dòng này, tất cả hàng cùng chiều cao
+}
+
+.quick-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 24px 8px;
+  border-radius: 14px;
+  border: 1px solid #1e3555;
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  color: #ffffff; // ← thêm dòng này
+
+  &:hover {
+    background: rgba(0, 188, 212, 0.08);
+    border-color: rgba(0, 188, 212, 0.3);
+  }
+
+  &.sos-btn {
+    background: linear-gradient(135deg, #ef5350, #e53935);
+    border-color: transparent;
+
+    &:hover {
+      background: linear-gradient(135deg, #e53935, #c62828);
+    }
+
+    .quick-btn-label {
+      font-size: 13px; // ← tăng lên
+      font-weight: 700;
+      color: #ffffff; // ← đảm bảo trắng
+    }
+
+    .quick-btn-sub {
+      font-size: 11px; // ← tăng lên
+      color: #8899aa; // ← sáng hơn #556677
+      line-height: 1.3;
+    }
+  }
+}
+
+.quick-btn-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0, 188, 212, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-btn-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.quick-btn-icon-sym {
+  font-size: 24px;
+  color: #00bcd4;
+}
+
+.quick-btn-icon-sym {
+  font-size: 24px;
+  color: #00bcd4;
+  width: 40px; // ← thêm
+  height: 40px; // ← thêm
+  display: flex; // ← thêm
+  align-items: center; // ← thêm
+  justify-content: center; // ← thêm
+}
+
+.quick-btn-sub {
+  font-size: 10px;
+  color: #8899aa;
+  line-height: 1.3;
+}
+
+.sos-btn .quick-btn-sub {
+  color: rgba(248, 245, 245, 0.9) !important;
+}
+
+.sos-btn {
+  .quick-btn-icon-wrap {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+  }
+
+  .quick-btn-icon-sym {
+    color: #fff;
+    font-variation-settings: 'FILL' 1;
+    opacity: 1;
+  }
+}
+
+// ========== HISTORY CARD ==========
+.history-card {
+  width: 100%;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px solid #1e3555;
+  transition: border-color 0.2s;
+
+  &:hover {
+    border-color: rgba(0, 188, 212, 0.2);
+  }
+}
+
+.history-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.history-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(0, 188, 212, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  .material-symbols-outlined {
+    font-size: 18px;
+    color: #00bcd4;
+  }
+}
+
+.history-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.history-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.history-address {
+  font-size: 11px;
+  color: #8899aa;
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-date {
+  font-size: 11px;
+  color: #556677;
+}
+
+.history-item-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.urgency-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+
+  &.urgency-low {
+    background: rgba(100, 116, 139, 0.15);
+    color: #64748b;
+  }
+  &.urgency-medium {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+  }
+  &.urgency-high {
+    background: rgba(239, 83, 80, 0.15);
+    color: #ef5350;
+  }
+  &.urgency-critical {
+    background: rgba(220, 38, 38, 0.2);
+    color: #dc2626;
+  }
+}

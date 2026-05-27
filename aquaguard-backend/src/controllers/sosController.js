@@ -2,7 +2,7 @@ const sosModel = require("../models/sosModel");
 const { successResponse, errorResponse } = require("../utils/response");
 const path = require("path");
 const fs = require("fs");
-
+const pool = require("../config/db"); // ← thêm dòng này, đường dẫn tùy project
 const sosController = {
   // Gửi yêu cầu SOS
   create: async (req, res, next) => {
@@ -89,6 +89,26 @@ const sosController = {
       sos.images = await sosModel.getImages(sos.id);
 
       return successResponse(res, sos, "Lấy chi tiết SOS thành công!");
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  getActive: async (req, res, next) => {
+    try {
+      const [rows] = await pool.query(`
+      SELECT s.*, 
+        u.full_name as citizen_name,
+        u.phone as citizen_phone,
+        t.name as team_name
+      FROM sos_requests s
+      LEFT JOIN users u ON s.user_id = u.id
+      LEFT JOIN rescue_teams t ON s.team_id = t.id
+      WHERE s.status NOT IN ('resolved', 'cancelled')
+        AND s.latitude IS NOT NULL
+        AND s.longitude IS NOT NULL
+    `);
+      return successResponse(res, rows, "Lấy danh sách SOS thành công!");
     } catch (err) {
       next(err);
     }

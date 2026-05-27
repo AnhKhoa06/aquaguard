@@ -1,4 +1,4 @@
-<div class="lang-switcher">
+<div class="lang-switcher" *ngIf="isAuthPage">
   <button (click)="toggleLang()" class="lang-btn">
     <mat-icon>translate</mat-icon>
     <span>{{ currentLang }}</span>

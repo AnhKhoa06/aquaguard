@@ -1,0 +1,323 @@
+:host {
+  display: block;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-shell {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+
+  --sidebar-width: 288px;
+  --sidebar-collapsed: 72px;
+}
+
+// ========== SIDEBAR ==========
+.sidebar {
+  width: var(--sidebar-width);
+  background: #111f21;
+  border-right: 1px solid rgba(30, 58, 74, 0.4); // ← thêm opacity 0.4
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: width 0.25s ease;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.app-shell.collapsed .sidebar {
+  width: var(--sidebar-collapsed);
+}
+
+.sidebar-top {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  overflow: hidden;
+}
+
+// Brand
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px 16px;
+}
+
+.logo {
+  width: 235px;
+  object-fit: contain;
+}
+
+.logo-mini {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #00bcd4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+
+  .material-symbols-outlined {
+    font-size: 24px;
+    color: #ffffff;
+  }
+}
+
+// Nav
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 10px;
+  margin: 0 3px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 20px;
+  color: #8899aa;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.2s;
+  white-space: nowrap;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  width: 100%;
+
+  &:hover {
+    background: rgba(0, 188, 212, 0.08);
+    color: #ffffff;
+    .nav-icon {
+      color: #00bcd4;
+    }
+  }
+
+  &.active {
+    background: rgba(0, 188, 212, 0.12);
+    color: #00bcd4;
+    .nav-icon {
+      color: #00bcd4;
+    }
+  }
+}
+
+.app-shell.collapsed .nav-item {
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.nav-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  color: #556677;
+  transition: color 0.2s;
+}
+
+.nav-label {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+// ========== SIDEBAR BOTTOM ==========
+.sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 12px 20px; // tăng padding
+  border-top: 1px solid rgba(30, 53, 85, 0.4); // nhạt hơn
+}
+
+// Cài đặt
+.settings-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  color: #8899aa;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(0, 188, 212, 0.08);
+    color: #ffffff;
+    .nav-icon {
+      color: #00bcd4;
+    }
+  }
+
+  &.active {
+    background: rgba(0, 188, 212, 0.12);
+    color: #ffffff;
+    .nav-icon {
+      color: #00bcd4;
+    }
+  }
+}
+
+.app-shell.collapsed .settings-item {
+  justify-content: center;
+  padding: 10px 0;
+}
+
+// User box
+.user-box {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 20px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.app-shell.collapsed .user-box {
+  align-items: center;
+  padding: 10px 0;
+  background: transparent;
+  border: none;
+  gap: 12px;
+}
+
+.user-info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-shell.collapsed .user-info-row {
+  justify-content: center;
+}
+
+.user-avatar {
+  width: 37px;
+  height: 37px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  min-width: 37px;
+  background: #00bcd4; // xanh thương hiệu
+  color: #ffffff; // chữ trắng
+  font-size: 14.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-meta {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 3px; // thêm khoảng cách giữa tên và role
+}
+
+.user-role {
+  font-size: 12px;
+  color: #556677;
+  white-space: nowrap;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center; // căn giữa
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: #556677;
+  cursor: pointer;
+  padding: 10px 8px; // to hơn
+  border-radius: 8px;
+  font-size: 13px; // to hơn chút
+  font-weight: 500;
+  transition: all 0.2s;
+  width: 100%;
+
+  .material-symbols-outlined {
+    font-size: 18px; // icon to hơn
+  }
+
+  &:hover {
+    color: #ef5350;
+    background: rgba(239, 83, 80, 0.08);
+  }
+}
+
+.app-shell.collapsed .logout-btn {
+  justify-content: center;
+  padding: 6px 0;
+  width: auto;
+
+  .logout-label {
+    display: none;
+  }
+}
+
+// ========== COLLAPSE BTN ==========
+// ========== COLLAPSE BTN ==========
+.collapse-btn {
+  position: absolute;
+  left: calc(var(--sidebar-width) - 14px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #1a2f31;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #8899aa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  transition:
+    left 0.25s ease,
+    background 0.2s,
+    color 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+
+  .material-symbols-outlined {
+    font-size: 20px;
+  }
+
+  &:hover {
+    background: #1e3a3c;
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.app-shell.collapsed .collapse-btn {
+  left: calc(var(--sidebar-collapsed) - 14px);
+}
+
+// ========== MAIN CONTENT ==========
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #0f172a; // slate-900, tối hơn sidebar 1 chút
+}

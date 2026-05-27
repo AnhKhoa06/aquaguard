@@ -154,7 +154,7 @@ button {
 }
 
 .toast-container .ngx-toastr.toast-success .toast-progress {
-  background: #22c55e !important;
+  background: #00e676 !important;
 }
 
 .toast-container .ngx-toastr.toast-error .toast-progress {
@@ -237,4 +237,62 @@ button {
 
 .toast-container .ngx-toastr.ng-animating {
   animation: toastFadeOut 0.5s ease-in forwards !important;
+}
+
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  border-radius: 15px !important;
+  overflow: hidden;
+}
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+  background: #1e293b !important;
+  color: #ffffff !important;
+  border: none !important;
+  font-size: 18px !important;
+  font-weight: 300 !important;
+  width: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  transition: background 0.2s !important;
+
+  &:hover {
+    background: #2d3f55 !important;
+    color: #ffffff !important;
+  }
+}
+
+.leaflet-control-zoom-in {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.sos-popup-wrap .leaflet-popup-content-wrapper {
+  background: #1a2035 !important;
+  border-radius: 14px !important;
+  padding: 0 !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45) !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  overflow: hidden;
+}
+
+.sos-popup-wrap .leaflet-popup-content {
+  margin: 0 !important;
+  width: auto !important;
+}
+
+.sos-popup-wrap .leaflet-popup-tip {
+  background: #1a2035 !important;
+}
+
+.sos-popup-wrap .leaflet-popup-close-button {
+  color: #64748b !important;
+  top: 8px !important;
+  right: 10px !important;
+}
+
+.sos-popup-wrap .leaflet-popup-close-button:hover {
+  color: #f1f5f9 !important;
+  background: none !important;
 }

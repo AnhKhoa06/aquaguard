@@ -40,7 +40,9 @@ export class AuthService {
   logout(): void {
     const refreshToken = localStorage.getItem('refreshToken');
     if (refreshToken) {
-      this.http.post(`${this.apiUrl}/auth/logout`, { refreshToken }).subscribe();
+      this.http.post(`${this.apiUrl}/auth/logout`, { refreshToken }).subscribe({
+        error: () => {},
+      });
     }
     localStorage.clear();
     this.currentUserSubject.next(null);
@@ -61,5 +63,18 @@ export class AuthService {
   getRole(): string | null {
     const user = this.getCurrentUser();
     return user ? user.role : null;
+  }
+
+  // auth.service.ts — sửa lại đúng URL
+  refreshToken(): Observable<any> {
+    const refreshToken = localStorage.getItem('refreshToken');
+    return this.http.post<any>(`${this.apiUrl}/auth/refresh-token`, { refreshToken }).pipe(
+      tap((res) => {
+        if (res.success) {
+          localStorage.setItem('accessToken', res.data.accessToken);
+          // refreshToken không đổi nên không cần set lại
+        }
+      }),
+    );
   }
 }

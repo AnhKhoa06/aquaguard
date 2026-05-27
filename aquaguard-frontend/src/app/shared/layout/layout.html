@@ -1,0 +1,72 @@
+<div class="app-shell" [class.collapsed]="collapsed">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <!-- Logo only -->
+      <div class="brand">
+        <img *ngIf="!collapsed" src="/logo.png" alt="AquaGuard" class="logo" />
+        <div *ngIf="collapsed" class="logo-mini">
+          <span class="material-symbols-outlined">water_drop</span>
+        </div>
+      </div>
+
+      <!-- Nav -->
+      <nav class="nav">
+        <a
+          class="nav-item"
+          *ngFor="let item of navItems"
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [attr.data-vi]="item.labelVi"
+          [attr.data-en]="item.labelEn"
+        >
+          <span class="material-symbols-outlined nav-icon">{{ item.icon }}</span>
+          <span class="nav-label" *ngIf="!collapsed">{{ item.labelVi }}</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="sidebar-bottom">
+      <!-- Cài đặt -->
+      <a class="settings-item" [routerLink]="['/settings']" routerLinkActive="active">
+        <span class="material-symbols-outlined nav-icon">settings</span>
+        <span class="nav-label" *ngIf="!collapsed">Cài đặt</span>
+      </a>
+
+      <!-- User box -->
+      <div class="user-box">
+        <div class="user-info-row">
+          <div class="user-avatar">{{ getInitials(currentUser?.full_name || '') }}</div>
+          <div class="user-meta" *ngIf="!collapsed">
+            <span class="user-name">{{ currentUser?.full_name }}</span>
+            <span
+              class="user-role"
+              [attr.data-vi]="getRoleLabel(currentUser?.role || '')"
+              [attr.data-en]="getRoleLabelEn(currentUser?.role || '')"
+            >
+              {{ getRoleLabel(currentUser?.role || '') }}
+            </span>
+          </div>
+        </div>
+        <button class="logout-btn" (click)="logout()">
+          <span class="material-symbols-outlined">logout</span>
+          <span class="logout-label" *ngIf="!collapsed" data-vi="Đăng xuất" data-en="Logout"
+            >Đăng xuất</span
+          >
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Toggle collapse — đặt ngoài sidebar -->
+  <button class="collapse-btn" (click)="toggleCollapse()">
+    <span class="material-symbols-outlined">{{
+      collapsed ? 'chevron_right' : 'chevron_left'
+    }}</span>
+  </button>
+
+  <!-- Main content -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

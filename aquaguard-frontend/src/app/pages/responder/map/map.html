@@ -1,0 +1,263 @@
+<div class="map-wrapper">
+  <div class="map-body">
+    <!-- Cột trái: navbar + canvas -->
+    <div class="map-left">
+      <!-- Navbar -->
+      <div class="map-navbar">
+        <div class="navbar-left">
+          <div class="navbar-location">
+            <span class="material-symbols-outlined">location_on</span>
+            @if (locationName) {
+              <span class="location-coords">{{ locationName }}</span>
+            }
+            @if (!locationName && userLat) {
+              <span class="location-coords">{{ userLat }}, {{ userLng }}</span>
+            }
+            @if (!userLat) {
+              <span class="location-coords muted">Đang xác định vị trí...</span>
+            }
+          </div>
+        </div>
+
+        <div class="navbar-center">
+          <div class="risk-badge" [ngClass]="'risk-' + riskLevel">
+            <span class="material-symbols-outlined">{{ getRiskIcon() }}</span>
+            <div class="risk-text">
+              <span class="risk-sub">MỨC ĐỘ RỦI RO HIỆN TẠI</span>
+              <span class="risk-label">{{ getRiskLabel() }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="navbar-right">
+          <div class="search-bar">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" placeholder="Tìm kiếm khu vực hoặc điểm c..." />
+          </div>
+          <button class="notif-btn">
+            <span class="material-symbols-outlined">notifications</span>
+            <span class="notif-dot" *ngIf="alerts.length > 0"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Canvas wrap: map + overlays + fabs + legend -->
+      <div class="map-canvas-wrap">
+        <div id="map" class="map-canvas"></div>
+
+        <div class="windy-overlay" [class.visible]="showWindy">
+          <iframe
+            *ngIf="showWindy"
+            [src]="getWindyUrl() | safe"
+            class="windy-iframe"
+            frameborder="0"
+            allowfullscreen
+          ></iframe>
+        </div>
+
+        <!-- Nút nổi -->
+        <div class="map-fab-col">
+          <div class="windy-fab-wrap">
+            <button class="map-fab windy-fab" (click)="toggleWindyPanel()">
+              <span class="material-symbols-outlined">layers</span>
+            </button>
+            <div class="windy-popup" *ngIf="showWindyPanel">
+              <div class="windy-popup-header">
+                <span class="material-symbols-outlined">cloud</span>
+                <span>THỜI TIẾT WINDY</span>
+              </div>
+              <button class="windy-popup-toggle" [class.active]="showWindy" (click)="toggleWindy()">
+                <span class="material-symbols-outlined">{{
+                  showWindy ? 'visibility' : 'visibility_off'
+                }}</span>
+                <span>{{ showWindy ? 'Ẩn bản đồ thời tiết' : 'Hiện bản đồ thời tiết' }}</span>
+              </button>
+              <div class="windy-popup-layers" *ngIf="showWindy">
+                <p class="windy-popup-layers-title">CHỌN LỚP HIỂN THỊ</p>
+                <button
+                  class="windy-popup-layer-item"
+                  *ngFor="let layer of windyLayers"
+                  [class.active]="selectedWindyLayer === layer.key"
+                  (click)="selectWindyLayer(layer.key)"
+                >
+                  <span class="material-symbols-outlined">{{ layer.icon }}</span>
+                  <span>{{ layer.label }}</span>
+                  <span
+                    class="material-symbols-outlined check-icon"
+                    *ngIf="selectedWindyLayer === layer.key"
+                    >check_circle</span
+                  >
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <button class="map-fab locate-fab" (click)="locateMe()">
+            @if (!locating) {
+              <span class="material-symbols-outlined">my_location</span>
+            }
+            @if (locating) {
+              <span class="material-symbols-outlined loading-spin">autorenew</span>
+            }
+          </button>
+
+          <!-- Ẩn/hiện vùng ngập -->
+          <button
+            class="map-fab flood-fab"
+            (click)="toggleFloodZone()"
+            [class.active]="showFloodZone"
+          >
+            <span class="material-symbols-outlined">flood</span>
+          </button>
+        </div>
+
+        <!-- Legend -->
+        <div class="map-legend">
+          <p class="legend-title">
+            <span class="material-symbols-outlined">legend_toggle</span>
+            Mức độ ngập
+          </p>
+          <div class="legend-item">
+            <span class="legend-dot critical"></span><span>Cực kỳ nguy hiểm</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot high"></span><span>Nghiêm trọng</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot medium"></span><span>Trung bình</span>
+          </div>
+          <div class="legend-item"><span class="legend-dot low"></span><span>An toàn</span></div>
+        </div>
+
+        <!-- Loading -->
+        <div class="map-loading" *ngIf="loading">
+          <span class="material-symbols-outlined loading-spin">autorenew</span>
+          <span>Đang tải dữ liệu...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel phải -->
+    <div class="map-side-panel">
+      <div class="panel-tabs">
+        <button
+          class="panel-tab"
+          [class.active]="activeTab === 'requests'"
+          (click)="activeTab = 'requests'"
+        >
+          YÊU CẦU
+        </button>
+        <button
+          class="panel-tab"
+          [class.active]="activeTab === 'team'"
+          (click)="activeTab = 'team'"
+        >
+          ĐỘI NHÓM
+        </button>
+      </div>
+
+      <!-- Tab yêu cầu -->
+      <div class="tab-content" *ngIf="activeTab === 'requests'">
+        <!-- Filter chips -->
+        <div class="filter-chips">
+          <button
+            class="filter-chip"
+            [class.active]="activeFilter === 'all'"
+            (click)="setFilter('all')"
+          >
+            Tất cả
+          </button>
+          <button
+            class="filter-chip pending"
+            [class.active]="activeFilter === 'pending'"
+            (click)="setFilter('pending')"
+          >
+            Chờ xử lý
+          </button>
+          <button
+            class="filter-chip inprogress"
+            [class.active]="activeFilter === 'in_progress'"
+            (click)="setFilter('in_progress')"
+          >
+            Đang xử lý
+          </button>
+          <button
+            class="filter-chip resolved"
+            [class.active]="activeFilter === 'resolved'"
+            (click)="setFilter('resolved')"
+          >
+            Đã cứu
+          </button>
+        </div>
+
+        <!-- Danh sách SOS -->
+        <div class="sos-request-list" *ngIf="filteredSosList.length > 0">
+          <div
+            class="sos-request-item"
+            *ngFor="let sos of filteredSosList"
+            (click)="focusMarker(sos)"
+          >
+            <div
+              class="sos-request-avatar"
+              [style.background]="
+                sos.status === 'pending'
+                  ? '#ef4444'
+                  : sos.status === 'resolved'
+                    ? '#22c55e'
+                    : '#f59e0b'
+              "
+            >
+              {{ getInitials(sos.citizen_name || 'AN') }}
+            </div>
+            <div class="sos-request-info">
+              <span class="sos-request-name">{{ sos.citizen_name || 'Ẩn danh' }}</span>
+              <span class="sos-request-address" *ngIf="sos.address">{{ sos.address }}</span>
+              <span class="sos-request-time">{{ sos.created_at | date: 'HH:mm - d/M/yyyy' }}</span>
+            </div>
+            <span class="sos-request-status" [ngClass]="getStatusClass(sos.status)">
+              {{ getStatusLabel(sos.status) }}
+            </span>
+          </div>
+        </div>
+
+        <div class="family-empty" *ngIf="filteredSosList.length === 0">
+          <span class="material-symbols-outlined">check_circle</span>
+          <p>Không có yêu cầu nào</p>
+        </div>
+
+        <!-- Alerts -->
+        <div class="alerts-block" *ngIf="alerts.length > 0">
+          <div class="alerts-block-header">
+            <span class="alerts-block-title">CẢNH BÁO THỜI TIẾT</span>
+            <div class="live-indicator">
+              <span class="live-dot"></span>
+              <span class="live-label">TRỰC TIẾP</span>
+            </div>
+          </div>
+          <div
+            class="alert-card"
+            *ngFor="let alert of alerts"
+            [ngClass]="getSeverityClass(alert.severity)"
+          >
+            <div class="alert-card-icon">
+              <span class="material-symbols-outlined">{{ getSeverityIcon(alert.severity) }}</span>
+            </div>
+            <div class="alert-card-body">
+              <span class="alert-card-title">{{ alert.title }}</span>
+              <span class="alert-card-msg">{{ alert.message }}</span>
+              <span class="alert-card-chip">{{ getSeverityLabel(alert.severity) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab đội nhóm -->
+      <div class="tab-content" *ngIf="activeTab === 'team'">
+        <div class="family-empty">
+          <span class="material-symbols-outlined">groups</span>
+          <p>Tính năng đang phát triển</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

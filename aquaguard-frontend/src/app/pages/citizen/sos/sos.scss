@@ -1,0 +1,39 @@
+.coming-soon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 16px;
+  background: #0f172a;
+
+  .material-symbols-outlined {
+    font-size: 64px;
+    color: #ef4444;
+    opacity: 0.6;
+  }
+
+  h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin: 0;
+  }
+
+  p {
+    font-size: 14px;
+    margin: 0;
+    color: #64748b;
+  }
+
+  .badge {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 999px;
+    letter-spacing: 0.5px;
+  }
+}

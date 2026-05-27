@@ -1,1 +1,204 @@
-<p>Coming soon...</p>
+<div class="dashboard-wrapper">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="header-left">
+      <p class="welcome-text">Chào mừng trở lại,</p>
+      <h1 class="user-name">{{ currentUser?.full_name }}</h1>
+    </div>
+    <div class="header-right">
+      <span class="status-label">Trạng thái:</span>
+      <div class="status-badges">
+        <button
+          class="status-btn safe"
+          [class.active]="selectedStatus === 'safe'"
+          (click)="setStatus('safe')"
+        >
+          <span class="material-symbols-outlined">check_circle</span>
+          <span>An toàn</span>
+        </button>
+        <button
+          class="status-btn danger"
+          [class.active]="selectedStatus === 'danger'"
+          (click)="setStatus('danger')"
+        >
+          <span class="material-symbols-outlined">error</span>
+          <span>Nguy hiểm</span>
+        </button>
+        <button
+          class="status-btn injured"
+          [class.active]="selectedStatus === 'injured'"
+          (click)="setStatus('injured')"
+        >
+          <span class="material-symbols-outlined">healing</span>
+          <span>Bị thương</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active SOS Banner -->
+  <button class="active-sos-banner" *ngIf="activeSos && !loadingSos">
+    <!-- Icon container -->
+    <div class="sos-icon-wrap">
+      <div class="sos-icon-box">
+        <span class="material-symbols-outlined">local_shipping</span>
+      </div>
+      <span class="sos-pulse-dot"></span>
+    </div>
+
+    <!-- Content -->
+    <div class="sos-content">
+      <div class="sos-content-top">
+        <span class="material-symbols-outlined sos-red-icon">sos</span>
+        <span class="sos-banner-title">Yêu cầu SOS đang hoạt động</span>
+      </div>
+      <div class="sos-banner-info">
+        <span class="sos-status-chip" [ngClass]="getStatusClass(activeSos.status)">
+          {{ getStatusLabel(activeSos.status) }}
+        </span>
+        <span class="sos-responder" *ngIf="activeSos.responder_name">
+          <span class="material-symbols-outlined">person</span>
+          {{ activeSos.responder_name }}
+        </span>
+        <span class="sos-responder" *ngIf="activeSos.team_name">
+          <span class="material-symbols-outlined">groups</span>
+          {{ activeSos.team_name }}
+        </span>
+        <span class="sos-date">• {{ activeSos.created_at | date: 'd/M/yyyy' }}</span>
+      </div>
+      <p class="sos-banner-address" *ngIf="activeSos.address">
+        <span class="material-symbols-outlined">location_on</span>
+        {{ activeSos.address }}
+      </p>
+    </div>
+
+    <!-- Arrow -->
+    <span class="material-symbols-outlined sos-arrow">chevron_right</span>
+  </button>
+
+  <!-- Main Grid -->
+  <div class="dashboard-grid">
+    <!-- An toàn gia đình -->
+    <div class="card family-card">
+      <div class="card-header">
+        <span class="material-symbols-outlined card-icon">group</span>
+        <h2 class="card-title">An toàn gia đình</h2>
+      </div>
+      <div class="card-body">
+        <!-- Loading -->
+        <div class="empty-state" *ngIf="loadingFamily">
+          <span class="material-symbols-outlined loading-icon">autorenew</span>
+          <p>Đang tải...</p>
+        </div>
+        <!-- Empty state -->
+        <div class="empty-state" *ngIf="!loadingFamily && familyMembers.length === 0">
+          <span class="material-symbols-outlined empty-icon">group_add</span>
+          <p class="empty-title">Chưa có thành viên gia đình</p>
+          <p class="empty-sub">Kết nối với gia đình để theo dõi tình trạng an toàn</p>
+          <button class="btn-primary">
+            <span class="material-symbols-outlined">person_add</span>
+            Thêm người thân
+          </button>
+        </div>
+        <!-- Family members list -->
+        <div class="family-list" *ngIf="!loadingFamily && familyMembers.length > 0">
+          <div class="family-item" *ngFor="let member of familyMembers">
+            <div class="member-avatar">{{ getInitials(member.full_name) }}</div>
+            <div class="member-info">
+              <span class="member-name">{{ member.full_name }}</span>
+              <span class="member-phone">{{ member.phone }}</span>
+            </div>
+            <span class="health-badge" [ngClass]="getHealthClass(member.health_status)">
+              {{ getHealthLabel(member.health_status) }}
+            </span>
+          </div>
+          <button class="btn-outline add-member-btn">
+            <span class="material-symbols-outlined">person_add</span>
+            Thêm người thân
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hành động nhanh -->
+    <div class="card quick-actions-card">
+      <div class="card-header">
+        <span class="material-symbols-outlined card-icon">bolt</span>
+        <h2 class="card-title">Hành động nhanh</h2>
+      </div>
+      <!-- bỏ <div class="card-body"> -->
+      <div class="quick-actions-grid">
+        <button class="quick-btn sos-btn" [routerLink]="['/citizen/sos']">
+          <div class="quick-btn-icon-wrap">
+            <span
+              class="material-symbols-outlined quick-btn-icon-sym"
+              style="font-variation-settings: 'FILL' 1"
+              >sos</span
+            >
+          </div>
+          <span class="quick-btn-label">SOS</span>
+          <span class="quick-btn-sub">Gửi yêu cầu cứu hộ</span>
+        </button>
+        <button class="quick-btn" [routerLink]="['/citizen/family']">
+          <div class="quick-btn-icon-wrap">
+            <span class="material-symbols-outlined quick-btn-icon-sym">group</span>
+          </div>
+          <span class="quick-btn-label">Gia đình</span>
+          <span class="quick-btn-sub">Kiểm tra gia đình</span>
+        </button>
+
+        <button class="quick-btn" [routerLink]="['/citizen/map']">
+          <div class="quick-btn-icon-wrap">
+            <span class="material-symbols-outlined quick-btn-icon-sym">map</span>
+          </div>
+          <span class="quick-btn-label">Bản đồ</span>
+          <span class="quick-btn-sub">Xem tình hình lũ</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lịch sử yêu cầu -->
+  <div class="card history-card">
+    <div class="card-header">
+      <span class="material-symbols-outlined card-icon">history</span>
+      <h2 class="card-title">Lịch sử yêu cầu</h2>
+    </div>
+    <div class="card-body">
+      <!-- Loading -->
+      <div class="empty-state" *ngIf="loadingSos">
+        <span class="material-symbols-outlined loading-icon">autorenew</span>
+        <p>Đang tải...</p>
+      </div>
+      <!-- Empty -->
+      <div class="empty-state" *ngIf="!loadingSos && sosHistory.length === 0">
+        <span class="material-symbols-outlined empty-icon">inbox</span>
+        <p class="empty-title">Chưa có yêu cầu nào</p>
+        <p class="empty-sub">Nếu bạn gặp nguy hiểm, hãy bấm nút SOS phía trên</p>
+      </div>
+      <!-- History list -->
+      <div class="history-list" *ngIf="!loadingSos && sosHistory.length > 0">
+        <div class="history-item" *ngFor="let sos of sosHistory">
+          <div class="history-item-left">
+            <div class="history-icon">
+              <span class="material-symbols-outlined">sos</span>
+            </div>
+            <div class="history-info">
+              <span class="history-title">Yêu cầu SOS #{{ sos.id }}</span>
+              <span class="history-address" *ngIf="sos.address">{{ sos.address }}</span>
+              <span class="history-date">{{ sos.created_at | date: 'd/M/yyyy HH:mm' }}</span>
+            </div>
+          </div>
+          <div class="history-item-right">
+            <span class="urgency-badge urgency-{{ sos.urgency_level }}">
+              {{ getUrgencyLabel(sos.urgency_level) }}
+            </span>
+            <span class="sos-status-chip" [ngClass]="getStatusClass(sos.status)">
+              {{ getStatusLabel(sos.status) }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

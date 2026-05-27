@@ -1,1 +1,248 @@
-<p>Coming soon...</p>
+<div class="admin-wrapper">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-title-row">
+        <span class="material-symbols-outlined page-icon">admin_panel_settings</span>
+        <h1 class="page-title">Admin Dashboard</h1>
+      </div>
+      <p class="page-subtitle">Manage users, rescue teams, and monitor system status</p>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tab-nav">
+    <button class="tab-btn" [class.active]="activeTab === 'overview'" (click)="setTab('overview')">
+      <span class="material-symbols-outlined">dashboard</span>
+      Overview
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'users'" (click)="setTab('users')">
+      <span class="material-symbols-outlined">manage_accounts</span>
+      User Management
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'teams'" (click)="setTab('teams')">
+      <span class="material-symbols-outlined">groups</span>
+      Rescue Teams
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'map'" (click)="setTab('map')">
+      <span class="material-symbols-outlined">map</span>
+      Flood Map
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="loading">
+    <span class="material-symbols-outlined spin">autorenew</span>
+    <p>Đang tải...</p>
+  </div>
+
+  <!-- ===== TAB OVERVIEW ===== -->
+  <div class="tab-content" *ngIf="!loading && activeTab === 'overview'">
+    <!-- Stat Cards -->
+    <div class="stat-cards">
+      <div class="stat-card teal">
+        <div class="stat-card-icon">
+          <span class="material-symbols-outlined">group</span>
+        </div>
+        <div class="stat-card-body">
+          <span class="stat-number">{{ stats?.total_users ?? 0 }}</span>
+          <span class="stat-label">Total Users</span>
+        </div>
+      </div>
+
+      <div class="stat-card green">
+        <div class="stat-card-icon">
+          <span class="material-symbols-outlined">person</span>
+        </div>
+        <div class="stat-card-body">
+          <span class="stat-number">{{ stats?.total_citizens ?? 0 }}</span>
+          <span class="stat-label">Citizens</span>
+        </div>
+      </div>
+
+      <div class="stat-card amber">
+        <div class="stat-card-icon">
+          <span class="material-symbols-outlined">shield</span>
+        </div>
+        <div class="stat-card-body">
+          <span class="stat-number">{{ stats?.total_rescuers ?? 0 }}</span>
+          <span class="stat-label">Rescuers</span>
+        </div>
+      </div>
+
+      <div class="stat-card red">
+        <div class="stat-card-icon">
+          <span class="material-symbols-outlined">emergency</span>
+        </div>
+        <div class="stat-card-body">
+          <span class="stat-number">{{ stats?.pending_sos ?? 0 }}</span>
+          <span class="stat-label">Pending SOS</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Grid -->
+    <div class="overview-grid">
+      <!-- System Status -->
+      <div class="card system-status-card">
+        <div class="card-header">
+          <span class="material-symbols-outlined card-icon">monitoring</span>
+          <h2 class="card-title">System Status</h2>
+        </div>
+        <div class="status-list">
+          <div class="status-row">
+            <div class="status-row-left">
+              <span class="material-symbols-outlined status-icon amber">shield</span>
+              <span class="status-row-label">Active Rescuers</span>
+            </div>
+            <span class="status-row-value">{{ stats?.active_rescuers ?? 0 }}</span>
+          </div>
+          <div class="status-row">
+            <div class="status-row-left">
+              <span class="material-symbols-outlined status-icon red">emergency</span>
+              <span class="status-row-label">Active SOS</span>
+            </div>
+            <span class="status-row-value">{{ stats?.active_sos ?? 0 }}</span>
+          </div>
+          <div class="status-row">
+            <div class="status-row-left">
+              <span class="material-symbols-outlined status-icon green">check_circle</span>
+              <span class="status-row-label">Resolved Today</span>
+            </div>
+            <span class="status-row-value">{{ stats?.resolved_today ?? 0 }}</span>
+          </div>
+          <div class="status-row">
+            <div class="status-row-left">
+              <span class="material-symbols-outlined status-icon teal">admin_panel_settings</span>
+              <span class="status-row-label">System Admins</span>
+            </div>
+            <span class="status-row-value">{{ stats?.total_admins ?? 0 }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rescue Teams -->
+      <div class="card rescue-teams-card">
+        <div class="card-header">
+          <span class="material-symbols-outlined card-icon">local_fire_department</span>
+          <h2 class="card-title">Rescue Teams</h2>
+        </div>
+        <div class="team-list" *ngIf="stats?.rescue_teams?.length > 0">
+          <div class="team-item" *ngFor="let team of stats.rescue_teams">
+            <div class="team-avatar" [style.background]="getAvatarColor(team.name)">
+              {{ getInitials(team.name) }}
+            </div>
+            <div class="team-info">
+              <span class="team-name">{{ team.name }}</span>
+              <span class="team-phone">{{ team.contact_phone }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="empty-state" *ngIf="!stats?.rescue_teams?.length">
+          <span class="material-symbols-outlined">group_off</span>
+          <p>Chưa có đội cứu hộ</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB USERS (placeholder) ===== -->
+  <div class="tab-content" *ngIf="!loading && activeTab === 'users'">
+    <div class="coming-soon">
+      <span class="material-symbols-outlined">manage_accounts</span>
+      <p>User Management — đang phát triển</p>
+    </div>
+  </div>
+
+  <!-- ===== TAB TEAMS (placeholder) ===== -->
+  <div class="tab-content" *ngIf="!loading && activeTab === 'teams'">
+    <div class="coming-soon">
+      <span class="material-symbols-outlined">groups</span>
+      <p>Rescue Teams — đang phát triển</p>
+    </div>
+  </div>
+
+  <!-- ===== TAB FLOOD MAP ===== -->
+  <div class="tab-content" *ngIf="!loading && activeTab === 'map'">
+    <div class="admin-map-wrap">
+      <!-- Windy overlay -->
+      <div class="windy-overlay" [class.visible]="showWindy">
+        <iframe
+          *ngIf="showWindy"
+          [src]="getWindyUrl() | safe"
+          class="windy-iframe"
+          frameborder="0"
+          allowfullscreen
+        ></iframe>
+      </div>
+
+      <!-- FAB buttons -->
+      <div class="map-fab-col">
+        <!-- Windy -->
+        <div class="windy-fab-wrap">
+          <button class="map-fab windy-fab" (click)="toggleWindyPanel()">
+            <span class="material-symbols-outlined">layers</span>
+          </button>
+          <div class="windy-popup" *ngIf="showWindyPanel">
+            <div class="windy-popup-header">
+              <span class="material-symbols-outlined">cloud</span>
+              <span>THỜI TIẾT WINDY</span>
+            </div>
+            <button class="windy-popup-toggle" [class.active]="showWindy" (click)="toggleWindy()">
+              <span class="material-symbols-outlined">{{
+                showWindy ? 'visibility' : 'visibility_off'
+              }}</span>
+              <span>{{ showWindy ? 'Ẩn bản đồ thời tiết' : 'Hiện bản đồ thời tiết' }}</span>
+            </button>
+            <div class="windy-popup-layers" *ngIf="showWindy">
+              <p class="windy-popup-layers-title">CHỌN LỚP HIỂN THỊ</p>
+              <button
+                class="windy-popup-layer-item"
+                *ngFor="let layer of windyLayers"
+                [class.active]="selectedWindyLayer === layer.key"
+                (click)="selectWindyLayer(layer.key)"
+              >
+                <span class="material-symbols-outlined">{{ layer.icon }}</span>
+                <span>{{ layer.label }}</span>
+                <span
+                  class="material-symbols-outlined check-icon"
+                  *ngIf="selectedWindyLayer === layer.key"
+                  >check_circle</span
+                >
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flood zone -->
+        <button
+          class="map-fab flood-fab"
+          [class.active]="showFloodZone"
+          (click)="toggleFloodZone()"
+        >
+          <span class="material-symbols-outlined">flood</span>
+        </button>
+      </div>
+
+      <!-- Legend -->
+      <div class="map-legend">
+        <p class="legend-title">
+          <span class="material-symbols-outlined">legend_toggle</span>
+          Mức độ ngập
+        </p>
+        <div class="legend-item">
+          <span class="legend-dot critical"></span><span>Cực kỳ nguy hiểm</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot high"></span><span>Nghiêm trọng</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot medium"></span><span>Trung bình</span>
+        </div>
+        <div class="legend-item"><span class="legend-dot low"></span><span>An toàn</span></div>
+      </div>
+
+      <div id="admin-map" class="admin-map-canvas"></div>
+    </div>
+  </div>
+</div>

@@ -10,4 +10,12 @@ export const citizenRoutes: Routes = [
     path: 'map',
     loadComponent: () => import('./map/map').then((m) => m.MapComponent),
   },
+  {
+    path: 'sos',
+    loadComponent: () => import('./sos/sos').then((m) => m.SosComponent),
+  },
+  {
+    path: 'safety',
+    loadComponent: () => import('./safety/safety').then((m) => m.SafetyComponent),
+  },
 ];

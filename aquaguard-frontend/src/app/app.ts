@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
@@ -12,6 +12,12 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class AppComponent {
   currentLang = 'VI';
+
+  constructor(public router: Router) {}
+
+  get isAuthPage(): boolean {
+    return this.router.url.startsWith('/auth');
+  }
 
   toggleLang() {
     this.currentLang = this.currentLang === 'VI' ? 'EN' : 'VI';
