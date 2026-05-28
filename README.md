@@ -61,11 +61,18 @@ RESPONDER_SECRET=RESCUE2026
 
 Mở **MySQL Workbench**, kết nối vào MySQL server, sau đó:
 
-1. Vào menu **File** → **Open SQL Script**
-2. Chọn file `aquaguard-backend/src/database/seed.sql`
-3. Nhấn **Execute** (Ctrl + Shift + Enter)
+1. Mở tab **Query** mới
+2. Chạy lệnh tạo database:
 
-> File `seed.sql` sẽ tự động tạo database, tạo toàn bộ bảng và thêm dữ liệu mẫu.
+```sql
+   CREATE DATABASE aquaguard;
+```
+
+3. Vào menu **File** → **Open SQL Script**
+4. Chọn file `aquaguard-backend/src/database/seed.sql`
+5. Nhấn **Execute** (Ctrl + Shift + Enter)
+
+> File `seed.sql` sẽ tự động tạo toàn bộ bảng và thêm dữ liệu mẫu.
 
 ---
 

@@ -149,10 +149,22 @@
   border-radius: 6px;
   letter-spacing: 0.05em;
 
-  &-info    { background: rgba(6, 182, 212, 0.15); color: #22d3ee; }
-  &-danger  { background: rgba(239, 68, 68, 0.15); color: #f87171; }
-  &-warning { background: rgba(251, 146, 60, 0.15); color: #fb923c; }
-  &-high    { background: rgba(249, 115, 22, 0.15); color: #f97316; }
+  &-info {
+    background: rgba(6, 182, 212, 0.15);
+    color: #22d3ee;
+  }
+  &-danger {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+  }
+  &-warning {
+    background: rgba(251, 146, 60, 0.15);
+    color: #fb923c;
+  }
+  &-high {
+    background: rgba(249, 115, 22, 0.15);
+    color: #f97316;
+  }
 }
 
 .toggle-btn {
@@ -174,7 +186,9 @@
 
   &:hover {
     background: rgba(255, 255, 255, 0.1);
-    .material-symbols-outlined { color: #fff; }
+    .material-symbols-outlined {
+      color: #fff;
+    }
   }
 }
 
@@ -182,8 +196,12 @@
 .safety-body {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.35s ease, padding 0.35s ease;
+  transition:
+    max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    padding 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease;
   padding: 0 24px;
+  opacity: 0;
 
   ul {
     list-style: none;
@@ -215,7 +233,18 @@
 }
 
 .safety-item.open .safety-body {
-  max-height: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  max-height: 600px; // ← số cụ thể thay vì none
   padding-top: 18px;
+  opacity: 1;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.toggle-btn .material-symbols-outlined {
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.2s;
+}
+
+.safety-item.open .toggle-btn .material-symbols-outlined {
+  transform: rotate(180deg);
 }
