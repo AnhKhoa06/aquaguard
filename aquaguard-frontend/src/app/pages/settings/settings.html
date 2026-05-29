@@ -11,7 +11,8 @@
       *ngFor="let tab of tabs"
       class="tab-btn"
       [class.active]="activeTab === tab.key"
-      (click)="setTab(tab.key)">
+      (click)="setTab(tab.key)"
+    >
       <mat-icon>{{ tab.icon }}</mat-icon>
       {{ tab.label }}
     </button>
@@ -19,7 +20,6 @@
 
   <!-- Tab: Hồ sơ -->
   <div *ngIf="activeTab === 'profile'" class="tab-content">
-
     <!-- Avatar card -->
     <div class="avatar-card">
       <div class="avatar">{{ getInitial() }}</div>
@@ -48,11 +48,20 @@
         </div>
         <div class="form-group">
           <label>Số điện thoại</label>
-          <input type="text" [(ngModel)]="profile.phone" placeholder="Nhập số điện thoại" />
+          <input
+            type="text"
+            [(ngModel)]="profile.phone"
+            disabled
+            placeholder="Nhập số điện thoại"
+          />
         </div>
         <div class="form-group">
           <label>Liên hệ khẩn cấp</label>
-          <input type="text" [(ngModel)]="profile.emergency_contact" placeholder="Số liên hệ khẩn cấp" />
+          <input
+            type="text"
+            [(ngModel)]="profile.emergency_contact"
+            placeholder="Số liên hệ khẩn cấp"
+          />
         </div>
         <div class="form-group">
           <label>Giới tính</label>
@@ -75,179 +84,181 @@
       <div class="form-group address-group">
         <label>Địa chỉ</label>
         <div class="address-row">
-          <input
-            type="text"
-            [(ngModel)]="profile.address"
-            placeholder="Nhập địa chỉ của bạn" />
-         <button class="location-btn" (click)="getLocation()" [disabled]="locating">
+          <input type="text" [(ngModel)]="profile.address" placeholder="Nhập địa chỉ của bạn" />
+          <button class="location-btn" (click)="getLocation()" [disabled]="locating">
             <mat-icon [class.spinning]="locating">
-             {{ locating ? 'sync' : 'my_location' }}
+              {{ locating ? 'sync' : 'my_location' }}
             </mat-icon>
-             {{ locating ? 'Đang xác định...' : 'Xác định vị trí' }}
-        </button>
+            {{ locating ? 'Đang xác định...' : 'Xác định vị trí' }}
+          </button>
         </div>
         <div class="coords" *ngIf="profile.latitude && profile.longitude">
-            <mat-icon>location_on</mat-icon>
-            {{ profile.latitude }}, {{ profile.longitude }}
+          <mat-icon>location_on</mat-icon>
+          {{ profile.latitude }}, {{ profile.longitude }}
         </div>
       </div>
-    <button class="save-btn" (click)="saveProfile()" [disabled]="saving">
+      <button class="save-btn" (click)="saveProfile()" [disabled]="saving">
         <mat-icon *ngIf="saving" class="spinning">sync</mat-icon>
         {{ saving ? 'Đang lưu...' : 'Lưu thay đổi' }}
-    </button>
+      </button>
     </div>
   </div>
 
-    <!-- Tab: Gia đình -->
-    <div *ngIf="activeTab === 'family'" class="tab-content">
-
+  <!-- Tab: Gia đình -->
+  <div *ngIf="activeTab === 'family'" class="tab-content">
     <!-- Trạng thái sức khỏe -->
     <div class="form-card">
-        <div class="form-card-title">
-      <span class="material-symbols-outlined" style="color: #00bcd4;">verified_user</span>
+      <div class="form-card-title">
+        <span class="material-symbols-outlined" style="color: #00bcd4">verified_user</span>
         Trạng thái của tôi
-        </div>
-        <div class="health-btns">
-        <button class="health-btn safe"
-            [class.active]="selectedHealth === 'safe'"
-            (click)="setHealth('safe')">
-            <span class="material-symbols-outlined">check_circle</span> an toàn
+      </div>
+      <div class="health-btns">
+        <button
+          class="health-btn safe"
+          [class.active]="selectedHealth === 'safe'"
+          (click)="setHealth('safe')"
+        >
+          <span class="material-symbols-outlined">check_circle</span> an toàn
         </button>
-        <button class="health-btn danger"
-            [class.active]="selectedHealth === 'danger'"
-            (click)="setHealth('danger')">
-            <span class="material-symbols-outlined">warning</span> nguy hiểm
+        <button
+          class="health-btn danger"
+          [class.active]="selectedHealth === 'danger'"
+          (click)="setHealth('danger')"
+        >
+          <span class="material-symbols-outlined">warning</span> nguy hiểm
         </button>
-        <button class="health-btn injured"
-            [class.active]="selectedHealth === 'injured'"
-            (click)="setHealth('injured')">
-            <span class="material-symbols-outlined">personal_injury</span> bị thương
+        <button
+          class="health-btn injured"
+          [class.active]="selectedHealth === 'injured'"
+          (click)="setHealth('injured')"
+        >
+          <span class="material-symbols-outlined">personal_injury</span> bị thương
         </button>
-        <button class="health-btn unknown"
-            [class.active]="selectedHealth === 'unknown'"
-            (click)="setHealth('unknown')">
-            <span class="material-symbols-outlined">help</span> không rõ
+        <button
+          class="health-btn unknown"
+          [class.active]="selectedHealth === 'unknown'"
+          (click)="setHealth('unknown')"
+        >
+          <span class="material-symbols-outlined">help</span> không rõ
         </button>
-        </div>
-        <input
-        type="text"
-        class="health-note"
-        placeholder="Ghi chú sức khỏe (tuỳ chọn)..."
-        />
+      </div>
+      <input type="text" class="health-note" placeholder="Ghi chú sức khỏe (tuỳ chọn)..." />
     </div>
 
     <!-- Người thân -->
     <div class="family-section">
-        <div class="family-section-header">
+      <div class="family-section-header">
         <div>
-            <div class="family-section-title">Người thân</div>
-            <div class="family-section-sub">Theo dõi tình trạng an toàn của gia đình trong trường hợp khẩn cấp</div>
+          <div class="family-section-title">Người thân</div>
+          <div class="family-section-sub">
+            Theo dõi tình trạng an toàn của gia đình trong trường hợp khẩn cấp
+          </div>
         </div>
         <button class="btn-primary" (click)="showAddMember = !showAddMember">
-            <span class="material-symbols-outlined">person_add</span>
-            Thêm người thân
+          <span class="material-symbols-outlined">person_add</span>
+          Thêm người thân
         </button>
-        </div>
+      </div>
 
-        <!-- Form thêm người thân -->
-        <div class="add-member-form" *ngIf="showAddMember">
+      <!-- Form thêm người thân -->
+      <div class="add-member-form" *ngIf="showAddMember">
         <div class="add-member-header">
-            <span class="material-symbols-outlined">person_search</span>
-            <span>Tìm theo số điện thoại</span>
+          <span class="material-symbols-outlined">person_search</span>
+          <span>Tìm theo số điện thoại</span>
         </div>
         <div class="add-member-row">
-            <input
+          <input
             type="text"
             [(ngModel)]="newMemberPhone"
             placeholder="Nhập SĐT (VD: 0901234567 hoặc +84901234567)"
             (keyup.enter)="addMember()"
-            />
-            <button class="search-btn" (click)="addMember()" [disabled]="addingMember">
+          />
+          <button class="search-btn" (click)="addMember()" [disabled]="addingMember">
             <span class="material-symbols-outlined">{{ addingMember ? 'sync' : 'search' }}</span>
-            </button>
+          </button>
         </div>
         <button class="btn-cancel" (click)="showAddMember = false">Đóng</button>
-        </div>
+      </div>
 
-        <!-- Loading -->
-        <div class="empty-state" *ngIf="loadingFamily">
+      <!-- Loading -->
+      <div class="empty-state" *ngIf="loadingFamily">
         <span class="material-symbols-outlined loading-icon">autorenew</span>
         <p>Đang tải...</p>
-        </div>
+      </div>
 
-        <!-- Empty -->
-        <div class="empty-state" *ngIf="!loadingFamily && familyMembers.length === 0">
+      <!-- Empty -->
+      <div class="empty-state" *ngIf="!loadingFamily && familyMembers.length === 0">
         <span class="material-symbols-outlined empty-icon">group_off</span>
         <p class="empty-title">Chưa có người thân nào. Nhấn "Thêm người thân" để bắt đầu.</p>
-        </div>
+      </div>
 
-        <!-- Danh sách -->
-        <div class="member-list" *ngIf="!loadingFamily && familyMembers.length > 0">
+      <!-- Danh sách -->
+      <div class="member-list" *ngIf="!loadingFamily && familyMembers.length > 0">
         <div class="member-item" *ngFor="let member of familyMembers">
-            <div class="member-avatar">{{ getMemberInitial(member.full_name) }}</div>
-            <div class="member-info">
+          <div class="member-avatar">{{ getMemberInitial(member.full_name) }}</div>
+          <div class="member-info">
             <div class="member-name">{{ member.full_name }}</div>
             <div class="member-phone">{{ member.phone }}</div>
-            </div>
-            <span class="health-badge" [ngClass]="getHealthClass(member.health_status)">
+          </div>
+          <span class="health-badge" [ngClass]="getHealthClass(member.health_status)">
             {{ getHealthLabel(member.health_status) }}
-            </span>
-            <button class="remove-btn" (click)="removeMember(member.id)">
+          </span>
+          <button class="remove-btn" (click)="removeMember(member.id)">
             <span class="material-symbols-outlined">delete</span>
-            </button>
+          </button>
         </div>
-        </div>
+      </div>
     </div>
-    </div>
+  </div>
 
   <!-- Tab: Giao diện -->
-    <div *ngIf="activeTab === 'theme'" class="tab-content">
+  <div *ngIf="activeTab === 'theme'" class="tab-content">
     <div class="form-card">
-        <div class="form-card-title">
+      <div class="form-card-title">
         <mat-icon>palette</mat-icon>
         Chủ đề
-        </div>
-        <div class="theme-grid">
+      </div>
+      <div class="theme-grid">
         <button
-            class="theme-card"
-            [class.active]="selectedTheme === 'light'"
-            (click)="setTheme('light')"
+          class="theme-card"
+          [class.active]="selectedTheme === 'light'"
+          (click)="setTheme('light')"
         >
-            <mat-icon>light_mode</mat-icon>
-            <span class="theme-name">Sáng</span>
-            <span class="theme-sub">Sáng và sạch sẽ</span>
-            <mat-icon class="theme-check" *ngIf="selectedTheme === 'light'">check_circle</mat-icon>
+          <mat-icon>light_mode</mat-icon>
+          <span class="theme-name">Sáng</span>
+          <span class="theme-sub">Sáng và sạch sẽ</span>
+          <mat-icon class="theme-check" *ngIf="selectedTheme === 'light'">check_circle</mat-icon>
         </button>
 
         <button
-            class="theme-card"
-            [class.active]="selectedTheme === 'dark'"
-            (click)="setTheme('dark')"
+          class="theme-card"
+          [class.active]="selectedTheme === 'dark'"
+          (click)="setTheme('dark')"
         >
-            <mat-icon>dark_mode</mat-icon>
-            <span class="theme-name">Tối</span>
-            <span class="theme-sub">Dễ chịu cho mắt</span>
-            <mat-icon class="theme-check" *ngIf="selectedTheme === 'dark'">check_circle</mat-icon>
+          <mat-icon>dark_mode</mat-icon>
+          <span class="theme-name">Tối</span>
+          <span class="theme-sub">Dễ chịu cho mắt</span>
+          <mat-icon class="theme-check" *ngIf="selectedTheme === 'dark'">check_circle</mat-icon>
         </button>
 
         <button
-            class="theme-card"
-            [class.active]="selectedTheme === 'system'"
-            (click)="setTheme('system')"
+          class="theme-card"
+          [class.active]="selectedTheme === 'system'"
+          (click)="setTheme('system')"
         >
-            <mat-icon>desktop_windows</mat-icon>
-            <span class="theme-name">Hệ thống</span>
-            <span class="theme-sub">Theo cài đặt thiết bị</span>
-            <mat-icon class="theme-check" *ngIf="selectedTheme === 'system'">check_circle</mat-icon>
+          <mat-icon>desktop_windows</mat-icon>
+          <span class="theme-name">Hệ thống</span>
+          <span class="theme-sub">Theo cài đặt thiết bị</span>
+          <mat-icon class="theme-check" *ngIf="selectedTheme === 'system'">check_circle</mat-icon>
         </button>
-        </div>
+      </div>
     </div>
-    </div>
+  </div>
 
   <!-- Tab: Ngôn ngữ -->
   <div *ngIf="activeTab === 'language'" class="tab-content">
     <div class="form-card">
-      <p style="color:#94a3b8">Tính năng Ngôn ngữ đang phát triển...</p>
+      <p style="color: #94a3b8">Tính năng Ngôn ngữ đang phát triển...</p>
     </div>
   </div>
 </div>

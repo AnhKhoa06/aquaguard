@@ -158,12 +158,13 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   private getLocationName(lat: number, lng: number) {
     fetch(
       `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=vi`,
-    )
+    ) //Nominatim là service geocoding miễn phí của OpenStreetMap —
+      // là API tra cứu địa danh theo tọa độ
       .then((r) => r.json())
       .then((data) => {
-        const state = data.address?.state || '';
-        const country = data.address?.country || '';
-        this.locationName = `${state}, ${country}`;
+        const state = data.address?.state || ''; //lấy tên tỉnh/thành
+        const country = data.address?.country || ''; //lấy tên quốc gia
+        this.locationName = `${state}, ${country}`; //gán vào biến hiển thị
       });
   }
 

@@ -95,7 +95,11 @@
           <span class="material-symbols-outlined empty-icon">group_add</span>
           <p class="empty-title">Chưa có thành viên gia đình</p>
           <p class="empty-sub">Kết nối với gia đình để theo dõi tình trạng an toàn</p>
-          <button class="btn-primary">
+          <button
+            class="btn-primary"
+            [routerLink]="['/settings']"
+            [queryParams]="{ tab: 'family' }"
+          >
             <span class="material-symbols-outlined">person_add</span>
             Thêm người thân
           </button>
@@ -112,7 +116,11 @@
               {{ getHealthLabel(member.health_status) }}
             </span>
           </div>
-          <button class="btn-outline add-member-btn">
+          <button
+            class="btn-outline add-member-btn"
+            [routerLink]="['/settings']"
+            [queryParams]="{ tab: 'family' }"
+          >
             <span class="material-symbols-outlined">person_add</span>
             Thêm người thân
           </button>
@@ -139,7 +147,7 @@
           <span class="quick-btn-label">SOS</span>
           <span class="quick-btn-sub">Gửi yêu cầu cứu hộ</span>
         </button>
-        <button class="quick-btn" [routerLink]="['/citizen/family']">
+        <button class="quick-btn" [routerLink]="['/settings']" [queryParams]="{ tab: 'family' }">
           <div class="quick-btn-icon-wrap">
             <span class="material-symbols-outlined quick-btn-icon-sym">group</span>
           </div>

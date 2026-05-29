@@ -10,6 +10,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { FamilyService } from '../../core/services/family.service';
 import { ThemeService, Theme } from '../../core/services/theme.service';
+import { ActivatedRoute } from '@angular/router';
 
 type Tab = 'profile' | 'family' | 'theme' | 'language';
 
@@ -18,7 +19,7 @@ type Tab = 'profile' | 'family' | 'theme' | 'language';
   standalone: true,
   imports: [CommonModule, FormsModule, MatIconModule],
   templateUrl: './settings.html',
-  styleUrls: ['./settings.scss']
+  styleUrls: ['./settings.scss'],
 })
 export class SettingsComponent implements OnInit {
   activeTab: Tab = 'profile';
@@ -26,10 +27,10 @@ export class SettingsComponent implements OnInit {
   saving = false;
   locating = false;
   age: number | null = null;
-  showAddMember = false; 
+  showAddMember = false;
   private isSaving = false;
   selectedTheme: Theme = 'dark';
-  
+
   familyMembers: User[] = [];
   loadingFamily = false;
   addingMember = false;
@@ -60,6 +61,7 @@ export class SettingsComponent implements OnInit {
     private router: Router,
     private familyService: FamilyService,
     private themeService: ThemeService,
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit() {
@@ -70,12 +72,9 @@ export class SettingsComponent implements OnInit {
     this.loadFamily();
     this.selectedTheme = this.themeService.getTheme();
 
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: any) => {
-      // Chỉ load khi navigate ĐẾN trang settings, không load khi đang ở đây
-      if (event.url.includes('/settings')) {
-        this.loadProfile();
+    this.route.queryParams.subscribe((params) => {
+      if (params['tab']) {
+        this.activeTab = params['tab'] as Tab;
       }
     });
   }
@@ -88,7 +87,7 @@ export class SettingsComponent implements OnInit {
     const cached = this.authService.getCurrentUser();
     if (cached) {
       this.mapUserToProfile(cached);
-      this.selectedHealth = cached.health_status || 'unknown'; 
+      this.selectedHealth = cached.health_status || 'unknown';
     }
 
     // Sau đó gọi API lấy data mới nhất
@@ -98,6 +97,12 @@ export class SettingsComponent implements OnInit {
           this.mapUserToProfile(res.data);
           this.currentUser = res.data;
           this.selectedHealth = res.data.health_status || 'unknown';
+
+          // Chỉ lấy vị trí khi chưa có địa chỉ
+          const isCoords = /^-?\d+\.\d+,\s*-?\d+\.\d+$/.test(this.profile.address);
+          if (!this.profile.address || isCoords) {
+            this.getLocation();
+          }
         }
         this.loading = false;
         this.cdr.detectChanges();
@@ -105,20 +110,20 @@ export class SettingsComponent implements OnInit {
       error: () => {
         this.loading = false;
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
   mapUserToProfile(user: User) {
-    this.profile.full_name        = user.full_name || '';
-    this.profile.email            = user.email || '';
-    this.profile.phone            = user.phone || '';
+    this.profile.full_name = user.full_name || '';
+    this.profile.email = user.email || '';
+    this.profile.phone = user.phone || '';
     this.profile.emergency_contact = (user as any).emergency_contact || '';
-    this.profile.gender           = user.gender || '';
-    this.profile.date_of_birth    = user.date_of_birth || '';
-    this.profile.address          = (user as any).address || '';
-    this.profile.latitude         = user.latitude || null;
-    this.profile.longitude        = user.longitude || null;
+    this.profile.gender = user.gender || '';
+    this.profile.date_of_birth = user.date_of_birth || '';
+    this.profile.address = (user as any).address || '';
+    this.profile.latitude = user.latitude || null;
+    this.profile.longitude = user.longitude || null;
     this.calcAge();
   }
   setHealth(status: string) {
@@ -170,82 +175,84 @@ export class SettingsComponent implements OnInit {
     this.locating = true;
     this.cdr.detectChanges();
 
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const lat = parseFloat(pos.coords.latitude.toFixed(6));
-        const lng = parseFloat(pos.coords.longitude.toFixed(6));
-        this.profile.latitude = lat;
-        this.profile.longitude = lng;
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      const lat = parseFloat(pos.coords.latitude.toFixed(6));
+      const lng = parseFloat(pos.coords.longitude.toFixed(6));
 
-        try {
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=vi`
-          );
-          const data = await res.json();
-          this.profile.address = data.display_name || `${lat}, ${lng}`;
-        } catch {
-          this.profile.address = `${lat}, ${lng}`;
-        }
+      console.log('getLocation called, lat:', lat, 'lng:', lng);
+      console.log('current address:', this.profile.address);
 
-        this.locating = false;
-        this.cdr.detectChanges();
-      },
-      () => {
-        this.locating = false;
-        this.cdr.detectChanges();
+      this.profile.latitude = lat;
+      this.profile.longitude = lng;
+
+      try {
+        const res = await fetch(
+          `http://localhost:3000/api/users/reverse-geocode?lat=${lat}&lng=${lng}`,
+          { headers: { Authorization: `Bearer ${this.authService.getToken()}` } },
+        );
+        const data = await res.json();
+        console.log('reverse-geocode response:', data);
+        this.profile.address = data.address || `${lat}, ${lng}`;
+      } catch (err) {
+        console.log('reverse-geocode error:', err);
+        if (!this.profile.address) this.profile.address = `${lat}, ${lng}`;
       }
-    );
+
+      this.locating = false;
+      this.cdr.detectChanges();
+    });
   }
 
   saveProfile() {
     this.isSaving = true;
     this.saving = true;
-    this.userService.updateProfile({
-      full_name:         this.profile.full_name,
-      email:             this.profile.email,
-      phone:             this.profile.phone,
-      gender:            this.profile.gender as any,
-      date_of_birth:     this.profile.date_of_birth,
-      address:           this.profile.address,
-      emergency_contact: this.profile.emergency_contact,
-      latitude:          this.profile.latitude ?? undefined,
-      longitude:         this.profile.longitude ?? undefined,
-    }).subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.toastr.success('Thông tin cá nhân đã được cập nhật!', 'Lưu thành công');
-          // Cập nhật lại localStorage đúng cách
-          const user = this.authService.getCurrentUser();
-          if (user) {
-            const updated = { 
-              ...user, 
-              full_name: this.profile.full_name,
-              email: this.profile.email,
-              phone: this.profile.phone,
-              gender: this.profile.gender,
-              date_of_birth: this.profile.date_of_birth,
-              address: this.profile.address,
-              emergency_contact: this.profile.emergency_contact,
-              latitude: this.profile.latitude,
-              longitude: this.profile.longitude,
-            };
-            localStorage.setItem('user', JSON.stringify(updated));
-            this.authService['currentUserSubject'].next(updated as any);
-          } 
-        } else {
-          this.toastr.error(res.message || 'Có lỗi xảy ra!', 'Thất bại');
-        }
-        this.saving = false;
-        this.isSaving = false; // ← thêm
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.toastr.error('Không thể kết nối server!', 'Lỗi');
-        this.saving = false;
-        this.isSaving = false; // ← thêm
-        this.cdr.detectChanges();
-      }
-    });
+    this.userService
+      .updateProfile({
+        full_name: this.profile.full_name,
+        email: this.profile.email,
+        gender: this.profile.gender as any,
+        date_of_birth: this.profile.date_of_birth,
+        address: this.profile.address,
+        emergency_contact: this.profile.emergency_contact,
+        latitude: this.profile.latitude ?? undefined,
+        longitude: this.profile.longitude ?? undefined,
+      })
+      .subscribe({
+        next: (res) => {
+          if (res.success) {
+            this.toastr.success('Thông tin cá nhân đã được cập nhật!', 'Lưu thành công');
+            // Cập nhật lại localStorage đúng cách
+            const user = this.authService.getCurrentUser();
+            if (user) {
+              const updated = {
+                ...user,
+                full_name: this.profile.full_name,
+                email: this.profile.email,
+                phone: this.profile.phone,
+                gender: this.profile.gender,
+                date_of_birth: this.profile.date_of_birth,
+                address: this.profile.address,
+                emergency_contact: this.profile.emergency_contact,
+                latitude: this.profile.latitude,
+                longitude: this.profile.longitude,
+              };
+              localStorage.setItem('user', JSON.stringify(updated));
+              this.authService['currentUserSubject'].next(updated as any);
+            }
+          } else {
+            this.toastr.error(res.message || 'Có lỗi xảy ra!', 'Thất bại');
+          }
+          this.saving = false;
+          this.isSaving = false; // ← thêm
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.toastr.error('Không thể kết nối server!', 'Lỗi');
+          this.saving = false;
+          this.isSaving = false; // ← thêm
+          this.cdr.detectChanges();
+        },
+      });
   }
   loadFamily() {
     this.loadingFamily = true;
@@ -258,7 +265,7 @@ export class SettingsComponent implements OnInit {
       error: () => {
         this.loadingFamily = false;
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
@@ -281,7 +288,7 @@ export class SettingsComponent implements OnInit {
         this.toastr.error('Không thể kết nối server!', 'Lỗi');
         this.addingMember = false;
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
@@ -299,7 +306,7 @@ export class SettingsComponent implements OnInit {
       error: () => {
         this.toastr.error('Không thể kết nối server!', 'Lỗi');
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 

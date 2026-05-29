@@ -10,13 +10,11 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-    getProfile(): Observable<ApiResponse<any>> {
-    return this.http.get<ApiResponse<any>>(
-        `${this.apiUrl}/users/profile?t=${Date.now()}`
-    );
-    }
-updateProfile(data: Partial<User>): Observable<ApiResponse<User>> {
-  console.log('updateProfile called', data); // ← thêm
-  return this.http.put<ApiResponse<User>>(`${this.apiUrl}/users/profile`, data);
-}
+  getProfile(): Observable<ApiResponse<any>> {
+    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/users/profile?t=${Date.now()}`);
+  }
+  updateProfile(data: Partial<User>): Observable<ApiResponse<User>> {
+    console.log('updateProfile called', data); // ← thêm
+    return this.http.put<ApiResponse<User>>(`${this.apiUrl}/users/profile`, data);
+  }
 }
