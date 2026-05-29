@@ -5,6 +5,7 @@ import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
+  console.log('Interceptor:', req.method, req.url); // ← thêm dòng này
   const authService = inject(AuthService);
   const router = inject(Router);
   const token = authService.getToken();

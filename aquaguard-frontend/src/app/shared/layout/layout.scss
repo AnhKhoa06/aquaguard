@@ -17,8 +17,8 @@
 // ========== SIDEBAR ==========
 .sidebar {
   width: var(--sidebar-width);
-  background: #111f21;
-  border-right: 1px solid rgba(30, 58, 74, 0.4); // ← thêm opacity 0.4
+  background: var(--color-sidebar);
+  border-right: 1px solid var(--color-border-light);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -83,7 +83,7 @@
   gap: 12px;
   padding: 14px 18px;
   border-radius: 20px;
-  color: #8899aa;
+  color: var(--color-text-secondary);
   text-decoration: none;
   font-size: 15px;
   font-weight: 500;
@@ -95,16 +95,18 @@
   width: 100%;
 
   &:hover {
-    background: rgba(0, 188, 212, 0.08);
-    color: #ffffff;
+    background: var(--color-nav-hover);
+    color: var(--color-text);
+
     .nav-icon {
       color: #00bcd4;
     }
   }
 
   &.active {
-    background: rgba(0, 188, 212, 0.12);
+    background: var(--color-nav-active);
     color: #00bcd4;
+
     .nav-icon {
       color: #00bcd4;
     }
@@ -119,7 +121,7 @@
 .nav-icon {
   font-size: 20px;
   flex-shrink: 0;
-  color: #556677;
+  color: var(--color-text-muted);
   transition: color 0.2s;
 }
 
@@ -133,8 +135,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 14px 12px 20px; // tăng padding
-  border-top: 1px solid rgba(30, 53, 85, 0.4); // nhạt hơn
+  padding: 14px 12px 20px;
+  border-top: 1px solid var(--color-border-light);
 }
 
 // Cài đặt
@@ -144,7 +146,7 @@
   gap: 12px;
   padding: 12px 14px;
   border-radius: 10px;
-  color: #8899aa;
+  color: var(--color-text-secondary);
   text-decoration: none;
   font-size: 13px;
   font-weight: 500;
@@ -152,16 +154,18 @@
   cursor: pointer;
 
   &:hover {
-    background: rgba(0, 188, 212, 0.08);
-    color: #ffffff;
+    background: var(--color-nav-hover);
+    color: var(--color-text);
+
     .nav-icon {
       color: #00bcd4;
     }
   }
 
   &.active {
-    background: rgba(0, 188, 212, 0.12);
-    color: #ffffff;
+    background: var(--color-nav-active);
+    color: var(--color-text);
+
     .nav-icon {
       color: #00bcd4;
     }
@@ -175,7 +179,7 @@
 
 // User box
 .user-box {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--color-user-box);
   border-radius: 20px;
   padding: 14px;
   display: flex;
@@ -208,8 +212,8 @@
   border-radius: 50%;
   flex-shrink: 0;
   min-width: 37px;
-  background: #00bcd4; // xanh thương hiệu
-  color: #ffffff; // chữ trắng
+  background: #00bcd4;
+  color: #ffffff;
   font-size: 14.5px;
   display: flex;
   align-items: center;
@@ -226,37 +230,37 @@
 .user-name {
   font-size: 14px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--color-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-bottom: 3px; // thêm khoảng cách giữa tên và role
+  margin-bottom: 3px;
 }
 
 .user-role {
   font-size: 12px;
-  color: #556677;
+  color: var(--color-text-muted);
   white-space: nowrap;
 }
 
 .logout-btn {
   display: flex;
   align-items: center;
-  justify-content: center; // căn giữa
+  justify-content: center;
   gap: 8px;
   background: transparent;
   border: none;
-  color: #556677;
+  color: var(--color-text-muted);
   cursor: pointer;
-  padding: 10px 8px; // to hơn
+  padding: 10px 8px;
   border-radius: 8px;
-  font-size: 13px; // to hơn chút
+  font-size: 13px;
   font-weight: 500;
   transition: all 0.2s;
   width: 100%;
 
   .material-symbols-outlined {
-    font-size: 18px; // icon to hơn
+    font-size: 18px;
   }
 
   &:hover {
@@ -276,7 +280,6 @@
 }
 
 // ========== COLLAPSE BTN ==========
-// ========== COLLAPSE BTN ==========
 .collapse-btn {
   position: absolute;
   left: calc(var(--sidebar-width) - 14px);
@@ -285,18 +288,15 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #1a2f31;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #8899aa;
+  background: var(--color-collapse-btn);
+  border: 1px solid var(--color-border-light);
+  color: var(--color-text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 20;
-  transition:
-    left 0.25s ease,
-    background 0.2s,
-    color 0.2s;
+  transition: left 0.25s ease, background 0.2s, color 0.2s;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 
   .material-symbols-outlined {
@@ -304,9 +304,9 @@
   }
 
   &:hover {
-    background: #1e3a3c;
-    color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.2);
+    background: var(--color-input);
+    color: var(--color-text);
+    border-color: var(--color-border);
   }
 }
 
@@ -319,5 +319,6 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  background: #0f172a; // slate-900, tối hơn sidebar 1 chút
+  background: var(--color-main);
 }
+

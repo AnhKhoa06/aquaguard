@@ -13,6 +13,7 @@ const shelterRoutes = require("./src/routes/shelterRoutes");
 const notificationRoutes = require("./src/routes/notificationRoutes");
 const adminRoutes = require("./src/routes/adminRoutes");
 const floodRoutes = require("./src/routes/floodRoutes");
+const userRoutes = require('./src/routes/userRoutes');
 
 // Import middleware
 const errorMiddleware = require("./src/middlewares/errorMiddleware");
@@ -37,6 +38,7 @@ app.use("/api/shelters", shelterRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/flood-data", floodRoutes);
+app.use('/api/users', userRoutes);
 
 // Khởi động flood job
 require("./src/jobs/floodJob");

@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { ThemeService } from './core/services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -10,10 +11,17 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   currentLang = 'VI';
 
-  constructor(public router: Router) {}
+  constructor(
+    public router: Router,
+    private themeService: ThemeService,
+  ) {}
+
+  ngOnInit() {
+    this.themeService.init();
+  }
 
   get isAuthPage(): boolean {
     return this.router.url.startsWith('/auth');

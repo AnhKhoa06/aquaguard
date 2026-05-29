@@ -1287,3 +1287,63 @@
 .sos-popup-wrap .leaflet-popup-tip {
   background: #1a2035 !important;
 }
+
+
+:host {
+  display: block;
+  height: 100%;
+  overflow: hidden;
+}
+
+.map-wrapper {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+// ========== NAVBAR ==========
+.map-navbar {
+  background: var(--color-card);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.location-coords {
+  color: var(--color-text);
+  &.muted { color: var(--color-text-secondary); }
+}
+
+// ========== SEARCH & BUTTONS ==========
+.search-bar {
+  background: var(--color-input);
+  border: 1px solid var(--color-border);
+}
+
+.notif-btn {
+  background: var(--color-input);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+// ========== SIDE PANEL ==========
+.map-side-panel {
+  background: var(--color-card-2);
+  border-left: 1px solid var(--color-border);
+}
+
+// ========== ACTION CARD ==========
+.action-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  .action-card-label { color: var(--color-text); }
+  .action-card-sub { color: var(--color-text-secondary); }
+}
+
+// ========== ALERTS ==========
+.alert-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+}
+
+.alert-card-title {
+  color: var(--color-text);
+}

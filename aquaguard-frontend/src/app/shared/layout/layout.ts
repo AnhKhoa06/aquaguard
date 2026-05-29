@@ -141,6 +141,12 @@ export class LayoutComponent implements OnInit {
     });
   }
 
+  getLogoSrc(): string {
+    // Kiểm tra theme hiện tại
+    const isLight = document.body.classList.contains('theme-light');
+    return isLight ? '/logo-light.png' : '/logo.png';
+  }
+
   logout() {
     this.authService.logout();
     this.router.navigate(['/auth/login']);

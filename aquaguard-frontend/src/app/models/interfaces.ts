@@ -1,10 +1,14 @@
 export interface User {
   id: number;
   full_name: string;
-  email: string;
+  email?: string;
   phone: string;
   role: 'citizen' | 'responder' | 'admin';
   health_status: 'safe' | 'danger' | 'injured' | 'unknown';
+  gender?: 'male' | 'female' | 'other';
+  date_of_birth?: string;
+  address?: string;
+  emergency_contact?: string;
   latitude?: number;
   longitude?: number;
   created_at: string;

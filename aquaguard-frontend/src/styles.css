@@ -6,20 +6,93 @@
   box-sizing: border-box;
 }
 
-:root {
-  --primary: #00bcd4;
-  --primary-dark: #0097a7;
-  --bg-dark: #0a1628;
-  --bg-card: #0f1f35;
-  --bg-input: #1a2f4a;
-  --bg-input-hover: #1e3555;
-  --text-primary: #ffffff;
-  --text-secondary: #8899aa;
-  --text-muted: #556677;
-  --border: #1e3555;
-  --border-focus: #00bcd4;
-  --error: #ef5350;
-  --success: #26a69a;
+/* ===== THEME VARIABLES ===== */
+:root,
+body,
+body.theme-dark {
+  --color-bg: #071c1f;
+  --color-main: #0f172a;
+  --color-sidebar: #111f21;
+  --color-card: #0f1f35;
+  --color-card-2: #1a2332;
+  --color-input: #1a2f4a;
+  --color-input-hover: #1e3555;
+  --color-border: #1e3555;
+  --color-border-light: rgba(30, 58, 74, 0.4);
+  --color-text: #ffffff;
+  --color-text-secondary: #8899aa;
+  --color-text-muted: #556677;
+  --color-user-box: rgba(255, 255, 255, 0.04);
+  --color-collapse-btn: #1a2f31;
+  --color-nav-hover: rgba(0, 188, 212, 0.08);
+  --color-nav-active: rgba(0, 188, 212, 0.12);
+  --color-status-bg: #1e293b;
+  --color-status-border: #334155;
+  --color-card-body: rgba(30, 41, 59, 0.5);
+  --color-card-body-border: #334155;
+  --color-family-item: rgba(255, 255, 255, 0.03);
+  --color-family-item-border: #1e3555;
+  --color-history-item: rgba(255, 255, 255, 0.03);
+  --color-quick-btn: rgba(255, 255, 255, 0.03);
+  --color-map-navbar: rgba(15, 23, 42, 0.95);
+  --color-map-sidebar: #111f21;
+  --color-map-panel-tab: transparent;
+  --color-action-card: #1e2333;
+  --color-alert-card: #1e2333;
+  --color-safety-item: #1a2535;
+  --color-settings-card: #1a2332;
+  --color-settings-input: #0f172a;
+  --color-settings-border: #2d3f55;
+  --color-settings-text-secondary: #94a3b8;
+  --color-member-item: #0f1f35;
+  --color-member-border: #1e3555;
+  --color-add-member-form: #0f1f35;
+  --color-health-btn: #2a3a50;
+  --color-health-note: #0a1e35;
+  --color-health-note-border: #1e3555;
+}
+
+body.theme-light {
+  --color-bg: #f0f4f8;
+  --color-main: #f1f5f9;
+  --color-sidebar: #ffffff;
+  --color-card: #ffffff;
+  --color-card-2: #f8fafc;
+  --color-input: #f1f5f9;
+  --color-input-hover: #e2e8f0;
+  --color-border: #e2e8f0;
+  --color-border-light: rgba(226, 232, 240, 0.8);
+  --color-text: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94a3b8;
+  --color-user-box: rgba(0, 0, 0, 0.04);
+  --color-collapse-btn: #e2e8f0;
+  --color-nav-hover: rgba(0, 188, 212, 0.08);
+  --color-nav-active: rgba(0, 188, 212, 0.12);
+  --color-status-bg: #f1f5f9;
+  --color-status-border: #e2e8f0;
+  --color-card-body: rgba(255, 255, 255, 0.8);
+  --color-card-body-border: #e2e8f0;
+  --color-family-item: rgba(0, 0, 0, 0.02);
+  --color-family-item-border: #e2e8f0;
+  --color-history-item: rgba(0, 0, 0, 0.02);
+  --color-quick-btn: rgba(0, 0, 0, 0.02);
+  --color-map-navbar: rgba(255, 255, 255, 0.95);
+  --color-map-sidebar: #ffffff;
+  --color-map-panel-tab: transparent;
+  --color-action-card: #f8fafc;
+  --color-alert-card: #f8fafc;
+  --color-safety-item: #ffffff;
+  --color-settings-card: #ffffff;
+  --color-settings-input: #f1f5f9;
+  --color-settings-border: #e2e8f0;
+  --color-settings-text-secondary: #475569;
+  --color-member-item: #f8fafc;
+  --color-member-border: #e2e8f0;
+  --color-add-member-form: #f8fafc;
+  --color-health-btn: #e2e8f0;
+  --color-health-note: #f8fafc;
+  --color-health-note-border: #e2e8f0;
 }
 
 html,
@@ -31,8 +104,8 @@ body {
 
 body {
   font-family: 'Inter', sans-serif;
-  background: #071c1f;
-  color: #ffffff;
+  background: var(--color-bg);
+  color: var(--color-text);
   min-height: 100vh;
 }
 
@@ -42,49 +115,32 @@ button {
 }
 
 /* Toast custom style */
+/* Toast custom style */
 .toast-container .ngx-toastr {
-  background: rgba(15, 23, 42, 0.95) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: var(--color-card) !important;
+  border: 1px solid var(--color-border) !important;
   border-radius: 12px !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
   padding: 14px 18px 14px 54px !important;
   font-family: 'Inter', sans-serif !important;
   min-width: 280px !important;
   backdrop-filter: blur(20px) !important;
+  color: var(--color-text) !important;
 }
 
 .toast-container .ngx-toastr .toast-title {
   font-size: 12px !important;
   font-weight: 600 !important;
   margin-bottom: 4px !important;
-  color: #ffffff !important;
+  color: var(--color-text) !important;
 }
 
 .toast-container .ngx-toastr .toast-message {
   font-size: 12px !important;
-  color: #94a3b8 !important;
+  color: var(--color-text-secondary) !important;
 }
 
-.toast-success::before {
-  content: '✓';
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 24px;
-  height: 24px;
-  background: rgba(0, 188, 212, 0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #00bcd4;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 24px;
-  text-align: center;
-}
-
+/* Toast type styles */
 .toast-container .ngx-toastr.toast-error {
   background: rgba(239, 83, 80, 0.15) !important;
   border-left: 3px solid #ef5350 !important;
@@ -109,6 +165,7 @@ button {
   background-image: none !important;
 }
 
+/* Icon before */
 .toast-success::before {
   content: 'check_circle';
   font-family: 'Material Icons';
@@ -153,6 +210,7 @@ button {
   font-size: 22px;
 }
 
+/* Progress bar */
 .toast-container .ngx-toastr.toast-success .toast-progress {
   background: #00e676 !important;
 }
@@ -169,11 +227,12 @@ button {
   background: #3b82f6 !important;
 }
 
+/* Close button */
 .toast-container .ngx-toastr .toast-close-button {
   pointer-events: all !important;
   cursor: pointer !important;
   background: transparent !important;
-  color: #94a3b8 !important;
+  color: var(--color-text-secondary) !important;
   opacity: 1 !important;
   font-size: 16px !important;
   font-weight: 400 !important;
@@ -182,7 +241,7 @@ button {
 }
 
 .toast-container .ngx-toastr .toast-close-button:hover {
-  color: #ffffff !important;
+  color: var(--color-text) !important;
   background: transparent !important;
   opacity: 1 !important;
 }
@@ -191,44 +250,20 @@ button {
   pointer-events: none !important;
 }
 
-/* Hiệu ứng lò xo */
+/* Animation */
 @keyframes toastBounceIn {
-  0% {
-    transform: translateX(120%);
-    opacity: 0;
-  }
-  55% {
-    transform: translateX(-8px);
-    opacity: 1;
-  }
-  75% {
-    transform: translateX(4px);
-  }
-  90% {
-    transform: translateX(-2px);
-  }
-  100% {
-    transform: translateX(0);
-  }
+  0% { transform: translateX(120%); opacity: 0; }
+  55% { transform: translateX(-8px); opacity: 1; }
+  75% { transform: translateX(4px); }
+  90% { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
 }
 
 @keyframes toastFadeOut {
-  0% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  20% {
-    transform: translateX(-20px);
-    opacity: 1;
-  }
-  21% {
-    transform: translateX(-20px);
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(150%);
-    opacity: 0;
-  }
+  0% { transform: translateX(0); opacity: 1; }
+  20% { transform: translateX(-20px); opacity: 1; }
+  21% { transform: translateX(-20px); opacity: 1; }
+  100% { transform: translateX(150%); opacity: 0; }
 }
 
 .toast-container .ngx-toastr {
@@ -257,11 +292,12 @@ button {
   height: 36px !important;
   line-height: 36px !important;
   transition: background 0.2s !important;
+}
 
-  &:hover {
-    background: #2d3f55 !important;
-    color: #ffffff !important;
-  }
+.leaflet-control-zoom-in:hover,
+.leaflet-control-zoom-out:hover {
+  background: #2d3f55 !important;
+  color: #ffffff !important;
 }
 
 .leaflet-control-zoom-in {

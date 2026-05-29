@@ -4,7 +4,13 @@
     <div class="sidebar-top">
       <!-- Logo only -->
       <div class="brand">
-        <img *ngIf="!collapsed" src="/logo.png" alt="AquaGuard" class="logo" />
+        <img 
+          *ngIf="!collapsed" 
+          [src]="getLogoSrc()" 
+          alt="AquaGuard" 
+          class="logo" 
+        />
+        
         <div *ngIf="collapsed" class="logo-mini">
           <span class="material-symbols-outlined">water_drop</span>
         </div>
