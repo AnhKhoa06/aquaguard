@@ -158,6 +158,18 @@
 
       <!-- Tab yêu cầu -->
       <div class="tab-content" *ngIf="activeTab === 'requests'">
+        <div class="route-summary" *ngIf="selectedSos">
+          <div>
+            <span class="route-kicker">ĐANG XEM</span>
+            <h3>{{ selectedSos.citizen_name || 'Ẩn danh' }}</h3>
+            <p>{{ selectedSos.address || 'Chưa có địa chỉ' }}</p>
+          </div>
+          <div class="route-metrics">
+            <span><strong>{{ routeDistanceKm?.toFixed(1) || '--' }}</strong> km</span>
+            <span><strong>{{ routeETA }}</strong></span>
+          </div>
+        </div>
+
         <!-- Filter chips -->
         <div class="filter-chips">
           <button

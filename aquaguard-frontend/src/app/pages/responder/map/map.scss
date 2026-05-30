@@ -1338,6 +1338,53 @@
   gap: 8px;
 }
 
+.route-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(22, 32, 50, 0.96), rgba(15, 23, 38, 0.96));
+  border: 1px solid rgba(0, 188, 212, 0.18);
+}
+
+.route-kicker {
+  display: inline-block;
+  margin-bottom: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: #5dd6ff;
+}
+
+.route-summary h3 {
+  margin: 0;
+  font-size: 14px;
+  color: #e2e8f0;
+}
+
+.route-summary p {
+  margin: 4px 0 0;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.route-metrics {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  color: #cbd5e1;
+  font-size: 12px;
+}
+
+.route-metrics strong {
+  color: #5dd6ff;
+}
+
 .sos-request-item {
   display: flex;
   align-items: flex-start;

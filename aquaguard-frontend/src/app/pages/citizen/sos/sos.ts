@@ -6,6 +6,7 @@ import { finalize } from 'rxjs';
 
 import { AuthService } from '../../../core/services/auth.service';
 import { SosService } from '../../../core/services/sos.service';
+import { UserService } from '../../../core/services/user.service';
 import { SosRequest, User } from '../../../models/interfaces';
 
 type UrgencyLevel = 'low' | 'medium' | 'high' | 'critical';
@@ -53,6 +54,7 @@ export class SosComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private authService: AuthService,
     private sosService: SosService,
+    private userService: UserService,
   ) {
     this.form = this.fb.group({
       address: ['', [Validators.required, Validators.minLength(8)]],
@@ -274,6 +276,16 @@ export class SosComponent implements OnInit, OnDestroy {
         this.latitude = lat;
         this.longitude = lng;
         this.gpsLabel = `Đã lấy vị trí GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+
+        this.userService.reverseGeocode(lat, lng).subscribe({
+          next: (res) => {
+            const address = res.address || `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+            this.form.patchValue({ address });
+          },
+          error: () => {
+            this.form.patchValue({ address: `${lat.toFixed(5)}, ${lng.toFixed(5)}` });
+          },
+        });
       } else {
         this.locationError = 'Không lấy được GPS. Vui lòng bật vị trí trên thiết bị.';
         this.gpsLabel = 'Chưa xác định vị trí';

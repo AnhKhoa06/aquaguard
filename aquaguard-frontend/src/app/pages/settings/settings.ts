@@ -136,7 +136,7 @@ export class SettingsComponent implements OnInit {
   getRoleLabel(role: string): string {
     const map: Record<string, string> = {
       citizen: 'Công dân',
-      responder: 'Đội cứu hộ',
+      responder: 'Rescue Team',
       admin: 'Quản trị viên',
     };
     return map[role] || 'Công dân';

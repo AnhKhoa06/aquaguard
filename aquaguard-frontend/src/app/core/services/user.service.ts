@@ -13,8 +13,28 @@ export class UserService {
   getProfile(): Observable<ApiResponse<any>> {
     return this.http.get<ApiResponse<any>>(`${this.apiUrl}/users/profile?t=${Date.now()}`);
   }
+
+  reverseGeocode(lat: number, lng: number): Observable<{ success: boolean; address: string | null }> {
+    return this.http.get<{ success: boolean; address: string | null }>(
+      `${this.apiUrl}/users/reverse-geocode?lat=${lat}&lng=${lng}`,
+    );
+  }
+
   updateProfile(data: Partial<User>): Observable<ApiResponse<User>> {
     console.log('updateProfile called', data); // ← thêm
     return this.http.put<ApiResponse<User>>(`${this.apiUrl}/users/profile`, data);
+  }
+
+  // Admin endpoints
+  getAllUsers(): Observable<ApiResponse<User[]>> {
+    return this.http.get<ApiResponse<User[]>>(`${this.apiUrl}/admin/users?t=${Date.now()}`);
+  }
+
+  updateRole(userId: number, role: User['role']): Observable<ApiResponse<null>> {
+    return this.http.patch<ApiResponse<null>>(`${this.apiUrl}/admin/users/${userId}/role`, { role });
+  }
+
+  deleteUser(userId: number): Observable<ApiResponse<null>> {
+    return this.http.delete<ApiResponse<null>>(`${this.apiUrl}/admin/users/${userId}`);
   }
 }
