@@ -691,6 +691,25 @@ input[disabled] {
   opacity: 0.7;
   cursor: not-allowed;
 }
+
+.close-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #1e2533;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s;
+
+  &:hover { background: #2d3748; }
+
+  .material-symbols-outlined { font-size: 20px; }
+}
 :host-context(body.theme-light) {
   .tab-btn {
     background: #e2e8f0;
@@ -709,6 +728,73 @@ input[disabled] {
   .form-group select {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   }
+
+  // ← thêm các phần dưới đây
+  .member-item {
+    background: #ffffff;
+    border-color: #e2e8f0;
+
+    .member-info {
+      .member-name { color: #0f172a; }
+      .member-relation { color: #64748b; }
+      .member-phone,
+      .member-address,
+      .member-health-note { color: #64748b; }
+    }
+  }
+
+  .invite-item {
+    .invite-info {
+      .invite-name { color: #0f172a; }
+      .invite-meta { color: #64748b; }
+    }
+  }
+
+  .reject-btn {
+    background: #e2e8f0;
+    border-color: #e2e8f0;
+    color: #475569;
+
+    &:hover {
+      background: #cbd5e1;
+    }
+  }
+
+  .search-result {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+
+    .search-result-name { color: #0f172a; }
+    .search-result-phone { color: #64748b; }
+
+    .relationship-input {
+      background: #f1f5f9;
+      border-color: #e2e8f0;
+      color: #0f172a;
+
+      &::placeholder { color: #94a3b8; }
+    }
+  }
+
+  .add-member-header {
+    color: #0f172a;
+  }
+
+  .add-member-row input {
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+    color: #0f172a;
+
+    &::placeholder { color: #94a3b8; }
+  }
+
+  .invites-header { color: #b45309; }
+
+  .invite-item {
+    background: rgba(245, 158, 11, 0.06);
+    border-color: rgba(245, 158, 11, 0.25);
+  }
+  
 }
 
 // Search
@@ -1003,10 +1089,24 @@ input[disabled] {
       font-size: 12px;
       color: #8891a8;
       margin-top: 4px;
+    
 
       .material-symbols-outlined {
         font-size: 14px;
         color: var(--primary);
+      }
+    }
+    .member-health-note {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: #8891a8;
+      margin-top: 4px;
+
+      .material-symbols-outlined {
+        font-size: 14px;
+        color: var(--primary);// xanh lá — phân biệt với phone/address
       }
     }
   }

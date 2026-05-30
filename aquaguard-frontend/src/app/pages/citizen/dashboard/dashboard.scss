@@ -583,6 +583,13 @@
   white-space: nowrap;
 }
 
+.member-note {
+  font-size: 11px;
+  color: #94a3b8;  // sáng hơn
+  margin-top: 3px;
+  font-style: italic;
+}
+
 .member-health-label {
   display: inline-flex;
   align-items: center;

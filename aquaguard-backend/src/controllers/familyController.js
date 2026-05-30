@@ -78,7 +78,7 @@ const searchByPhone = async (req, res, next) => {
 // Gửi lời mời kết nối
 const sendInvite = async (req, res, next) => {
   try {
-    const { to_user_id, relationship } = req.body;
+    const { to_user_id, relationship, health_note } = req.body;
     const from_user_id = req.user.id;
 
     // Check đã là người thân chưa
@@ -101,7 +101,9 @@ const sendInvite = async (req, res, next) => {
     if (existing.length > 0) {
       return res.json({ success: false, message: "Đã gửi lời mời trước đó!" });
     }
-
+     if (health_note !== undefined) {
+      await db.query('UPDATE users SET health_note = ? WHERE id = ?', [health_note || null, from_user_id]);
+    }
     await db.query(
       "INSERT INTO family_invites (from_user_id, to_user_id, relationship) VALUES (?, ?, ?)",
       [from_user_id, to_user_id, relationship || ""],

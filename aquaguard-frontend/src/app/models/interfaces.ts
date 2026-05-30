@@ -14,6 +14,7 @@ export interface User {
   relationship?: string;
   created_at: string;
   updated_at?: string;
+  health_note?: string;
 }
 
 export interface SosRequest {

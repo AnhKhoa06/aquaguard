@@ -142,7 +142,13 @@
           <span class="material-symbols-outlined">help</span> không rõ
         </button>
       </div>
-      <input type="text" class="health-note" placeholder="Ghi chú sức khỏe (tuỳ chọn)..." />
+      <!-- Thay input cũ -->
+      <textarea
+        class="health-note"
+        [(ngModel)]="healthNote"
+        placeholder="Ghi chú sức khỏe (tuỳ chọn)..."
+        rows="1"
+      ></textarea>
     </div>
 
     <!-- Người thân -->
@@ -252,6 +258,10 @@
             <div class="member-phone">
               <span class="material-symbols-outlined">phone</span>
               {{ member.phone }}
+            </div>
+            <div class="member-health-note" *ngIf="member.health_note">
+              <span class="material-symbols-outlined">medical_information</span>
+              {{ member.health_note }}
             </div>
             <div class="member-address" *ngIf="member.address">
               <span class="material-symbols-outlined">location_on</span>

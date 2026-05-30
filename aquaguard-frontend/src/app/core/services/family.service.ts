@@ -35,10 +35,11 @@ export class FamilyService {
     return this.http.post<ApiResponse<SearchResult>>(`${this.apiUrl}/family/search`, { phone });
   }
 
-  sendInvite(to_user_id: number, relationship: string): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/family/invite`, {
-      to_user_id,
+  sendInvite(toUserId: number, relationship: string, healthNote: string = ''): Observable<any> {
+    return this.http.post(`${this.apiUrl}/family/invite`, {
+      to_user_id: toUserId,
       relationship,
+      health_note: healthNote,
     });
   }
 

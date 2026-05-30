@@ -21,7 +21,7 @@ const familyModel = {
   // Lấy danh sách người thân
   getFamily: async (user_id) => {
     const [rows] = await db.query(
-      `SELECT u.id, u.full_name, u.phone, u.health_status, u.latitude, u.longitude,
+      `SELECT u.id, u.full_name, u.phone, u.health_status, u.latitude, u.longitude,u.health_note,
           u.address, u.updated_at,
           (SELECT fi.relationship 
            FROM family_invites fi 

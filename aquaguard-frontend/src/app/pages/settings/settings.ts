@@ -30,12 +30,15 @@ export class SettingsComponent implements OnInit {
   showAddMember = false;
   private isSaving = false;
   selectedTheme: Theme = 'dark';
-
+  
+  
   familyMembers: User[] = [];
   loadingFamily = false;
   addingMember = false;
   newMemberPhone = '';
   selectedHealth: string = '';
+  healthNote: string = '';
+  
 
   profile = {
     full_name: '',
@@ -74,6 +77,7 @@ export class SettingsComponent implements OnInit {
   ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
     this.selectedHealth = this.currentUser?.health_status || 'unknown';
+    this.healthNote = (this.currentUser as any)?.health_note || '';
     this.buildTabs();
     this.loadProfile();
     this.loadFamily();
@@ -97,6 +101,7 @@ export class SettingsComponent implements OnInit {
     if (cached) {
       this.mapUserToProfile(cached);
       this.selectedHealth = cached.health_status || 'unknown';
+      this.healthNote = (cached as any).health_note || '';
     }
 
     // Sau đó gọi API lấy data mới nhất
@@ -106,6 +111,7 @@ export class SettingsComponent implements OnInit {
           this.mapUserToProfile(res.data);
           this.currentUser = res.data;
           this.selectedHealth = res.data.health_status || 'unknown';
+          this.healthNote = (res.data as any).health_note || '';
 
           // Chỉ lấy vị trí khi chưa có địa chỉ
           const isCoords = /^-?\d+\.\d+,\s*-?\d+\.\d+$/.test(this.profile.address);
@@ -367,7 +373,7 @@ export class SettingsComponent implements OnInit {
 
   sendInvite() {
     if (!this.searchResult) return;
-    this.familyService.sendInvite(this.searchResult.id, this.relationship).subscribe({
+    this.familyService.sendInvite(this.searchResult.id, this.relationship, this.healthNote).subscribe({
       next: (res) => {
         if (res.success) {
           this.toastr.success(res.message, 'Thành công');
@@ -375,6 +381,7 @@ export class SettingsComponent implements OnInit {
           this.searchResult = null;
           this.newMemberPhone = '';
           this.relationship = '';
+          this.healthNote = '';  // ← reset luôn
         } else {
           this.toastr.warning(res.message, 'Thông báo');
         }
