@@ -97,7 +97,7 @@ export class LayoutComponent implements OnInit {
           labelEn: 'My Tasks',
           route: '/responder/my-tasks',
         },
-        { icon: 'groups', labelVi: 'Đội cứu hộ', labelEn: 'Rescue Team', route: '/responder/team' },
+        { icon: 'groups', labelVi: 'Rescue Team', labelEn: 'Rescue Team', route: '/responder/team' },
       ];
     }
   }
@@ -114,7 +114,7 @@ export class LayoutComponent implements OnInit {
   getRoleLabel(role: string): string {
     const map: Record<string, string> = {
       citizen: 'Công dân',
-      responder: 'Đội cứu hộ',
+      responder: 'Rescue Team',
       admin: 'Quản trị viên hệ thống',
     };
     return map[role] || role;

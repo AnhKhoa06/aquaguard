@@ -22,6 +22,11 @@
   margin-bottom: 18px;
 }
 
+.compact-shell {
+  display: grid;
+  gap: 18px;
+}
+
 .hero-copy h1 {
   margin: 8px 0 6px;
   font-size: clamp(2rem, 3vw, 3rem);
@@ -231,6 +236,65 @@
   grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.95fr);
   gap: 18px;
   align-items: start;
+}
+
+.compact-shell .panel {
+  max-width: 920px;
+}
+
+.compact-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.compact-item,
+.compact-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.compact-item {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(13, 22, 36, 0.86);
+  border: 1px solid rgba(108, 133, 174, 0.12);
+}
+
+.compact-item .material-symbols-outlined {
+  color: #56d6ff;
+}
+
+.compact-item strong,
+.compact-footer strong {
+  color: #f3f8ff;
+}
+
+.compact-item p {
+  margin: 2px 0 0;
+  color: #8ca4c7;
+  font-size: 0.92rem;
+}
+
+.compact-footer {
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(110, 137, 181, 0.12);
+}
+
+.compact-empty {
+  min-height: 180px;
+}
+
+.active-request.compact {
+  padding: 18px;
+}
+
+.compact-item-row {
+  align-items: center;
 }
 
 .panel {

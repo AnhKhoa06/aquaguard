@@ -146,11 +146,54 @@
     </div>
   </div>
 
-  <!-- ===== TAB USERS (placeholder) ===== -->
+  <!-- ===== TAB USERS ===== -->
   <div class="tab-content" *ngIf="!loading && activeTab === 'users'">
-    <div class="coming-soon">
-      <span class="material-symbols-outlined">manage_accounts</span>
-      <p>User Management — đang phát triển</p>
+    <div class="users-header">
+      <div class="users-actions">
+        <input placeholder="Tìm theo tên hoặc số điện thoại" [(ngModel)]="userQuery" />
+        <button (click)="loadUsers()" class="btn">Tải lại</button>
+      </div>
+    </div>
+
+    <div class="users-table-wrap" *ngIf="!usersLoading">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Họ tên</th>
+            <th>Phone</th>
+            <th>Role</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let u of users | slice:0:200; let i = index" [hidden]="userQuery && !(u.full_name || '').toLowerCase().includes(userQuery.toLowerCase()) && !(u.phone||'').includes(userQuery)">
+            <td>{{ i + 1 }}</td>
+            <td>{{ u.full_name || '-' }}</td>
+            <td>{{ u.phone || '-' }}</td>
+            <td>
+              <select [value]="u.role" (change)="onChangeRole(u, $any($event.target).value)">
+                <option value="citizen">Citizen</option>
+                <option value="responder">Rescue Team</option>
+                <option value="admin">Admin</option>
+              </select>
+            </td>
+            <td>{{ u.health_status || '-' }}</td>
+            <td>
+              <button class="btn small" (click)="onDeleteUser(u)">Delete</button>
+            </td>
+          </tr>
+          <tr *ngIf="users.length === 0">
+            <td colspan="6" class="empty">Chưa có người dùng</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="usersLoading" class="loading-state">
+      <span class="material-symbols-outlined spin">autorenew</span>
+      <p>Đang tải danh sách người dùng...</p>
     </div>
   </div>
 

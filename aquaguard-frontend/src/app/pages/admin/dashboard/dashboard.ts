@@ -1,17 +1,19 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import * as L from 'leaflet';
 import { SosService } from '../../../core/services/sos.service';
+import { UserService } from '../../../core/services/user.service';
 import { FloodService } from '../../../core/services/flood.service';
 import { SafePipe } from '../../../core/pipes/safe.pipe';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, SafePipe],
+  imports: [CommonModule, RouterModule, FormsModule, SafePipe],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss'],
 })
@@ -19,6 +21,10 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
   activeTab: 'overview' | 'users' | 'teams' | 'map' = 'overview';
   loading = true;
   stats: any = null;
+  // Users
+  users: any[] = [];
+  usersLoading = false;
+  userQuery = '';
   private apiUrl = environment.apiUrl;
 
   // Map
@@ -47,6 +53,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
     private http: HttpClient,
     private sosService: SosService,
     private floodService: FloodService,
+    private userService: UserService,
   ) {}
 
   ngOnInit() {
@@ -72,6 +79,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
     });
   }
 
+  // ===== Users =====
   setTab(tab: 'overview' | 'users' | 'teams' | 'map') {
     // Nếu đang ở tab map mà chuyển sang tab khác → destroy map
     if (this.activeTab === 'map' && tab !== 'map') {
@@ -86,6 +94,44 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
     if (tab === 'map') {
       setTimeout(() => this.initMap(), 100);
     }
+
+    if (tab === 'users') {
+      this.loadUsers();
+    }
+  }
+
+  loadUsers() {
+    this.usersLoading = true;
+    this.userService.getAllUsers().subscribe({
+      next: (res) => {
+        if (res.success) this.users = res.data || [];
+        this.usersLoading = false;
+      },
+      error: () => (this.usersLoading = false),
+    });
+  }
+
+  onChangeRole(u: any, role: any) {
+    const prev = u.role;
+    u.role = role;
+    this.userService.updateRole(u.id, role).subscribe({
+      next: (res) => {
+        // success
+      },
+      error: () => {
+        u.role = prev; // rollback
+      },
+    });
+  }
+
+  onDeleteUser(u: any) {
+    if (!confirm(`Xoá người dùng "${u.full_name || u.phone}"?`)) return;
+    this.userService.deleteUser(u.id).subscribe({
+      next: (res) => {
+        this.users = this.users.filter((x) => x.id !== u.id);
+      },
+      error: () => alert('Xoá không thành công'),
+    });
   }
 
   private initMap() {

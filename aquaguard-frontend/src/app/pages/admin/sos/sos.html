@@ -1,0 +1,139 @@
+<div class="admin-sos-page">
+	<section class="page-header">
+		<div>
+			<span class="eyebrow"><span class="dot"></span><span>SOS</span></span>
+			<h1>Yêu cầu SOS</h1>
+			<p>Quản lý các yêu cầu SOS đang chờ, đang xử lý và đã hoàn tất.</p>
+		</div>
+
+		<button class="primary-btn" type="button" (click)="refreshNow()">
+			<span class="material-symbols-outlined">refresh</span>
+			<span>{{ refreshing ? 'Đang cập nhật' : 'Làm mới' }}</span>
+		</button>
+	</section>
+
+	<div class="feedback" *ngIf="feedbackMessage" [class.success]="feedbackType === 'success'" [class.error]="feedbackType === 'error'">
+		<span class="material-symbols-outlined">{{ feedbackType === 'success' ? 'check_circle' : 'error' }}</span>
+		<span>{{ feedbackMessage }}</span>
+	</div>
+
+	<section class="stats-grid">
+		<article class="stat-card accent">
+			<span class="stat-label">Tổng SOS</span>
+			<strong>{{ stats.total }}</strong>
+		</article>
+		<article class="stat-card amber">
+			<span class="stat-label">Đang chờ</span>
+			<strong>{{ stats.pending }}</strong>
+		</article>
+		<article class="stat-card blue">
+			<span class="stat-label">Đang xử lý</span>
+			<strong>{{ stats.in_progress }}</strong>
+		</article>
+		<article class="stat-card green">
+			<span class="stat-label">Hoàn tất</span>
+			<strong>{{ stats.resolved }}</strong>
+		</article>
+	</section>
+
+	<section class="toolbar">
+		<input
+			type="search"
+			placeholder="Tìm theo tên, địa chỉ hoặc đội cứu hộ"
+			[value]="searchQuery"
+			(input)="searchQuery = $any($event.target).value"
+		/>
+
+		<div class="filters">
+			<button type="button" class="filter-btn" [class.active]="filterStatus === 'all'" (click)="filterStatus = 'all'">Tất cả</button>
+			<button type="button" class="filter-btn" [class.active]="filterStatus === 'pending'" (click)="filterStatus = 'pending'">Chờ</button>
+			<button type="button" class="filter-btn" [class.active]="filterStatus === 'assigned'" (click)="filterStatus = 'assigned'">Phân công</button>
+			<button type="button" class="filter-btn" [class.active]="filterStatus === 'in_progress'" (click)="filterStatus = 'in_progress'">Đang xử lý</button>
+			<button type="button" class="filter-btn" [class.active]="filterStatus === 'resolved'" (click)="filterStatus = 'resolved'">Hoàn tất</button>
+		</div>
+	</section>
+
+	<div class="admin-sos-grid">
+		<section class="list-panel panel">
+			<div class="panel-head">
+				<div>
+					<span class="panel-kicker">DANH SÁCH</span>
+					<h2>{{ filteredRequests.length }} yêu cầu</h2>
+				</div>
+			</div>
+
+			<div class="loading-state" *ngIf="loading">
+				<div class="skeleton-card" *ngFor="let _ of [1, 2, 3]"></div>
+			</div>
+
+			<div class="list-empty" *ngIf="!loading && filteredRequests.length === 0">
+				<span class="material-symbols-outlined">inbox</span>
+				<p>Không có yêu cầu phù hợp</p>
+			</div>
+
+			<article
+				class="sos-row"
+				*ngFor="let request of filteredRequests"
+				[class.active]="selectedId === request.id"
+				(click)="selectRequest(request)"
+			>
+				<div class="row-main">
+					<div class="row-title">
+						<strong>#{{ request.id }} - {{ request.citizen_name || 'Ẩn danh' }}</strong>
+						<span class="status-pill" [ngClass]="getStatusTone(request.status)">{{ getStatusLabel(request.status) }}</span>
+					</div>
+					<p>{{ request.address || 'Chưa có địa chỉ' }}</p>
+				</div>
+
+				<div class="row-meta">
+					<span>{{ request.num_people }} người</span>
+					<span>{{ getUrgencyLabel(request.urgency_level) }}</span>
+				</div>
+			</article>
+		</section>
+
+		<aside class="detail-panel panel" *ngIf="selectedRequest; else noSelection">
+			<div class="panel-head compact">
+				<div>
+					<span class="panel-kicker">CHI TIẾT SOS</span>
+					<h2>#{{ selectedRequest.id }}</h2>
+				</div>
+				<span class="status-pill" [ngClass]="getStatusTone(selectedRequest.status)">{{ getStatusLabel(selectedRequest.status) }}</span>
+			</div>
+
+			<div class="detail-stack">
+				<div class="detail-card">
+					<span class="detail-label">Người gửi</span>
+					<strong>{{ selectedRequest.citizen_name || 'Ẩn danh' }}</strong>
+					<p>{{ selectedRequest.citizen_phone || 'Chưa có số điện thoại' }}</p>
+				</div>
+				<div class="detail-card">
+					<span class="detail-label">Địa chỉ</span>
+					<strong>{{ selectedRequest.address || 'Chưa có địa chỉ' }}</strong>
+					<p>{{ selectedRequest.num_people }} người • {{ getUrgencyLabel(selectedRequest.urgency_level) }}</p>
+				</div>
+				<div class="detail-card">
+					<span class="detail-label">Đội cứu hộ</span>
+					<strong>{{ selectedRequest.team_name || 'Chưa phân công' }}</strong>
+					<p>{{ getResponderLabel(selectedRequest) }}</p>
+				</div>
+			</div>
+
+			<div class="actions">
+				<button type="button" class="action-btn blue" (click)="updateStatus('in_progress')">Đang xử lý</button>
+				<button type="button" class="action-btn green" (click)="updateStatus('resolved')">Hoàn tất</button>
+				<button type="button" class="action-btn red" (click)="updateStatus('cancelled')">Hủy</button>
+			</div>
+		</aside>
+
+		<ng-template #noSelection>
+			<aside class="detail-panel panel">
+				<div class="empty-detail">
+					<span class="material-symbols-outlined">sos</span>
+					<h3>Chọn một yêu cầu SOS</h3>
+					<p>Chi tiết và thao tác xử lý sẽ hiện ở đây.</p>
+				</div>
+			</aside>
+		</ng-template>
+	</div>
+</div>

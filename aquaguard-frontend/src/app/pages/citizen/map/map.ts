@@ -9,6 +9,7 @@ import { SafePipe } from '../../../core/pipes/safe.pipe';
 import { SosRequest, Alert, User } from '../../../models/interfaces';
 import { FloodService } from '../../../core/services/flood.service';
 import { HttpClient } from '@angular/common/http';
+import { ShelterService } from '../../../core/services/shelter.service';
 import { forkJoin } from 'rxjs';
 @Component({
   selector: 'app-map',
@@ -25,6 +26,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   private userCircle: L.Circle | null = null;
 
   private floodLayers: any[] = [];
+  private shelterMarkers: L.Marker[] = [];
 
   sosList: SosRequest[] = [];
   alerts: Alert[] = [];
@@ -60,6 +62,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     private familyService: FamilyService,
     private floodService: FloodService,
     private http: HttpClient,
+    private shelterService: ShelterService,
   ) {}
 
   ngOnInit() {
@@ -68,6 +71,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadFamily();
     this.loadWeatherAlerts();
     this.loadFloodData();
+    this.loadShelters();
     this.locateMe();
   }
 
@@ -290,6 +294,52 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       error: (err) => {
         console.log('flood error:', err); // ← thêm dòng này
       },
+    });
+  }
+
+  private loadShelters() {
+    this.shelterService.getAll().subscribe({
+      next: (res) => {
+        if (res.success) {
+          const list = res.data || [];
+          // store and render if map already initialized
+          this.renderShelterMarkers(list);
+        }
+      },
+      error: (err) => {
+        console.log('shelters error:', err);
+      },
+    });
+  }
+
+  private renderShelterMarkers(list: any[]) {
+    // remove old markers
+    this.shelterMarkers.forEach((m) => m.remove());
+    this.shelterMarkers = [];
+
+    list.forEach((s) => {
+      if (!s.latitude || !s.longitude) return;
+
+      const statusColor = s.current_count >= s.capacity ? '#ef4444' : '#10b981';
+
+      const icon = L.divIcon({
+        className: '',
+        html: `<div style="width:18px;height:18px;border-radius:50%;background:${statusColor};border:2px solid #fff;box-shadow:0 1px 6px rgba(0,0,0,0.3)"></div>`,
+        iconSize: [18, 18],
+        iconAnchor: [9, 9],
+      });
+
+      const marker = L.marker([s.latitude, s.longitude], { icon })
+        .bindPopup(`
+          <div style="min-width:180px;font-family:inherit;padding:8px">
+            <strong style="display:block;color:#e2e8f0">${s.name}</strong>
+            <div style="font-size:12px;color:#94a3b8">${s.address || ''}</div>
+            <div style="margin-top:8px;font-size:12px;color:#cbd5e1">Sức chứa: ${s.current_count}/${s.capacity}</div>
+          </div>
+        `)
+        .addTo(this.map);
+
+      this.shelterMarkers.push(marker);
     });
   }
 
