@@ -171,7 +171,7 @@
       color: #ffffff;
 
       .highlight {
-        color: #00bcd4;
+        color: var(--primary);
       }
     }
 
@@ -204,7 +204,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #00bcd4;
+        color: var(--primary);
         flex-shrink: 0;
 
         mat-icon {
@@ -405,7 +405,7 @@
 
   a {
     font-size: 13px;
-    color: #00bcd4;
+    color: var(--primary);
     text-decoration: none;
 
     &:hover {
@@ -464,7 +464,7 @@
   color: #8899aa;
 
   a {
-    color: #00bcd4;
+    color: var(--primary);
     text-decoration: none;
     font-weight: 500;
 

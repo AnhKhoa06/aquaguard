@@ -10,8 +10,9 @@
 :root,
 body,
 body.theme-dark {
+  --primary: rgb(17, 160, 182);
   --color-bg: #071c1f;
-  --color-main: #0f172a;
+  --color-main: rgba(15, 23, 42, 0.5);
   --color-sidebar: #111f21;
   --color-card: #0f1f35;
   --color-card-2: #1a2332;
@@ -40,21 +41,26 @@ body.theme-dark {
   --color-action-card: #1e2333;
   --color-alert-card: #1e2333;
   --color-safety-item: #1a2535;
-  --color-settings-card: #1a2332;
-  --color-settings-input: #0f172a;
-  --color-settings-border: #2d3f55;
-  --color-settings-text-secondary: #94a3b8;
+  --color-settings-card: rgba(30, 41, 59, 0.5);
+  --color-settings-input: rgba(15, 23, 42, 0.8);
+  --color-settings-border: #334155;
+  --color-settings-text-secondary: #64748b;
   --color-member-item: #0f1f35;
   --color-member-border: #1e3555;
   --color-add-member-form: #0f1f35;
   --color-health-btn: #2a3a50;
   --color-health-note: #0a1e35;
   --color-health-note-border: #1e3555;
+  --color-invite-item: rgba(30, 41, 59, 0.5);
+  --color-invite-border: rgba(51, 65, 85, 0.3);
+  --color-invite-reject: #334155;
+  --color-invite-reject-text: #94a3b8;
 }
 
 body.theme-light {
+  --primary: rgb(17, 160, 182);
   --color-bg: #f0f4f8;
-  --color-main: #f1f5f9;
+  --color-main: #f8fafc;
   --color-sidebar: #ffffff;
   --color-card: #ffffff;
   --color-card-2: #f8fafc;
@@ -86,13 +92,31 @@ body.theme-light {
   --color-settings-card: #ffffff;
   --color-settings-input: #f1f5f9;
   --color-settings-border: #e2e8f0;
-  --color-settings-text-secondary: #475569;
+  --color-settings-text-secondary: #64748b;
   --color-member-item: #f8fafc;
   --color-member-border: #e2e8f0;
   --color-add-member-form: #f8fafc;
   --color-health-btn: #e2e8f0;
   --color-health-note: #f8fafc;
   --color-health-note-border: #e2e8f0;
+  --color-invite-item: rgba(255, 255, 255, 0.8);
+  --color-invite-border: #e2e8f0;
+  --color-invite-reject: #e2e8f0;
+  --color-invite-reject-text: #64748b;
+  .leaflet-control-zoom {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .leaflet-control-zoom-in,
+  .leaflet-control-zoom-out {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    &:hover {
+      background: #f1f5f9 !important;
+      color: #0f172a !important;
+    }
+  }
 }
 
 html,
@@ -252,18 +276,42 @@ button {
 
 /* Animation */
 @keyframes toastBounceIn {
-  0% { transform: translateX(120%); opacity: 0; }
-  55% { transform: translateX(-8px); opacity: 1; }
-  75% { transform: translateX(4px); }
-  90% { transform: translateX(-2px); }
-  100% { transform: translateX(0); }
+  0% {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  55% {
+    transform: translateX(-8px);
+    opacity: 1;
+  }
+  75% {
+    transform: translateX(4px);
+  }
+  90% {
+    transform: translateX(-2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
 @keyframes toastFadeOut {
-  0% { transform: translateX(0); opacity: 1; }
-  20% { transform: translateX(-20px); opacity: 1; }
-  21% { transform: translateX(-20px); opacity: 1; }
-  100% { transform: translateX(150%); opacity: 0; }
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  20% {
+    transform: translateX(-20px);
+    opacity: 1;
+  }
+  21% {
+    transform: translateX(-20px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(150%);
+    opacity: 0;
+  }
 }
 
 .toast-container .ngx-toastr {
@@ -331,4 +379,12 @@ button {
 .sos-popup-wrap .leaflet-popup-close-button:hover {
   color: #f1f5f9 !important;
   background: none !important;
+}
+
+body.theme-dark {
+  color-scheme: dark;
+}
+
+body.theme-light {
+  color-scheme: light;
 }

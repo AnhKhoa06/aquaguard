@@ -83,47 +83,60 @@
       <div class="card-header">
         <span class="material-symbols-outlined card-icon">group</span>
         <h2 class="card-title">An toàn gia đình</h2>
+        <span class="member-count" *ngIf="familyMembers.length > 0">
+          {{ familyMembers.length }} thành viên
+        </span>
       </div>
-      <div class="card-body">
-        <!-- Loading -->
-        <div class="empty-state" *ngIf="loadingFamily">
-          <span class="material-symbols-outlined loading-icon">autorenew</span>
-          <p>Đang tải...</p>
-        </div>
-        <!-- Empty state -->
-        <div class="empty-state" *ngIf="!loadingFamily && familyMembers.length === 0">
-          <span class="material-symbols-outlined empty-icon">group_add</span>
-          <p class="empty-title">Chưa có thành viên gia đình</p>
-          <p class="empty-sub">Kết nối với gia đình để theo dõi tình trạng an toàn</p>
-          <button
-            class="btn-primary"
-            [routerLink]="['/settings']"
-            [queryParams]="{ tab: 'family' }"
-          >
-            <span class="material-symbols-outlined">person_add</span>
-            Thêm người thân
-          </button>
-        </div>
-        <!-- Family members list -->
-        <div class="family-list" *ngIf="!loadingFamily && familyMembers.length > 0">
-          <div class="family-item" *ngFor="let member of familyMembers">
-            <div class="member-avatar">{{ getInitials(member.full_name) }}</div>
-            <div class="member-info">
-              <span class="member-name">{{ member.full_name }}</span>
-              <span class="member-phone">{{ member.phone }}</span>
+
+      <!-- Loading -->
+      <div class="empty-state" *ngIf="loadingFamily">
+        <span class="material-symbols-outlined loading-icon">autorenew</span>
+        <p>Đang tải...</p>
+      </div>
+      <!-- Empty state -->
+      <div class="empty-state" *ngIf="!loadingFamily && familyMembers.length === 0">
+        <span class="material-symbols-outlined empty-icon">group_add</span>
+        <p class="empty-title">Chưa có thành viên gia đình</p>
+        <p class="empty-sub">Kết nối với gia đình để theo dõi tình trạng an toàn</p>
+        <button class="btn-primary" [routerLink]="['/settings']" [queryParams]="{ tab: 'family' }">
+          <span class="material-symbols-outlined">person_add</span>
+          Thêm người thân
+        </button>
+      </div>
+      <!-- Family members list -->
+      <div class="family-list" *ngIf="!loadingFamily && familyMembers.length > 0">
+        <div class="family-item" *ngFor="let member of familyMembers">
+          <!-- Avatar + status dot -->
+          <div class="member-avatar-wrap">
+            <div class="member-avatar" [ngClass]="'ring-' + getHealthClass(member.health_status)">
+              {{ getInitials(member.full_name) }}
             </div>
-            <span class="health-badge" [ngClass]="getHealthClass(member.health_status)">
-              {{ getHealthLabel(member.health_status) }}
-            </span>
+            <span class="member-status-dot" [ngClass]="getHealthClass(member.health_status)"></span>
           </div>
-          <button
-            class="btn-outline add-member-btn"
-            [routerLink]="['/settings']"
-            [queryParams]="{ tab: 'family' }"
-          >
-            <span class="material-symbols-outlined">person_add</span>
-            Thêm người thân
-          </button>
+
+          <!-- Info -->
+          <div class="member-info">
+            <div class="member-name-row">
+              <span class="member-name">{{ member.full_name }}</span>
+              <span class="member-relation" *ngIf="member.relationship"
+                >({{ member.relationship }})</span
+              >
+            </div>
+            <div class="member-health-row">
+              <span class="member-health-label" [ngClass]="getHealthClass(member.health_status)">
+                <span class="material-symbols-outlined">{{
+                  getHealthIcon(member.health_status)
+                }}</span>
+                {{ getHealthLabel(member.health_status) }}
+              </span>
+              <span class="member-time">• {{ getTimeAgo(member.updated_at) }}</span>
+            </div>
+          </div>
+
+          <!-- Health icon box -->
+          <div class="member-health-box" [ngClass]="getHealthClass(member.health_status)">
+            <span class="material-symbols-outlined">{{ getHealthIcon(member.health_status) }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -161,6 +174,30 @@
           </div>
           <span class="quick-btn-label">Bản đồ</span>
           <span class="quick-btn-sub">Xem tình hình lũ</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lời mời kết nối -->
+  <div class="invites-card" *ngIf="invites.length > 0">
+    <div class="card-header">
+      <span class="material-symbols-outlined card-icon" style="color: #00bcd4">mail</span>
+      <h2 class="card-title">Lời mời kết nối</h2>
+      <span class="invites-count">{{ invites.length }}</span>
+    </div>
+    <div class="card-body">
+      <div class="invite-item" *ngFor="let invite of invites">
+        <div class="invite-avatar">{{ invite.from_name.charAt(0).toUpperCase() }}</div>
+        <div class="invite-info">
+          <div class="invite-name">{{ invite.from_name }}</div>
+          <div class="invite-meta">{{ invite.from_phone }} • {{ invite.relationship }}</div>
+        </div>
+        <button class="accept-btn" (click)="acceptInvite(invite.id)">
+          <span class="material-symbols-outlined">check</span>
+        </button>
+        <button class="reject-btn" (click)="rejectInvite(invite.id)">
+          <span class="material-symbols-outlined">close</span>
         </button>
       </div>
     </div>

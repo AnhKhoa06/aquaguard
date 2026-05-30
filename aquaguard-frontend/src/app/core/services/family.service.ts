@@ -4,6 +4,23 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ApiResponse, User } from '../../models/interfaces';
 
+export interface FamilyInvite {
+  id: number;
+  from_user_id: number;
+  to_user_id: number;
+  from_name: string;
+  from_phone: string;
+  relationship: string;
+  status: string;
+  created_at: string;
+}
+
+export interface SearchResult {
+  id: number;
+  full_name: string;
+  phone: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class FamilyService {
   private apiUrl = environment.apiUrl;
@@ -14,8 +31,27 @@ export class FamilyService {
     return this.http.get<ApiResponse<User[]>>(`${this.apiUrl}/family`);
   }
 
-  addMember(phone: string): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/family`, { phone });
+  searchByPhone(phone: string): Observable<ApiResponse<SearchResult>> {
+    return this.http.post<ApiResponse<SearchResult>>(`${this.apiUrl}/family/search`, { phone });
+  }
+
+  sendInvite(to_user_id: number, relationship: string): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/family/invite`, {
+      to_user_id,
+      relationship,
+    });
+  }
+
+  getInvites(): Observable<ApiResponse<FamilyInvite[]>> {
+    return this.http.get<ApiResponse<FamilyInvite[]>>(`${this.apiUrl}/family/invites`);
+  }
+
+  acceptInvite(inviteId: number): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/family/invites/${inviteId}/accept`, {});
+  }
+
+  rejectInvite(inviteId: number): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/family/invites/${inviteId}/reject`, {});
   }
 
   removeMember(memberId: number): Observable<ApiResponse<any>> {

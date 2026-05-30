@@ -109,7 +109,7 @@
     <!-- Trạng thái sức khỏe -->
     <div class="form-card">
       <div class="form-card-title">
-        <span class="material-symbols-outlined" style="color: #00bcd4">verified_user</span>
+        <span class="material-symbols-outlined" style="color: var(--primary)">verified_user</span>
         Trạng thái của tôi
       </div>
       <div class="health-btns">
@@ -160,7 +160,7 @@
         </button>
       </div>
 
-      <!-- Form thêm người thân -->
+      <!-- Form tìm kiếm -->
       <div class="add-member-form" *ngIf="showAddMember">
         <div class="add-member-header">
           <span class="material-symbols-outlined">person_search</span>
@@ -170,14 +170,61 @@
           <input
             type="text"
             [(ngModel)]="newMemberPhone"
-            placeholder="Nhập SĐT (VD: 0901234567 hoặc +84901234567)"
-            (keyup.enter)="addMember()"
+            placeholder="Nhập SĐT (VD: 0901234567)"
+            (keyup.enter)="searchMember()"
           />
-          <button class="search-btn" (click)="addMember()" [disabled]="addingMember">
-            <span class="material-symbols-outlined">{{ addingMember ? 'sync' : 'search' }}</span>
+          <button class="search-btn" (click)="searchMember()" [disabled]="searching">
+            <span class="material-symbols-outlined">{{ searching ? 'sync' : 'search' }}</span>
           </button>
         </div>
-        <button class="btn-cancel" (click)="showAddMember = false">Đóng</button>
+
+        <!-- Lỗi không tìm thấy -->
+        <div class="search-error" *ngIf="searchError">
+          <span class="material-symbols-outlined">error</span>
+          {{ searchError }}
+        </div>
+
+        <!-- Kết quả tìm kiếm -->
+        <div class="search-result" *ngIf="searchResult">
+          <div class="search-result-avatar">
+            {{ searchResult.full_name.charAt(0).toUpperCase() }}
+          </div>
+          <div class="search-result-info">
+            <div class="search-result-name">{{ searchResult.full_name }}</div>
+            <div class="search-result-phone">{{ searchResult.phone }}</div>
+          </div>
+          <input
+            type="text"
+            class="relationship-input"
+            [(ngModel)]="relationship"
+            placeholder="Quan hệ (VD: Bố, Mẹ...)"
+          />
+          <button class="connect-btn" (click)="sendInvite()">Kết nối</button>
+        </div>
+
+        <button
+          class="btn-cancel"
+          (click)="showAddMember = false; searchResult = null; searchError = ''"
+        >
+          Đóng
+        </button>
+      </div>
+
+      <!-- Lời mời đang chờ -->
+      <div class="invites-section" *ngIf="invites.length > 0">
+        <div class="invites-header">
+          <span class="material-symbols-outlined">notifications</span>
+          <span>LỜI MỜI ĐANG CHỜ ({{ invites.length }})</span>
+        </div>
+        <div class="invite-item" *ngFor="let invite of invites">
+          <div class="invite-avatar">{{ invite.from_name.charAt(0).toUpperCase() }}</div>
+          <div class="invite-info">
+            <div class="invite-name">{{ invite.from_name }}</div>
+            <div class="invite-meta">{{ invite.from_phone }} • {{ invite.relationship }}</div>
+          </div>
+          <button class="accept-btn" (click)="acceptInvite(invite.id)">Chấp nhận</button>
+          <button class="reject-btn" (click)="rejectInvite(invite.id)">Từ chối</button>
+        </div>
       </div>
 
       <!-- Loading -->
@@ -187,18 +234,29 @@
       </div>
 
       <!-- Empty -->
-      <div class="empty-state" *ngIf="!loadingFamily && familyMembers.length === 0">
+      <div
+        class="empty-state"
+        *ngIf="!loadingFamily && familyMembers.length === 0 && invites.length === 0"
+      >
         <span class="material-symbols-outlined empty-icon">group_off</span>
         <p class="empty-title">Chưa có người thân nào. Nhấn "Thêm người thân" để bắt đầu.</p>
       </div>
 
-      <!-- Danh sách -->
+      <!-- Danh sách người thân -->
       <div class="member-list" *ngIf="!loadingFamily && familyMembers.length > 0">
         <div class="member-item" *ngFor="let member of familyMembers">
           <div class="member-avatar">{{ getMemberInitial(member.full_name) }}</div>
           <div class="member-info">
             <div class="member-name">{{ member.full_name }}</div>
-            <div class="member-phone">{{ member.phone }}</div>
+            <div class="member-relation">{{ member.relationship || '' }}</div>
+            <div class="member-phone">
+              <span class="material-symbols-outlined">phone</span>
+              {{ member.phone }}
+            </div>
+            <div class="member-address" *ngIf="member.address">
+              <span class="material-symbols-outlined">location_on</span>
+              {{ member.address }}
+            </div>
           </div>
           <span class="health-badge" [ngClass]="getHealthClass(member.health_status)">
             {{ getHealthLabel(member.health_status) }}

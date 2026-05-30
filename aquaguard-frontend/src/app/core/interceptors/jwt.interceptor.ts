@@ -8,15 +8,18 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   console.log('Interceptor:', req.method, req.url); // ← thêm dòng này
   const authService = inject(AuthService);
   const router = inject(Router);
-  const token = authService.getToken();
+
+  const token = authService.getToken(); //lấy token từ localStorage
 
   const cloned = token
     ? req.clone({
-        headers: req.headers.set('Authorization', `Bearer ${token}`),
+        //tạo bản sao request
+        headers: req.headers.set('Authorization', `Bearer ${token}`), //kẹp token vào
       })
-    : req;
+    : req; //không có token thì giữ nguyên
 
   return next(cloned).pipe(
+    //gửi đi bản sao đã có token
     catchError((err: HttpErrorResponse) => {
       // Bỏ qua refresh-token và logout để tránh loop vô hạn
       const isAuthRequest =

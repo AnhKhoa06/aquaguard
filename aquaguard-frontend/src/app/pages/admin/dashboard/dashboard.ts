@@ -258,7 +258,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   getAvatarColor(name: string): string {
-    const colors = ['#00bcd4', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+    const colors = ['var(--primary)', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
     return colors[name.charCodeAt(0) % colors.length];
   }
 }

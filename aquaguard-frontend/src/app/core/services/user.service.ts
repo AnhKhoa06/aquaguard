@@ -17,4 +17,7 @@ export class UserService {
     console.log('updateProfile called', data); // ← thêm
     return this.http.put<ApiResponse<User>>(`${this.apiUrl}/users/profile`, data);
   }
+  updateHealth(health_status: string): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/users/health`, { health_status });
+  }
 }

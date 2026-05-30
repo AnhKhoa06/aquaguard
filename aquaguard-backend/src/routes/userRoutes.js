@@ -41,9 +41,10 @@ router.put("/profile", authMiddleware, async (req, res) => {
       emergency_contact,
       latitude,
       longitude,
+      health_status, // ← thêm
     } = req.body;
 
-    const result = await db.query(
+    await db.query(
       `UPDATE users SET
         full_name = ?,
         email = ?,
@@ -52,7 +53,8 @@ router.put("/profile", authMiddleware, async (req, res) => {
         address = ?,
         emergency_contact = ?,
         latitude = ?,
-        longitude = ?
+        longitude = ?,
+        health_status = COALESCE(?, health_status)
        WHERE id = ?`,
       [
         full_name,
@@ -63,6 +65,7 @@ router.put("/profile", authMiddleware, async (req, res) => {
         emergency_contact || null,
         latitude || null,
         longitude || null,
+        health_status || null, // ← thêm
         req.user.id,
       ],
     );
@@ -77,6 +80,27 @@ router.put("/profile", authMiddleware, async (req, res) => {
     );
 
     res.json({ success: true, message: "Cập nhật thành công.", data: rows[0] });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Lỗi server." });
+  }
+});
+
+// PUT /api/users/health
+router.put("/health", authMiddleware, async (req, res) => {
+  try {
+    const { health_status } = req.body;
+    const validStatus = ["safe", "danger", "injured", "unknown"];
+
+    if (!health_status || !validStatus.includes(health_status)) {
+      return res.json({ success: false, message: "Trạng thái không hợp lệ!" });
+    }
+
+    await db.query("UPDATE users SET health_status = ? WHERE id = ?", [
+      health_status,
+      req.user.id,
+    ]);
+
+    res.json({ success: true, message: "Cập nhật trạng thái thành công!" });
   } catch (err) {
     res.status(500).json({ success: false, message: "Lỗi server." });
   }

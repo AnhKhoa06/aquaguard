@@ -27,7 +27,7 @@
 
 .page-icon {
   font-size: 28px;
-  color: #00bcd4;
+  color: var(--primary);
 }
 
 .page-title {
@@ -75,7 +75,7 @@
   }
 
   &.active {
-    background: #00bcd4;
+    background: var(--primary);
     color: #ffffff;
     border-color: transparent;
   }
@@ -92,7 +92,7 @@
 
   .material-symbols-outlined {
     font-size: 36px;
-    color: #00bcd4;
+    color: var(--primary);
   }
 }
 
@@ -142,11 +142,11 @@
     background: rgba(0, 188, 212, 0.08);
     border-color: rgba(0, 188, 212, 0.2);
     .stat-card-icon {
-      color: #00bcd4;
+      color: var(--primary);
       background: rgba(0, 188, 212, 0.12);
     }
     &::before {
-      background: #00bcd4;
+      background: var(--primary);
     }
   }
 
@@ -245,7 +245,7 @@
 
 .card-icon {
   font-size: 20px;
-  color: #00bcd4;
+  color: var(--primary);
 }
 
 .card-title {
@@ -285,7 +285,7 @@
   font-size: 20px;
 
   &.teal {
-    color: #00bcd4;
+    color: var(--primary);
   }
   &.green {
     color: #10b981;
@@ -494,7 +494,7 @@
     gap: 6px;
     font-size: 10px;
     font-weight: 700;
-    color: #00bcd4;
+    color: var(--primary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin: 0 0 4px;
@@ -619,7 +619,7 @@
 
   .material-symbols-outlined {
     font-size: 16px;
-    color: #00bcd4;
+    color: var(--primary);
   }
 }
 
@@ -643,8 +643,8 @@
   }
 
   &.active {
-    background: #00bcd4;
-    border-color: #00bcd4;
+    background: var(--primary);
+    border-color: var(--primary);
     color: #ffffff;
   }
   &:hover:not(.active) {
@@ -688,7 +688,7 @@
   .check-icon {
     margin-left: auto;
     font-size: 18px;
-    color: #00bcd4;
+    color: var(--primary);
   }
 
   &.active {
@@ -697,5 +697,194 @@
   &:hover {
     background: rgba(0, 188, 212, 0.08);
     color: #ffffff;
+  }
+}
+
+// ========== LIGHT THEME OVERRIDES ==========
+:host-context(body.theme-light) {
+  .admin-wrapper {
+    background: var(--bg-main);
+  }
+
+  .page-title {
+    color: #0f172a;
+  }
+  .page-subtitle {
+    color: #64748b;
+  }
+
+  .tab-btn {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    &:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+      border-color: #cbd5e1;
+    }
+    &.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: transparent;
+    }
+  }
+
+  .loading-state {
+    color: #64748b;
+  }
+
+  // Stat cards — giữ nguyên màu nền tông pastel, chỉ đổi số và label
+  .stat-number {
+    color: #0f172a;
+  }
+  .stat-label {
+    color: #64748b;
+  }
+
+  // Card
+  .card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+  }
+  .card-title {
+    color: #0f172a;
+  }
+
+  // Status rows
+  .status-row {
+    background: rgba(0, 0, 0, 0.02);
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+  }
+  .status-row-label {
+    color: #475569;
+  }
+  .status-row-value {
+    color: #0f172a;
+  }
+
+  // Team list
+  .team-item {
+    background: rgba(0, 0, 0, 0.02);
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+  }
+  .team-name {
+    color: #0f172a;
+  }
+  .team-phone {
+    color: #64748b;
+  }
+
+  // Empty / coming soon
+  .empty-state {
+    color: #94a3b8;
+  }
+  .coming-soon {
+    color: #94a3b8;
+    .material-symbols-outlined {
+      color: #e2e8f0;
+    }
+  }
+
+  // Admin map
+  .admin-map-wrap {
+    border: 1px solid #e2e8f0;
+  }
+
+  .map-legend {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(0, 188, 212, 0.2);
+    .legend-title {
+      color: var(--primary);
+    }
+    .legend-item {
+      color: #475569;
+    }
+  }
+
+  .map-fab {
+    background: rgba(255, 255, 255, 0.92);
+    color: #475569;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    &:hover {
+      color: #0f172a;
+    }
+
+    &.windy-fab {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+      &:hover {
+        color: #0f172a;
+      }
+      &.active {
+        background: var(--primary) !important;
+        color: #ffffff !important;
+        border: none !important;
+        box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3) !important;
+      }
+    }
+
+    &.flood-fab {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+      &.active {
+        background: #f59e0b !important;
+        color: #ffffff !important;
+        border: none !important;
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3) !important;
+      }
+      &:hover:not(.active) {
+        color: #0f172a;
+      }
+    }
+  }
+
+  .windy-popup {
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid #e2e8f0;
+    .windy-popup-header {
+      color: #64748b;
+    }
+    .windy-popup-layers-title {
+      color: #64748b;
+    }
+  }
+
+  .windy-popup-toggle {
+    color: #475569;
+    border-color: rgba(0, 188, 212, 0.2);
+    background: rgba(0, 188, 212, 0.06);
+    &.active {
+      background: var(--primary);
+      color: #ffffff;
+    }
+    &:hover:not(.active) {
+      background: rgba(0, 188, 212, 0.1);
+      color: #0f172a;
+    }
+  }
+
+  .windy-popup-layer-item {
+    color: #475569;
+    &.active {
+      color: #0f172a;
+    }
+    &:hover {
+      background: rgba(0, 188, 212, 0.08);
+      color: #0f172a;
+    }
+  }
+
+  .sos-popup-wrap .leaflet-popup-content-wrapper {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+  .sos-popup-wrap .leaflet-popup-tip {
+    background: #ffffff !important;
   }
 }

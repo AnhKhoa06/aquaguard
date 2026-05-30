@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { SosService } from '../../../core/services/sos.service';
-import { FamilyService } from '../../../core/services/family.service';
+import { FamilyService, FamilyInvite } from '../../../core/services/family.service';
 import { User, SosRequest } from '../../../models/interfaces';
+import { UserService } from '../../../core/services/user.service';
 
 @Component({
   selector: 'app-citizen-dashboard',
@@ -23,10 +24,14 @@ export class DashboardComponent implements OnInit {
   loadingSos = true;
   selectedStatus = '';
 
+  invites: FamilyInvite[] = [];
+  loadingInvites = false;
+
   constructor(
     private authService: AuthService,
     private sosService: SosService,
     private familyService: FamilyService,
+    private userService: UserService,
   ) {}
 
   ngOnInit() {
@@ -35,10 +40,42 @@ export class DashboardComponent implements OnInit {
     this.selectedStatus = this.currentUser?.health_status || '';
     this.loadMySos();
     this.loadFamily();
+    this.loadInvites();
   }
 
   setStatus(status: string) {
     this.selectedStatus = status;
+    this.userService.updateHealth(status).subscribe({
+      next: (res) => {
+        if (res.success) {
+          const user = this.authService.getCurrentUser();
+          if (user) {
+            user.health_status = status as 'safe' | 'danger' | 'injured' | 'unknown';
+            localStorage.setItem('user', JSON.stringify(user));
+          }
+        }
+      },
+      error: (err) => console.log('update health error:', err),
+    });
+  }
+
+  getHealthIcon(status: string): string {
+    const map: Record<string, string> = {
+      safe: 'check',
+      danger: 'warning',
+      injured: 'healing',
+      unknown: 'help_outline',
+    };
+    return map[status] || 'help_outline';
+  }
+
+  getTimeAgo(dateStr: string | undefined): string {
+    if (!dateStr) return '';
+    const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 60000);
+    if (diff < 1) return 'vừa xong';
+    if (diff < 60) return `${diff} phút trước`;
+    if (diff < 1440) return `${Math.floor(diff / 60)} giờ trước`;
+    return `${Math.floor(diff / 1440)} ngày trước`;
   }
 
   loadMySos() {
@@ -72,6 +109,36 @@ export class DashboardComponent implements OnInit {
       error: () => {
         this.loadingFamily = false;
       },
+    });
+  }
+
+  loadInvites() {
+    this.loadingInvites = true;
+    this.familyService.getInvites().subscribe({
+      next: (res) => {
+        if (res.success) this.invites = res.data;
+        this.loadingInvites = false;
+      },
+      error: () => {
+        this.loadingInvites = false;
+      },
+    });
+  }
+
+  acceptInvite(inviteId: number) {
+    this.familyService.acceptInvite(inviteId).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.loadInvites();
+          this.loadFamily();
+        }
+      },
+    });
+  }
+
+  rejectInvite(inviteId: number) {
+    this.familyService.rejectInvite(inviteId).subscribe({
+      next: () => this.loadInvites(),
     });
   }
 

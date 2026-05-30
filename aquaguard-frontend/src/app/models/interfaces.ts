@@ -11,7 +11,9 @@ export interface User {
   emergency_contact?: string;
   latitude?: number;
   longitude?: number;
+  relationship?: string;
   created_at: string;
+  updated_at?: string;
 }
 
 export interface SosRequest {

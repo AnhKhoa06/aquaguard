@@ -8,7 +8,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { User } from '../../models/interfaces';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { FamilyService } from '../../core/services/family.service';
+import { FamilyService, FamilyInvite, SearchResult } from '../../core/services/family.service';
 import { ThemeService, Theme } from '../../core/services/theme.service';
 import { ActivatedRoute } from '@angular/router';
 
@@ -53,6 +53,13 @@ export class SettingsComponent implements OnInit {
 
   tabs: { key: Tab; label: string; icon: string }[] = [];
 
+  searchResult: SearchResult | null = null;
+  searchError = '';
+  searching = false;
+  relationship = '';
+  invites: FamilyInvite[] = [];
+  loadingInvites = false;
+
   constructor(
     private toastr: ToastrService,
     private cdr: ChangeDetectorRef,
@@ -77,6 +84,8 @@ export class SettingsComponent implements OnInit {
         this.activeTab = params['tab'] as Tab;
       }
     });
+
+    this.loadInvites();
   }
 
   loadProfile() {
@@ -128,6 +137,19 @@ export class SettingsComponent implements OnInit {
   }
   setHealth(status: string) {
     this.selectedHealth = status;
+    this.userService.updateHealth(status).subscribe({
+      next: (res: any) => {
+        if (res.success) {
+          this.toastr.success('Đã cập nhật trạng thái!', 'Thành công');
+          const user = this.authService.getCurrentUser();
+          if (user) {
+            const updated = { ...user, health_status: status };
+            localStorage.setItem('user', JSON.stringify(updated)); //Cập nhật localStorage
+            this.authService['currentUserSubject'].next(updated as any); //và BehaviorSubject
+          }
+        }
+      },
+    });
   }
   setTab(tab: Tab) {
     this.activeTab = tab;
@@ -269,29 +291,6 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-  addMember() {
-    if (!this.newMemberPhone.trim()) return;
-    this.addingMember = true;
-    this.familyService.addMember(this.newMemberPhone.trim()).subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.toastr.success('Đã thêm người thân!', 'Thành công');
-          this.newMemberPhone = '';
-          this.loadFamily();
-        } else {
-          this.toastr.error(res.message || 'Không tìm thấy người dùng!', 'Thất bại');
-        }
-        this.addingMember = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.toastr.error('Không thể kết nối server!', 'Lỗi');
-        this.addingMember = false;
-        this.cdr.detectChanges();
-      },
-    });
-  }
-
   removeMember(memberId: number) {
     this.familyService.removeMember(memberId).subscribe({
       next: (res) => {
@@ -337,5 +336,92 @@ export class SettingsComponent implements OnInit {
   setTheme(theme: Theme) {
     this.selectedTheme = theme;
     this.themeService.apply(theme);
+  }
+
+  //family invites
+
+  searchMember() {
+    if (!this.newMemberPhone.trim()) return;
+    this.searching = true;
+    this.searchResult = null;
+    this.searchError = '';
+    this.relationship = '';
+
+    this.familyService.searchByPhone(this.newMemberPhone.trim()).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.searchResult = res.data;
+        } else {
+          this.searchError = res.message || 'Không tìm thấy người dùng!';
+        }
+        this.searching = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.searchError = 'Không thể kết nối server!';
+        this.searching = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  sendInvite() {
+    if (!this.searchResult) return;
+    this.familyService.sendInvite(this.searchResult.id, this.relationship).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.toastr.success(res.message, 'Thành công');
+          this.showAddMember = false;
+          this.searchResult = null;
+          this.newMemberPhone = '';
+          this.relationship = '';
+        } else {
+          this.toastr.warning(res.message, 'Thông báo');
+        }
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.toastr.error('Không thể kết nối server!', 'Lỗi');
+      },
+    });
+  }
+
+  loadInvites() {
+    this.loadingInvites = true;
+    this.familyService.getInvites().subscribe({
+      next: (res) => {
+        if (res.success) this.invites = res.data;
+        this.loadingInvites = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.loadingInvites = false;
+      },
+    });
+  }
+
+  acceptInvite(inviteId: number) {
+    this.familyService.acceptInvite(inviteId).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.toastr.success('Đã chấp nhận lời mời!', 'Thành công');
+          this.loadInvites();
+          this.loadFamily();
+        }
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  rejectInvite(inviteId: number) {
+    this.familyService.rejectInvite(inviteId).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.toastr.success('Đã từ chối lời mời!', 'Thông báo');
+          this.loadInvites();
+        }
+        this.cdr.detectChanges();
+      },
+    });
   }
 }
