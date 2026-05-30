@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { finalize } from 'rxjs';
+import * as L from 'leaflet';
 
 import { AuthService } from '../../../core/services/auth.service';
 import { SosService } from '../../../core/services/sos.service';
@@ -20,11 +21,29 @@ type UrgencyLevel = 'low' | 'medium' | 'high' | 'critical';
   styleUrl: './sos.scss',
 })
 export class SosComponent implements OnInit, OnDestroy {
+  private readonly trackIcon = L.icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  });
+  private readonly citizenIcon = L.icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  });
+
   currentUser: User | null = null;
   sosRequests: SosRequest[] = [];
   activeSos: SosRequest | null = null;
 
   showForm = false;
+  showTracking = false;
   loading = true;
   syncing = false;
   submitting = false;
@@ -35,10 +54,19 @@ export class SosComponent implements OnInit, OnDestroy {
   feedbackMessage = '';
   feedbackType: 'success' | 'error' | '' = '';
   lastSyncedAt = '';
+  trackingStatusLabel = 'Đang chờ điều phối';
+  trackingResponderLabel = 'Chưa có đội tiếp nhận';
+  trackingTeamLabel = 'Chưa có nhóm xử lý';
+  trackingUpdatedAt = '';
 
   selectedFiles: File[] = [];
   imagePreviews: string[] = [];
   private refreshHandle: ReturnType<typeof setInterval> | null = null;
+  private trackingRefreshHandle: ReturnType<typeof setInterval> | null = null;
+  private trackingMap: L.Map | null = null;
+  private trackingCitizenMarker: L.Marker | null = null;
+  private trackingResponderMarker: L.Marker | null = null;
+  private trackingRouteLayer: L.Polyline | null = null;
   latitude: number | null = null;
   longitude: number | null = null;
 
@@ -79,6 +107,11 @@ export class SosComponent implements OnInit, OnDestroy {
       clearInterval(this.refreshHandle);
       this.refreshHandle = null;
     }
+    if (this.trackingRefreshHandle) {
+      clearInterval(this.trackingRefreshHandle);
+      this.trackingRefreshHandle = null;
+    }
+    this.destroyTrackingMap();
     this.revokePreviews();
   }
 
@@ -93,6 +126,36 @@ export class SosComponent implements OnInit, OnDestroy {
 
   closeForm(): void {
     this.showForm = false;
+  }
+
+  openTracking(): void {
+    if (!this.activeSos) {
+      this.toastr.info('Chưa có yêu cầu SOS đang hoạt động.', 'Thông tin');
+      return;
+    }
+
+    this.showTracking = true;
+    this.syncTrackingMeta();
+
+    setTimeout(() => {
+      this.initTrackingMap();
+      this.renderTrackingRoute();
+    }, 0);
+
+    if (!this.trackingRefreshHandle) {
+      this.trackingRefreshHandle = setInterval(() => {
+        this.loadMySos(false);
+      }, 8000);
+    }
+  }
+
+  closeTracking(): void {
+    this.showTracking = false;
+    if (this.trackingRefreshHandle) {
+      clearInterval(this.trackingRefreshHandle);
+      this.trackingRefreshHandle = null;
+    }
+    this.destroyTrackingMap();
   }
 
   setUrgency(value: UrgencyLevel): void {
@@ -258,6 +321,10 @@ export class SosComponent implements OnInit, OnDestroy {
           this.sosRequests = res.data || [];
           this.activeSos =
             this.sosRequests.find((s) => !['resolved', 'cancelled'].includes(s.status)) || null;
+          this.syncTrackingMeta();
+          if (this.showTracking) {
+            this.renderTrackingRoute();
+          }
           if (forceSync && this.activeSos) {
             this.feedbackMessage = 'Dữ liệu đã được cập nhật.';
             this.feedbackType = 'success';
@@ -371,11 +438,22 @@ export class SosComponent implements OnInit, OnDestroy {
     const map: Record<string, string> = {
       pending: 'Đang chờ',
       assigned: 'Đã phân công',
-      in_progress: 'Đang cứu hộ',
+      in_progress: 'Đang xử lý',
       resolved: 'Đã hoàn tất',
       cancelled: 'Đã hủy',
     };
     return map[status] || status;
+  }
+
+  getStatusIcon(status: string): string {
+    const map: Record<string, string> = {
+      pending: 'schedule',
+      assigned: 'badge',
+      in_progress: 'local_shipping',
+      resolved: 'task_alt',
+      cancelled: 'cancel',
+    };
+    return map[status] || 'info';
   }
 
   getStatusTone(status: string): string {
@@ -428,5 +506,193 @@ export class SosComponent implements OnInit, OnDestroy {
         description: 'Yêu cầu SOS đã được hoàn tất.',
       },
     ];
+  }
+
+  getTrackingSubtitle(): string {
+    if (!this.activeSos) return 'Trực tiếp - chưa có yêu cầu';
+    if (this.activeSos.responder_name || this.activeSos.team_name) {
+      return 'Trực tiếp - đã kết nối';
+    }
+    return 'Trực tiếp - đang chờ tiếp nhận';
+  }
+
+  private syncTrackingMeta(): void {
+    if (!this.activeSos) {
+      this.trackingStatusLabel = 'Chưa có yêu cầu đang theo dõi';
+      this.trackingResponderLabel = 'Chưa có đội tiếp nhận';
+      this.trackingTeamLabel = 'Chưa có nhóm xử lý';
+      return;
+    }
+
+    this.trackingStatusLabel = this.getStatusLabel(this.activeSos.status);
+    this.trackingResponderLabel = this.activeSos.responder_name || 'Chưa có đội tiếp nhận';
+    this.trackingTeamLabel = this.activeSos.team_name || 'Chưa có nhóm xử lý';
+    this.trackingUpdatedAt = new Date().toLocaleTimeString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+
+  private initTrackingMap(): void {
+    if (!this.showTracking) return;
+
+    const mapElement = document.getElementById('tracking-map');
+    if (!mapElement) return;
+
+    if (this.trackingMap) {
+      this.trackingMap.invalidateSize();
+      return;
+    }
+
+    this.trackingMap = L.map('tracking-map', {
+      zoomControl: true,
+      preferCanvas: true,
+    });
+
+    L.tileLayer('https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}', {
+      attribution: '© Google Maps',
+      maxZoom: 20,
+    }).addTo(this.trackingMap);
+  }
+
+  private destroyTrackingMap(): void {
+    if (this.trackingRouteLayer) {
+      this.trackingRouteLayer.remove();
+      this.trackingRouteLayer = null;
+    }
+    if (this.trackingCitizenMarker) {
+      this.trackingCitizenMarker.remove();
+      this.trackingCitizenMarker = null;
+    }
+    if (this.trackingResponderMarker) {
+      this.trackingResponderMarker.remove();
+      this.trackingResponderMarker = null;
+    }
+    if (this.trackingMap) {
+      this.trackingMap.remove();
+      this.trackingMap = null;
+    }
+  }
+
+  private escapeHtml(value: string): string {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  private buildCitizenPopup(): string {
+    const name = this.escapeHtml(this.currentUser?.full_name || 'khoa');
+    const phone = this.escapeHtml(this.currentUser?.phone || '');
+    return `
+      <div style="min-width: 220px; max-width: 260px; border-radius: 18px; background: #fff; padding: 14px 16px 16px; box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18); position: relative; font-family: Inter, Arial, sans-serif;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; color:#ef4444; font-weight:800; font-size:20px;">
+          <span class="material-symbols-outlined" style="font-size:24px; font-variation-settings:'FILL' 1;">person</span>
+          <span style="color:#ef4444; text-transform:none;">${name}</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; color:#64748b; font-size:14px;">
+          <span style="width:20px; display:inline-flex; justify-content:center; color:#334155;">•</span>
+          <span>Người cần cứu hộ</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; color:#475569; font-size:14px;">
+          <span class="material-symbols-outlined" style="font-size:20px; color:#334155;">call</span>
+          <span>${phone}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  private buildResponderPopup(): string {
+    const responderName = this.escapeHtml(this.activeSos?.responder_name || 'Đội cứu hộ');
+    const teamName = this.escapeHtml(this.activeSos?.team_name || 'Nhóm xử lý');
+    return `
+      <div style="min-width: 220px; max-width: 260px; border-radius: 18px; background: #fff; padding: 14px 16px 16px; box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18); position: relative; font-family: Inter, Arial, sans-serif;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; color:#2563eb; font-weight:800; font-size:18px;">
+          <span class="material-symbols-outlined" style="font-size:24px; font-variation-settings:'FILL' 1;">siren</span>
+          <span style="color:#2563eb; text-transform:none;">${responderName}</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; color:#64748b; font-size:14px;">
+          <span class="material-symbols-outlined" style="font-size:20px; color:#475569;">groups</span>
+          <span>${teamName}</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; color:#475569; font-size:14px;">
+          <span class="material-symbols-outlined" style="font-size:20px; color:#475569;">local_shipping</span>
+          <span>Đang đến ứng cứu</span>
+        </div>
+      </div>
+    `;
+  }
+
+  private renderTrackingRoute(): void {
+    if (!this.trackingMap || !this.activeSos) return;
+
+    const citizenLat = this.activeSos.latitude ?? this.latitude;
+    const citizenLng = this.activeSos.longitude ?? this.longitude;
+    const responderLat = this.activeSos.responder_latitude;
+    const responderLng = this.activeSos.responder_longitude;
+
+    if (this.trackingRouteLayer) {
+      this.trackingRouteLayer.remove();
+      this.trackingRouteLayer = null;
+    }
+    if (this.trackingCitizenMarker) {
+      this.trackingCitizenMarker.remove();
+      this.trackingCitizenMarker = null;
+    }
+    if (this.trackingResponderMarker) {
+      this.trackingResponderMarker.remove();
+      this.trackingResponderMarker = null;
+    }
+
+    if (typeof citizenLat !== 'number' || typeof citizenLng !== 'number') return;
+
+    this.trackingCitizenMarker = L.marker([citizenLat, citizenLng], { icon: this.citizenIcon })
+      .addTo(this.trackingMap)
+      .bindPopup(this.buildCitizenPopup(), {
+        closeButton: false,
+        autoPan: true,
+        className: 'citizen-track-popup',
+        offset: [0, -34],
+      });
+
+    const boundsPoints: L.LatLngExpression[] = [[citizenLat, citizenLng]];
+
+    if (typeof responderLat === 'number' && typeof responderLng === 'number') {
+      this.trackingResponderMarker = L.marker([responderLat, responderLng], { icon: this.trackIcon })
+        .addTo(this.trackingMap)
+        .bindPopup(
+          this.buildResponderPopup(),
+          {
+            closeButton: false,
+            autoPan: true,
+            className: 'citizen-track-popup responder-track-popup',
+            offset: [0, -34],
+          },
+        );
+
+      this.trackingRouteLayer = L.polyline(
+        [
+          [citizenLat, citizenLng],
+          [responderLat, responderLng],
+        ],
+        {
+          color: '#22c55e',
+          weight: 5,
+          opacity: 0.9,
+          dashArray: '10 10',
+        },
+      ).addTo(this.trackingMap);
+
+      boundsPoints.push([responderLat, responderLng]);
+    }
+
+    this.trackingMap.fitBounds(boundsPoints as L.LatLngBoundsExpression, {
+      padding: [45, 45],
+      maxZoom: 16,
+    });
+
+    setTimeout(() => this.trackingMap?.invalidateSize(), 50);
   }
 }

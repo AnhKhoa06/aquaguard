@@ -31,9 +31,7 @@
         <article class="sos-card" *ngIf="activeRequest; else emptyRequest">
           <div class="sos-card-top">
             <span class="status-pill" [ngClass]="getStatusTone(activeRequest.status)">
-              <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1"
-                >local_shipping</span
-              >
+              <span class="material-symbols-outlined status-icon">{{ getStatusIcon(activeRequest.status) }}</span>
               {{ getStatusLabel(activeRequest.status) }}
             </span>
             <span class="request-date">{{ activeRequest.created_at | date: 'd/M/yyyy' }}</span>
@@ -81,7 +79,7 @@
               <span class="material-symbols-outlined">groups</span>
               <span>Nhóm xử lý: {{ activeRequest.team_name }}</span>
             </div>
-            <button class="track-btn" type="button">
+            <button class="track-btn" type="button" (click)="openTracking()">
               <span class="material-symbols-outlined">map</span>
               <span>Xem theo dõi</span>
             </button>
@@ -206,6 +204,27 @@
           </button>
         </footer>
       </form>
+    </section>
+  </div>
+
+  <div class="tracking-backdrop" *ngIf="showTracking" (click)="closeTracking()">
+    <section class="tracking-modal" (click)="$event.stopPropagation()">
+      <header class="tracking-header">
+        <div class="tracking-header-copy">
+          <div class="tracking-title-row">
+            <span class="tracking-live-dot"></span>
+            <h2>Theo dõi cứu hộ</h2>
+          </div>
+          <p>{{ getTrackingSubtitle() }}</p>
+        </div>
+        <button class="tracking-close-btn" type="button" (click)="closeTracking()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </header>
+
+      <div class="tracking-map-shell">
+        <div id="tracking-map" class="tracking-map"></div>
+      </div>
     </section>
   </div>
 </div>

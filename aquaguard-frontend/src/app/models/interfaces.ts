@@ -32,6 +32,10 @@ export interface SosRequest {
   citizen_name?: string;
   citizen_phone?: string;
   responder_name?: string;
+  responder_phone?: string;
+  responder_latitude?: number | null;
+  responder_longitude?: number | null;
+  responder_status?: string;
   team_name?: string;
   images?: SosImage[];
 }

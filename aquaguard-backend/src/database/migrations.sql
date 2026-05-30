@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
   phone VARCHAR(20) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   role ENUM('citizen', 'responder', 'admin') DEFAULT 'citizen',
+  status ENUM('online','offline','busy') DEFAULT 'offline',
   health_status ENUM('safe', 'danger', 'injured', 'unknown') DEFAULT 'unknown',
   health_note TEXT,
   age INT,

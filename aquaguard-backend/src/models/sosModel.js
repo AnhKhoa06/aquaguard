@@ -51,6 +51,9 @@ const sosModel = {
         u.full_name AS citizen_name, u.phone AS citizen_phone,
         u.age AS citizen_age, u.gender AS citizen_gender,
         r.full_name AS responder_name,
+        r.latitude AS responder_latitude,
+        r.longitude AS responder_longitude,
+        r.status AS responder_status,
         t.name AS team_name
       FROM sos_requests s
       LEFT JOIN users u ON s.user_id = u.id
@@ -72,6 +75,9 @@ const sosModel = {
     const [rows] = await db.query(
       `SELECT s.*,
         r.full_name AS responder_name, r.phone AS responder_phone,
+        r.latitude AS responder_latitude,
+        r.longitude AS responder_longitude,
+        r.status AS responder_status,
         t.name AS team_name
        FROM sos_requests s
        LEFT JOIN users r ON s.responder_id = r.id
@@ -90,6 +96,9 @@ const sosModel = {
         u.full_name AS citizen_name, u.phone AS citizen_phone,
         u.age AS citizen_age, u.gender AS citizen_gender,
         r.full_name AS responder_name, r.phone AS responder_phone,
+        r.latitude AS responder_latitude,
+        r.longitude AS responder_longitude,
+        r.status AS responder_status,
         t.name AS team_name, t.phone AS team_phone
        FROM sos_requests s
        LEFT JOIN users u ON s.user_id = u.id
