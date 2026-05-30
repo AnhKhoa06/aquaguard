@@ -28,6 +28,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   private floodLayers: any[] = [];
   private shelterMarkers: L.Marker[] = [];
 
+  private familyMarkers: L.Marker[] = [];
+
   sosList: SosRequest[] = [];
   alerts: Alert[] = [];
   familyMembers: User[] = [];
@@ -238,6 +240,66 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  private renderFamilyMarkers() {
+    // Xóa marker cũ
+    this.familyMarkers.forEach((m) => m.remove());
+    this.familyMarkers = [];
+
+    this.familyMembers.forEach((member) => {
+      if (!member.latitude || !member.longitude) return;
+
+      const initials = member.full_name
+        .trim()
+        .split(' ')
+        .filter((n) => n.length > 0)
+        .map((n) => n[0])
+        .slice(-2)
+        .join('')
+        .toUpperCase();
+
+      const healthColor: Record<string, string> = {
+        safe: '#22c55e',
+        danger: '#ef4444',
+        injured: '#f59e0b',
+        unknown: '#64748b',
+      };
+      const bg = healthColor[member.health_status] || '#64748b';
+
+      const icon = L.divIcon({
+        className: '',
+        html: `
+        <div style="
+          width: 40px; height: 40px; border-radius: 50%;
+          background: ${bg};
+          display: flex; align-items: center; justify-content: center;
+          border: 2.5px solid #fff;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+          font-size: 13px; font-weight: 700; color: #fff;
+        ">${initials}</div>
+      `,
+        iconSize: [40, 40],
+        iconAnchor: [20, 20],
+      });
+
+      const marker = L.marker([member.latitude, member.longitude], { icon })
+        .bindPopup(
+          `
+        <div style="padding: 10px; font-family: inherit; min-width: 160px;">
+          <p style="margin: 0 0 6px; font-size: 14px; font-weight: 700; color: #f1f5f9;">${member.full_name}</p>
+          <p style="margin: 0; font-size: 12px; color: #94a3b8;">${member.phone}</p>
+          <p style="margin: 6px 0 0; font-size: 12px; color: ${bg}; font-weight: 600;">
+            Trạng thái: ${this.getHealthLabel(member.health_status)}
+          </p>
+        </div>
+      `,
+          { className: 'sos-popup-wrap' },
+        )
+        .addTo(this.map);
+
+      this.familyMarkers.push(marker);
+    });
+  }
+
   // Thêm method
   private loadFloodData() {
     this.floodService.getFloodData().subscribe({
@@ -330,13 +392,15 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       });
 
       const marker = L.marker([s.latitude, s.longitude], { icon })
-        .bindPopup(`
+        .bindPopup(
+          `
           <div style="min-width:180px;font-family:inherit;padding:8px">
             <strong style="display:block;color:#e2e8f0">${s.name}</strong>
             <div style="font-size:12px;color:#94a3b8">${s.address || ''}</div>
             <div style="margin-top:8px;font-size:12px;color:#cbd5e1">Sức chứa: ${s.current_count}/${s.capacity}</div>
           </div>
-        `)
+        `,
+        )
         .addTo(this.map);
 
       this.shelterMarkers.push(marker);
@@ -528,7 +592,13 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   toggleFamily() {
     this.showFamily = !this.showFamily;
-    // sau này thêm logic hiện/ẩn marker gia đình trên map
+
+    if (this.showFamily) {
+      this.renderFamilyMarkers();
+    } else {
+      this.familyMarkers.forEach((m) => m.remove());
+      this.familyMarkers = [];
+    }
   }
 
   toggleFloodZone() {

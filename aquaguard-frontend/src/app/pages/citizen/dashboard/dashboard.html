@@ -37,7 +37,11 @@
   </div>
 
   <!-- Active SOS Banner -->
-  <button class="active-sos-banner" *ngIf="activeSos && !loadingSos">
+  <button
+    class="active-sos-banner"
+    *ngIf="activeSos && !loadingSos"
+    [routerLink]="['/citizen/sos']"
+  >
     <!-- Icon container -->
     <div class="sos-icon-wrap">
       <div class="sos-icon-box">

@@ -1,34 +1,25 @@
 <div class="sos-page">
-  <section class="hero-card">
-    <div class="hero-copy">
-      <div class="eyebrow">
-        <span class="dot"></span>
-        <span>SOS</span>
-      </div>
-      <h1>Yêu cầu SOS</h1>
-      <p>Gửi yêu cầu cứu hộ và theo dõi trạng thái theo thời gian thực.</p>
+  <div class="hero-card">
+    <div>
+      <h1 class="hero-title">
+        <span class="material-symbols-outlined sos-icon">sos</span>
+        Yêu cầu SOS
+      </h1>
+      <p class="hero-sub">Gửi yêu cầu cứu hộ và theo dõi trạng thái theo thời gian thực</p>
     </div>
-
-    <div class="hero-actions">
-      <button class="primary-btn" type="button" (click)="openForm()">
-        <span class="material-symbols-outlined">add_circle</span>
-        <span>Gửi SOS</span>
-      </button>
-    </div>
-  </section>
-
-  <div class="toast" *ngIf="feedbackMessage" [class.success]="feedbackType === 'success'" [class.error]="feedbackType === 'error'">
-    <span class="material-symbols-outlined">{{ feedbackType === 'success' ? 'check_circle' : 'error' }}</span>
-    <span>{{ feedbackMessage }}</span>
+    <button class="primary-btn" type="button" (click)="openForm()">
+      <span class="material-symbols-outlined">add_circle</span>
+      Gửi SOS
+    </button>
   </div>
 
   <section class="compact-shell">
     <article class="request-panel panel">
       <div class="panel-head">
-        <div>
-          <span class="panel-kicker">YÊU CẦU CỦA TÔI</span>
-          <h2>{{ totalRequests || 0 }} yêu cầu</h2>
-        </div>
+        <h2 class="panel-kicker">
+          <span class="material-symbols-outlined">history</span>
+          YÊU CẦU CỦA TÔI ({{ totalRequests || 0 }})
+        </h2>
       </div>
 
       <div class="loading-state" *ngIf="loading">
@@ -36,78 +27,86 @@
       </div>
 
       <ng-container *ngIf="!loading">
-        <article class="active-request compact" *ngIf="activeRequest; else emptyRequest">
-          <div class="request-top">
+        <!-- Active SOS card -->
+        <article class="sos-card" *ngIf="activeRequest; else emptyRequest">
+          <div class="sos-card-top">
             <span class="status-pill" [ngClass]="getStatusTone(activeRequest.status)">
-              <span class="dot"></span>
+              <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1"
+                >local_shipping</span
+              >
               {{ getStatusLabel(activeRequest.status) }}
             </span>
             <span class="request-date">{{ activeRequest.created_at | date: 'd/M/yyyy' }}</span>
           </div>
 
-          <div class="compact-row">
-            <div class="compact-item">
-              <span class="material-symbols-outlined">person</span>
-              <div>
-                <strong>{{ currentUser?.full_name || 'Ẩn danh' }}</strong>
-                <p>Bạn</p>
-              </div>
+          <div class="sos-card-body">
+            <div class="info-row">
+              <span class="material-symbols-outlined icon-primary icon-lg">person</span>
+              <span
+                ><strong>Bạn</strong>
+                <span class="name-sub">({{ currentUser?.full_name }})</span></span
+              >
+            </div>
+            <div class="info-row">
+              <span class="material-symbols-outlined icon-red icon-lg">location_on</span>
+              <span>{{ activeRequest.address || 'Chưa có địa chỉ' }}</span>
+            </div>
+            <div class="info-row description" *ngIf="activeRequest.description">
+              <span>{{ activeRequest.description }}</span>
             </div>
 
-            <div class="compact-item address-item">
-              <span class="material-symbols-outlined">place</span>
-              <div>
-                <strong>{{ activeRequest.address || 'Chưa có địa chỉ' }}</strong>
-                <p>{{ activeRequest.num_people }} người • {{ getUrgencyLabel(activeRequest.urgency_level) }}</p>
-              </div>
+            <div class="sos-images" *ngIf="activeRequest.images && activeRequest.images.length > 0">
+              <img
+                *ngFor="let img of activeRequest.images"
+                [src]="
+                  img.image_url.startsWith('http')
+                    ? img.image_url
+                    : 'http://localhost:3000' + img.image_url
+                "
+                alt="Ảnh hiện trường"
+                class="sos-thumb"
+              />
             </div>
           </div>
 
-          <div class="compact-footer">
-            <div>
-              <span class="mini-title">Đội cứu hộ</span>
-              <strong>{{ activeRequest.team_name || 'Đang điều phối' }}</strong>
+          <div class="sos-card-footer">
+            <span class="urgency-badge urgency-{{ activeRequest.urgency_level }}">
+              Mức độ {{ getUrgencyLabel(activeRequest.urgency_level) }}
+            </span>
+            <div class="footer-info">
+              <span class="material-symbols-outlined">person</span>
+              <span>Được giao cho: {{ activeRequest.responder_name || 'Chưa tiếp nhận' }}</span>
             </div>
-            <div>
-              <span class="mini-title">Người nhận</span>
-              <strong>{{ activeRequest.responder_name || 'Chưa tiếp nhận' }}</strong>
+            <div class="footer-info primary" *ngIf="activeRequest.team_name">
+              <span class="material-symbols-outlined">groups</span>
+              <span>Nhóm xử lý: {{ activeRequest.team_name }}</span>
             </div>
+            <button class="track-btn" type="button">
+              <span class="material-symbols-outlined">map</span>
+              <span>Xem theo dõi</span>
+            </button>
           </div>
         </article>
 
         <ng-template #emptyRequest>
-          <div class="empty-state compact-empty">
+          <div class="empty-state">
             <span class="material-symbols-outlined">sos</span>
             <h3>Chưa có yêu cầu SOS đang hoạt động</h3>
             <p>Nhấn Gửi SOS khi cần hỗ trợ khẩn cấp.</p>
           </div>
         </ng-template>
-
-        <div class="request-list" *ngIf="sosRequests.length > 0">
-          <article class="request-item compact-item-row" *ngFor="let sos of sosRequests">
-            <div class="item-copy">
-              <strong>Yêu cầu SOS #{{ sos.id }}</strong>
-              <span class="item-address" *ngIf="sos.address">{{ sos.address }}</span>
-            </div>
-
-            <div class="item-right">
-              <span class="urgency-chip urgency-{{ sos.urgency_level }}">{{ getUrgencyLabel(sos.urgency_level) }}</span>
-              <span class="status-pill" [ngClass]="getStatusTone(sos.status)">{{ getStatusLabel(sos.status) }}</span>
-            </div>
-          </article>
-        </div>
       </ng-container>
     </article>
   </section>
 
+  <!-- Modal -->
   <div class="modal-backdrop" *ngIf="showForm" (click)="closeForm()">
     <section class="sos-modal" (click)="$event.stopPropagation()">
       <header class="modal-header">
         <div>
-          <span class="panel-kicker">YÊU CẦU CỨU HỘ MỚI</span>
-          <h2>Cung cấp thông tin chi tiết để đội cứu hộ hỗ trợ nhanh nhất có thể.</h2>
+          <h2>Yêu cầu cứu hộ mới</h2>
+          <p>Cung cấp thông tin chi tiết để đội cứu hộ hỗ trợ nhanh nhất có thể.</p>
         </div>
-
         <button class="close-btn" type="button" (click)="closeForm()">
           <span class="material-symbols-outlined">close</span>
         </button>
@@ -117,49 +116,47 @@
         <span class="material-symbols-outlined">my_location</span>
         <span>{{ locationError || gpsLabel }}</span>
         <button type="button" class="gps-retry" (click)="retryLocation()" [disabled]="locating">
-          {{ locating ? 'Đang lấy GPS...' : 'Lấy lại' }}
+          {{ locating ? 'Đang lấy...' : 'Lấy lại' }}
         </button>
       </div>
 
       <form class="sos-form" [formGroup]="form" (ngSubmit)="submitSos()">
-        <label class="field-group">
+        <div class="field-group">
           <span class="field-label">
-            <span class="material-symbols-outlined">place</span>
-            <span>Vị trí hiện tại</span>
+            <span class="material-symbols-outlined" style="color: #ef5350">location_on</span>
+            Vị trí hiện tại
           </span>
           <textarea
-            rows="2"
+            rows="1"
             formControlName="address"
-            placeholder="Hẻm, đường, phường/xã, quận/huyện, tỉnh/thành phố..."
-            readonly
+            placeholder="Địa chỉ tự động lấy từ GPS..."
           ></textarea>
-          <small>Tự động lấy từ GPS, bạn không cần nhập.</small>
-        </label>
-
-        <label class="field-group">
-          <span class="field-label">
-            <span class="material-symbols-outlined">description</span>
-            <span>Mô tả tình huống</span>
-          </span>
-          <textarea
-            rows="5"
-            formControlName="description"
-            placeholder="Mô tả tình huống hiện tại: mức nước, số người cần cứu hộ, tình trạng sức khỏe..."
-          ></textarea>
-          <small *ngIf="descriptionControl?.touched && descriptionControl?.invalid">Hãy mô tả ngắn gọn nhưng đủ ý.</small>
-        </label>
+        </div>
 
         <div class="field-group">
           <span class="field-label">
-            <span class="material-symbols-outlined">priority_high</span>
-            <span>Mức độ khẩn cấp</span>
+            <span class="material-symbols-outlined" style="color: #00bcd4">description</span>
+            Mô tả tình huống
           </span>
-          <div class="urgency-grid">
+          <textarea
+            rows="4"
+            formControlName="description"
+            placeholder="Mô tả tình huống hiện tại..."
+          ></textarea>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label">
+            <span class="material-symbols-outlined" style="color: #f59e0b">warning</span>
+            Mức độ khẩn cấp
+          </span>
+          <div class="urgency-pills">
             <button
               *ngFor="let urgency of urgencyOptions"
               type="button"
-              class="urgency-btn"
-              [ngClass]="[urgency.tone, 'urgency-btn', form.value.urgency_level === urgency.value ? 'active' : '']"
+              class="urgency-pill"
+              [class.active]="form.value.urgency_level === urgency.value"
+              [ngClass]="urgency.tone"
               (click)="setUrgency(urgency.value)"
             >
               {{ urgency.label }}
@@ -167,41 +164,33 @@
           </div>
         </div>
 
-        <div class="field-grid">
-          <label class="field-group compact-field">
-            <span class="field-label">
-              <span class="material-symbols-outlined">groups</span>
-              <span>Số người cần cứu hộ</span>
-            </span>
-            <input type="number" min="1" max="99" formControlName="num_people" />
-          </label>
-
-          <div class="field-group compact-field read-only-field">
-            <span class="field-label">
-              <span class="material-symbols-outlined">sos</span>
-              <span>Mức độ đã chọn</span>
-            </span>
-            <strong>{{ urgencyLabel }}</strong>
-          </div>
-        </div>
-
         <div class="field-group">
           <span class="field-label">
-            <span class="material-symbols-outlined">photo_camera</span>
-            <span>Hình ảnh hiện trường</span>
+            <span class="material-symbols-outlined" style="color: #8b5cf6">photo_camera</span>
+            Hình ảnh hiện trường
             <small>(tối đa 5 hình)</small>
           </span>
-
-          <div class="upload-zone" (click)="fileInput.click()" (drop)="onDrop($event)" (dragover)="onDragOver($event)">
-            <input #fileInput type="file" accept="image/*" multiple hidden (change)="onFilesSelected($event)" />
+          <div
+            class="upload-zone"
+            (click)="fileInput.click()"
+            (drop)="onDrop($event)"
+            (dragover)="onDragOver($event)"
+          >
+            <input
+              #fileInput
+              type="file"
+              accept="image/*"
+              multiple
+              hidden
+              (change)="onFilesSelected($event)"
+            />
             <span class="material-symbols-outlined">cloud_upload</span>
-            <p>Kéo thả hình ảnh vào đây hoặc <strong>chọn tệp</strong></p>
-            <small>PNG, JPG, WEBP - tối đa 10MB/hình</small>
+            <p>Kéo thả hoặc <strong>chọn tệp</strong></p>
+            <small>PNG, JPG, WEBP — tối đa 10MB/hình</small>
           </div>
-
           <div class="preview-grid" *ngIf="imagePreviews.length > 0">
             <div class="preview-item" *ngFor="let preview of imagePreviews; let index = index">
-              <img [src]="preview" alt="Ảnh hiện trường" />
+              <img [src]="preview" alt="preview" />
               <button type="button" class="remove-preview" (click)="removeFile(index)">
                 <span class="material-symbols-outlined">close</span>
               </button>
@@ -211,16 +200,12 @@
 
         <footer class="modal-actions">
           <button type="button" class="cancel-btn" (click)="closeForm()">Hủy</button>
-          <button type="submit" class="submit-btn" [disabled]="!canSubmit">
+          <button type="submit" class="submit-btn">
             <span class="material-symbols-outlined">sos</span>
-            <span>{{ submitting ? 'Đang gửi...' : 'Gửi yêu cầu cứu hộ' }}</span>
+            {{ submitting ? 'Đang gửi...' : 'Gửi yêu cầu cứu hộ' }}
           </button>
         </footer>
       </form>
     </section>
   </div>
-
-  <ng-template #loadingCards>
-    <div></div>
-  </ng-template>
 </div>

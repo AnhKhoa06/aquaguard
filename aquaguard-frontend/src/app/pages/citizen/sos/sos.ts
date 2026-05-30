@@ -8,6 +8,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { SosService } from '../../../core/services/sos.service';
 import { UserService } from '../../../core/services/user.service';
 import { SosRequest, User } from '../../../models/interfaces';
+import { ToastrService } from 'ngx-toastr';
 
 type UrgencyLevel = 'low' | 'medium' | 'high' | 'critical';
 
@@ -55,6 +56,7 @@ export class SosComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private sosService: SosService,
     private userService: UserService,
+    private toastr: ToastrService,
   ) {
     this.form = this.fb.group({
       address: ['', [Validators.required, Validators.minLength(8)]],
@@ -130,10 +132,13 @@ export class SosComponent implements OnInit, OnDestroy {
   }
 
   submitSos(): void {
-    if (this.form.invalid || !this.latitude || !this.longitude) {
-      this.form.markAllAsTouched();
-      this.feedbackMessage = 'Vui lòng nhập đủ thông tin và chờ GPS sẵn sàng.';
-      this.feedbackType = 'error';
+    if (!this.latitude || !this.longitude) {
+      this.toastr.warning('Vui lòng chờ GPS sẵn sàng!', 'Thiếu thông tin');
+      return;
+    }
+
+    if (!this.form.value.description?.trim()) {
+      this.toastr.warning('Vui lòng mô tả tình huống!', 'Thiếu thông tin');
       return;
     }
 
@@ -216,7 +221,7 @@ export class SosComponent implements OnInit, OnDestroy {
   }
 
   get canSubmit(): boolean {
-    return this.form.valid && !!this.latitude && !!this.longitude && !this.submitting;
+    return true;
   }
 
   get addressControl() {

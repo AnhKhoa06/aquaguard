@@ -55,6 +55,14 @@ body.theme-dark {
   --color-invite-border: rgba(51, 65, 85, 0.3);
   --color-invite-reject: #334155;
   --color-invite-reject-text: #94a3b8;
+  --color-sos-card: #1e293b;
+  --color-sos-card-border: rgba(51, 65, 85, 0.3);
+  --modal-bg: #0f172a;
+  --modal-header-bg: rgba(15, 23, 42, 0.9);
+  --modal-border: #334155;
+  --modal-input-bg: #1e293b;
+  --modal-input-border: #334155;
+  --modal-divider: #1e2533;
 }
 
 body.theme-light {
@@ -103,6 +111,14 @@ body.theme-light {
   --color-invite-border: #e2e8f0;
   --color-invite-reject: #e2e8f0;
   --color-invite-reject-text: #64748b;
+  --color-sos-card: #ffffff;
+  --color-sos-card-border: rgba(226, 232, 240, 0.8);
+  --modal-bg: #ffffff;
+  --modal-header-bg: rgba(255, 255, 255, 0.9);
+  --modal-border: #e2e8f0;
+  --modal-input-bg: #f8fafc;
+  --modal-input-border: #e2e8f0;
+  --modal-divider: #f1f5f9;
   .leaflet-control-zoom {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
   }
