@@ -22,7 +22,8 @@ type UrgencyLevel = 'low' | 'medium' | 'high' | 'critical';
 })
 export class SosComponent implements OnInit, OnDestroy {
   private readonly trackIcon = L.icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+    iconUrl:
+      'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
     shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
@@ -30,7 +31,8 @@ export class SosComponent implements OnInit, OnDestroy {
     shadowSize: [41, 41],
   });
   private readonly citizenIcon = L.icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+    iconUrl:
+      'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
     shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
@@ -67,6 +69,7 @@ export class SosComponent implements OnInit, OnDestroy {
   private trackingCitizenMarker: L.Marker | null = null;
   private trackingResponderMarker: L.Marker | null = null;
   private trackingRouteLayer: L.Polyline | null = null;
+  private hasInitialFit = false;
   latitude: number | null = null;
   longitude: number | null = null;
 
@@ -151,6 +154,7 @@ export class SosComponent implements OnInit, OnDestroy {
 
   closeTracking(): void {
     this.showTracking = false;
+    this.hasInitialFit = false;
     if (this.trackingRefreshHandle) {
       clearInterval(this.trackingRefreshHandle);
       this.trackingRefreshHandle = null;
@@ -244,7 +248,7 @@ export class SosComponent implements OnInit, OnDestroy {
   }
 
   get totalRequests(): number {
-    return this.sosRequests.length;
+    return this.activeSos ? 1 : 0;
   }
 
   get statusLabel(): string {
@@ -320,7 +324,9 @@ export class SosComponent implements OnInit, OnDestroy {
           if (!res.success) return;
           this.sosRequests = res.data || [];
           this.activeSos =
-            this.sosRequests.find((s) => !['resolved', 'cancelled'].includes(s.status)) || null;
+            this.sosRequests.length > 0
+              ? this.sosRequests[0] // lấy cái mới nhất
+              : null;
           this.syncTrackingMeta();
           if (this.showTracking) {
             this.renderTrackingRoute();
@@ -437,10 +443,9 @@ export class SosComponent implements OnInit, OnDestroy {
   getStatusLabel(status: string): string {
     const map: Record<string, string> = {
       pending: 'Đang chờ',
-      assigned: 'Đã phân công',
+      assigned: 'Đang xử lý',
       in_progress: 'Đang xử lý',
-      resolved: 'Đã hoàn tất',
-      cancelled: 'Đã hủy',
+      resolved: 'Đã giải quyết',
     };
     return map[status] || status;
   }
@@ -450,8 +455,7 @@ export class SosComponent implements OnInit, OnDestroy {
       pending: 'schedule',
       assigned: 'badge',
       in_progress: 'local_shipping',
-      resolved: 'task_alt',
-      cancelled: 'cancel',
+      resolved: 'check',
     };
     return map[status] || 'info';
   }
@@ -459,10 +463,9 @@ export class SosComponent implements OnInit, OnDestroy {
   getStatusTone(status: string): string {
     const map: Record<string, string> = {
       pending: 'tone-pending',
-      assigned: 'tone-assigned',
+      assigned: 'tone-progress',
       in_progress: 'tone-progress',
       resolved: 'tone-resolved',
-      cancelled: 'tone-cancelled',
     };
     return map[status] || 'tone-idle';
   }
@@ -491,18 +494,13 @@ export class SosComponent implements OnInit, OnDestroy {
         description: 'Hệ thống đã ghi nhận và đang điều phối đội cứu hộ.',
       },
       {
-        key: 'assigned',
-        label: 'Đội đã nhận',
-        description: 'Một đội hoặc responder đã được phân công cho yêu cầu này.',
-      },
-      {
         key: 'in_progress',
         label: 'Đang di chuyển',
         description: 'Đội cứu hộ đang tới vị trí của bạn.',
       },
       {
         key: 'resolved',
-        label: 'Đã xử lý xong',
+        label: 'Đã giải quyết',
         description: 'Yêu cầu SOS đã được hoàn tất.',
       },
     ];
@@ -584,45 +582,42 @@ export class SosComponent implements OnInit, OnDestroy {
   }
 
   private buildCitizenPopup(): string {
-    const name = this.escapeHtml(this.currentUser?.full_name || 'khoa');
+    const name = this.escapeHtml(this.currentUser?.full_name || '');
     const phone = this.escapeHtml(this.currentUser?.phone || '');
     return `
-      <div style="min-width: 220px; max-width: 260px; border-radius: 18px; background: #fff; padding: 14px 16px 16px; box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18); position: relative; font-family: Inter, Arial, sans-serif;">
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; color:#ef4444; font-weight:800; font-size:20px;">
-          <span class="material-symbols-outlined" style="font-size:24px; font-variation-settings:'FILL' 1;">person</span>
-          <span style="color:#ef4444; text-transform:none;">${name}</span>
-        </div>
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; color:#64748b; font-size:14px;">
-          <span style="width:20px; display:inline-flex; justify-content:center; color:#334155;">•</span>
-          <span>Người cần cứu hộ</span>
-        </div>
-        <div style="display:flex; align-items:center; gap:10px; color:#475569; font-size:14px;">
-          <span class="material-symbols-outlined" style="font-size:20px; color:#334155;">call</span>
-          <span>${phone}</span>
-        </div>
+    <div style="min-width: 200px; font-family: Inter, Arial, sans-serif; padding: 4px 0;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+        <span class="material-symbols-outlined" style="font-size:20px; color:#ef4444; font-variation-settings:'FILL' 1;">person</span>
+        <span style="font-weight:800; font-size:15px; color:#0f172a;">${name}</span>
       </div>
-    `;
+      <div style="font-size:13px; color:#64748b; margin-bottom:6px;">Người cần cứu hộ</div>
+      <div style="display:flex; align-items:center; gap:6px; font-size:13px; color:#475569;">
+        <span class="material-symbols-outlined" style="font-size:16px;">call</span>
+        ${phone}
+      </div>
+    </div>
+  `;
   }
 
   private buildResponderPopup(): string {
     const responderName = this.escapeHtml(this.activeSos?.responder_name || 'Đội cứu hộ');
-    const teamName = this.escapeHtml(this.activeSos?.team_name || 'Nhóm xử lý');
+    const teamName = this.escapeHtml(this.activeSos?.team_name || '');
     return `
-      <div style="min-width: 220px; max-width: 260px; border-radius: 18px; background: #fff; padding: 14px 16px 16px; box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18); position: relative; font-family: Inter, Arial, sans-serif;">
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; color:#2563eb; font-weight:800; font-size:18px;">
-          <span class="material-symbols-outlined" style="font-size:24px; font-variation-settings:'FILL' 1;">siren</span>
-          <span style="color:#2563eb; text-transform:none;">${responderName}</span>
-        </div>
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; color:#64748b; font-size:14px;">
-          <span class="material-symbols-outlined" style="font-size:20px; color:#475569;">groups</span>
-          <span>${teamName}</span>
-        </div>
-        <div style="display:flex; align-items:center; gap:10px; color:#475569; font-size:14px;">
-          <span class="material-symbols-outlined" style="font-size:20px; color:#475569;">local_shipping</span>
-          <span>Đang đến ứng cứu</span>
-        </div>
+    <div style="min-width: 200px; font-family: Inter, Arial, sans-serif; padding: 4px 0;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+        <span class="material-symbols-outlined" style="font-size:20px; color:#2563eb; font-variation-settings:'FILL' 1;">siren</span>
+        <span style="font-weight:800; font-size:15px; color:#0f172a;">${responderName}</span>
       </div>
-    `;
+      <div style="display:flex; align-items:center; gap:6px; font-size:13px; color:#64748b; margin-bottom:6px;">
+        <span class="material-symbols-outlined" style="font-size:16px;">groups</span>
+        ${teamName}
+      </div>
+      <div style="display:flex; align-items:center; gap:6px; font-size:13px; color:#475569;">
+        <span class="material-symbols-outlined" style="font-size:16px;">local_shipping</span>
+        Đang đến ứng cứu
+      </div>
+    </div>
+  `;
   }
 
   private renderTrackingRoute(): void {
@@ -633,6 +628,7 @@ export class SosComponent implements OnInit, OnDestroy {
     const responderLat = this.activeSos.responder_latitude;
     const responderLng = this.activeSos.responder_longitude;
 
+    // Xóa layer cũ
     if (this.trackingRouteLayer) {
       this.trackingRouteLayer.remove();
       this.trackingRouteLayer = null;
@@ -648,50 +644,125 @@ export class SosComponent implements OnInit, OnDestroy {
 
     if (typeof citizenLat !== 'number' || typeof citizenLng !== 'number') return;
 
+    // Marker công dân — xanh dương
+
     this.trackingCitizenMarker = L.marker([citizenLat, citizenLng], { icon: this.citizenIcon })
       .addTo(this.trackingMap)
-      .bindPopup(this.buildCitizenPopup(), {
-        closeButton: false,
-        autoPan: true,
-        className: 'citizen-track-popup',
-        offset: [0, -34],
-      });
+      .bindPopup(this.buildCitizenPopup(), { closeButton: false, offset: [0, -34] });
+
+    this.trackingCitizenMarker.openPopup();
+
+    // ← thêm đoạn này vào đây
+    if (this.activeSos.status === 'pending') {
+      L.marker([citizenLat, citizenLng], {
+        icon: L.divIcon({
+          className: '',
+          html: `<div style="
+            background: #f59e0b;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: Inter, sans-serif;
+            white-space: nowrap;
+            width: max-content;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+          ">
+            <span class="material-symbols-outlined" style="font-size:16px;">schedule</span>
+            Đang chờ cứu hộ tiếp nhận...
+          </div>`,
+          iconAnchor: [80, -20],
+        }),
+      }).addTo(this.trackingMap);
+
+      if (!this.hasInitialFit) {
+        this.trackingMap.setView([citizenLat, citizenLng], 15);
+        this.hasInitialFit = true;
+      }
+      return;
+    }
 
     const boundsPoints: L.LatLngExpression[] = [[citizenLat, citizenLng]];
 
     if (typeof responderLat === 'number' && typeof responderLng === 'number') {
-      this.trackingResponderMarker = L.marker([responderLat, responderLng], { icon: this.trackIcon })
-        .addTo(this.trackingMap)
-        .bindPopup(
-          this.buildResponderPopup(),
-          {
-            closeButton: false,
-            autoPan: true,
-            className: 'citizen-track-popup responder-track-popup',
-            offset: [0, -34],
-          },
-        );
+      const responderIcon = L.icon({
+        iconUrl:
+          'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41],
+      });
 
-      this.trackingRouteLayer = L.polyline(
-        [
-          [citizenLat, citizenLng],
-          [responderLat, responderLng],
-        ],
-        {
-          color: '#22c55e',
-          weight: 5,
-          opacity: 0.9,
-          dashArray: '10 10',
-        },
-      ).addTo(this.trackingMap);
+      this.trackingResponderMarker = L.marker([responderLat, responderLng], { icon: responderIcon })
+        .addTo(this.trackingMap)
+        .bindPopup(this.buildResponderPopup(), { closeButton: false, offset: [0, -34] });
+
+      // Màu đường theo status
+      const lineColor = this.activeSos.status === 'resolved' ? '#1a73e8' : '#f59e0b';
+
+      fetch(
+        `https://router.project-osrm.org/route/v1/driving/${citizenLng},${citizenLat};${responderLng},${responderLat}?overview=full&geometries=geojson`,
+      )
+        .then((r) => r.json())
+        .then((data) => {
+          const routeData = data.routes[0];
+          const coords = data.routes[0].geometry.coordinates.map(
+            (c: number[]) => [c[1], c[0]] as L.LatLngExpression,
+          );
+
+          this.trackingRouteLayer = L.polyline(coords, {
+            color: lineColor,
+            weight: 5,
+            opacity: 0.9,
+          }).addTo(this.trackingMap!);
+
+          // ← Thêm distance label
+          const distanceKm = (routeData.distance / 1000).toFixed(1);
+          const durationMin = Math.round(routeData.duration / 60);
+          const midIndex = Math.floor(coords.length / 2);
+          const midPoint = coords[midIndex] as [number, number];
+
+          L.marker(midPoint, {
+            icon: L.divIcon({
+              className: '',
+              html: `<div style="
+                background: #1a73e8;
+                color: white;
+                padding: 6px 14px;
+                border-radius: 20px;
+                font-size: 13px;
+                font-weight: 700;
+                font-family: Inter, sans-serif;
+                white-space: nowrap;
+                width: max-content;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                display: flex;
+                align-items: center;
+                gap: 6px;
+              ">
+                <span class="material-symbols-outlined" style="font-size:16px;">route</span>
+                ${distanceKm} km · ~${durationMin} phút
+              </div>`,
+              iconSize: undefined,
+              iconAnchor: [80, 16], // ← tăng lên
+            }),
+          }).addTo(this.trackingMap!);
+
+          // Chỉ fitBounds lần đầu
+          if (!this.hasInitialFit) {
+            this.trackingMap!.fitBounds(L.polyline(coords).getBounds(), { padding: [60, 60] });
+            this.hasInitialFit = true;
+          }
+        });
 
       boundsPoints.push([responderLat, responderLng]);
     }
-
-    this.trackingMap.fitBounds(boundsPoints as L.LatLngBoundsExpression, {
-      padding: [45, 45],
-      maxZoom: 16,
-    });
 
     setTimeout(() => this.trackingMap?.invalidateSize(), 50);
   }

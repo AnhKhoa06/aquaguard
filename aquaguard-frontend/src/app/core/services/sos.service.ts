@@ -36,4 +36,13 @@ export class SosService {
   accept(id: number): Observable<any> {
     return this.http.patch(`${this.apiUrl}/sos/${id}/accept`, {});
   }
+  assignResponder(id: number, responderId: number): Observable<ApiResponse<any>> {
+    return this.http.patch<ApiResponse<any>>(`${this.apiUrl}/sos/${id}/assign`, {
+      responder_id: responderId,
+    });
+  }
+
+  updateResponderLocation(sosId: number, latitude: number, longitude: number): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/sos/${sosId}/location`, { latitude, longitude });
+  }
 }

@@ -14,8 +14,8 @@ body.theme-dark {
   --color-bg: #071c1f;
   --color-main: rgba(15, 23, 42, 0.5);
   --color-sidebar: #111f21;
-  --color-card: #0f1f35;
-  --color-card-2: #1a2332;
+  --color-card: #0d1b2e;
+  --color-card-2: #111e30;
   --color-input: #1a2f4a;
   --color-input-hover: #1e3555;
   --color-border: #1e3555;
@@ -63,6 +63,8 @@ body.theme-dark {
   --modal-input-bg: #1e293b;
   --modal-input-border: #334155;
   --modal-divider: #1e2533;
+  --color-admin-card: #0f1f35;
+  --color-admin-input: #1a2f4a;
 }
 
 body.theme-light {
@@ -119,6 +121,8 @@ body.theme-light {
   --modal-input-bg: #f8fafc;
   --modal-input-border: #e2e8f0;
   --modal-divider: #f1f5f9;
+  --color-admin-card: #ffffff;
+  --color-admin-input: #f1f5f9;
   .leaflet-control-zoom {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
   }

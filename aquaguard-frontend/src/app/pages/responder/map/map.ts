@@ -21,16 +21,12 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   private map!: L.Map;
   private sosMarkers: L.Marker[] = [];
   private userMarker: L.Marker | null = null;
-  private routeLayer: L.Polyline | null = null;
   private floodLayers: any[] = [];
 
   sosList: SosRequest[] = [];
   filteredSosList: SosRequest[] = [];
   alerts: Alert[] = [];
   teamMembers: any[] = []; // sẽ load từ API sau
-  selectedSos: SosRequest | null = null;
-  routeDistanceKm: number | null = null;
-  routeETA: string = '--';
 
   showWindyPanel = false;
   showFloodZone = false;
@@ -134,11 +130,9 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // ── THÊM MỚI: zoom vào marker khi click item trong list ──
   focusMarker(sos: SosRequest) {
-    this.selectedSos = sos;
     this.map.setView([sos.latitude, sos.longitude], 17, { animate: true });
     const marker = this.sosMarkers[this.filteredSosList.indexOf(sos)];
     if (marker) marker.openPopup();
-    this.drawRouteTo(sos);
   }
 
   // ── THÊM MỚI: nhận nhiệm vụ ──
@@ -206,7 +200,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
               created_at: new Date().toISOString(),
             });
           }
-          if (current.windspeed_10m > 6) {
+          if (current.windspeed_10m > -1) {
             autoAlerts.push({
               id: Math.floor(Math.random() * -1000),
               created_by: 0,
@@ -465,10 +459,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
           });
           this.userMarker = L.marker([lat, lng], { icon }).addTo(this.map);
           this.map.setView([lat, lng], 15);
-
-          if (this.selectedSos) {
-            this.drawRouteTo(this.selectedSos);
-          }
         }
       },
       (err) => {
@@ -526,63 +516,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       info: 'alert-info',
     };
     return map[severity] || '';
-  }
-
-  getRouteTone(status: string): string {
-    const map: Record<string, string> = {
-      pending: '#f59e0b',
-      assigned: '#f59e0b',
-      in_progress: '#f59e0b',
-      resolved: '#22c55e',
-    };
-    return map[status] || '#3b82f6';
-  }
-
-  private drawRouteTo(sos: SosRequest) {
-    if (!this.map || !this.userLat || !this.userLng) return;
-
-    if (this.routeLayer) {
-      this.routeLayer.remove();
-      this.routeLayer = null;
-    }
-
-    const start: [number, number] = [this.userLat, this.userLng];
-    const end: [number, number] = [sos.latitude, sos.longitude];
-    const tone = this.getRouteTone(sos.status);
-
-    this.routeDistanceKm = this.haversine(this.userLat, this.userLng, sos.latitude, sos.longitude);
-    this.routeETA = this.estimateEta(this.routeDistanceKm, sos.status);
-
-    this.routeLayer = L.polyline([start, end], {
-      color: tone,
-      weight: 5,
-      opacity: 0.9,
-      dashArray: sos.status === 'resolved' ? '8 8' : '12 10',
-      lineCap: 'round',
-      lineJoin: 'round',
-    }).addTo(this.map);
-
-    const bounds = L.latLngBounds([start, end]);
-    this.map.fitBounds(bounds.pad(0.25), { animate: true });
-  }
-
-  private haversine(lat1: number, lon1: number, lat2: number, lon2: number): number {
-    const R = 6371;
-    const dLat = ((lat2 - lat1) * Math.PI) / 180;
-    const dLon = ((lon2 - lon1) * Math.PI) / 180;
-    const a =
-      Math.sin(dLat / 2) ** 2 +
-      Math.cos((lat1 * Math.PI) / 180) *
-        Math.cos((lat2 * Math.PI) / 180) *
-        Math.sin(dLon / 2) ** 2;
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  }
-
-  private estimateEta(distanceKm: number, status: string): string {
-    if (!Number.isFinite(distanceKm)) return '--';
-    const speed = status === 'resolved' ? 35 : status === 'in_progress' ? 22 : 28;
-    const minutes = Math.max(1, Math.round((distanceKm / speed) * 60));
-    return `${minutes} phút`;
   }
 
   getSeverityIcon(severity: string): string {

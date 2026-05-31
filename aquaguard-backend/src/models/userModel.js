@@ -69,8 +69,9 @@ const userModel = {
   // Lấy tất cả users (admin)
   findAll: async () => {
     const [rows] = await db.query(
-      `SELECT id, full_name, phone, role, gender, 
-       health_status, created_at FROM users`,
+      `SELECT id, full_name, email, phone, role, gender, 
+     health_status, latitude, longitude, address, created_at 
+     FROM users ORDER BY created_at DESC`,
     );
     return rows;
   },

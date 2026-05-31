@@ -2,11 +2,14 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SosService } from '../../../core/services/sos.service';
 import { SosRequest } from '../../../models/interfaces';
+import { FormsModule } from '@angular/forms';
+import { UserService } from '../../../core/services/user.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-admin-sos',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './sos.html',
   styleUrl: './sos.scss',
 })
@@ -19,13 +22,24 @@ export class SosComponent implements OnInit, OnDestroy {
   searchQuery = '';
   feedbackMessage = '';
   feedbackType: 'success' | 'error' | '' = '';
+  sortBy: 'priority' | 'newest' | 'oldest' = 'priority';
+
+  //
+  responders: any[] = [];
+  selectedResponderId: number | null = null;
+
   private refreshHandle: ReturnType<typeof setInterval> | null = null;
 
-  constructor(private sosService: SosService) {}
+  constructor(
+    private sosService: SosService,
+    private userService: UserService,
+    private toastr: ToastrService,
+  ) {}
 
   ngOnInit(): void {
     this.loadRequests(true);
     this.refreshHandle = setInterval(() => this.loadRequests(false), 10000);
+    this.loadResponders();
   }
 
   ngOnDestroy(): void {
@@ -36,12 +50,34 @@ export class SosComponent implements OnInit, OnDestroy {
   }
 
   get filteredRequests(): SosRequest[] {
-    return this.sosRequests.filter((request) => {
-      const matchesStatus = this.filterStatus === 'all' || request.status === this.filterStatus;
-      const haystack = `${request.citizen_name || ''} ${request.address || ''} ${request.team_name || ''}`.toLowerCase();
-      const matchesSearch = !this.searchQuery || haystack.includes(this.searchQuery.toLowerCase());
-      return matchesStatus && matchesSearch;
-    });
+    let list = this.sosRequests.filter(
+      (r: SosRequest) =>
+        (this.filterStatus === 'all' || r.status === this.filterStatus) &&
+        (!this.searchQuery ||
+          r.citizen_name?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          r.address?.toLowerCase().includes(this.searchQuery.toLowerCase())),
+    );
+
+    if (this.sortBy === 'newest') {
+      list = list.sort(
+        (a: SosRequest, b: SosRequest) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      );
+    } else if (this.sortBy === 'oldest') {
+      list = list.sort(
+        (a: SosRequest, b: SosRequest) =>
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+      );
+    } else {
+      const urgencyOrder: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 };
+      list = list.sort(
+        (a: SosRequest, b: SosRequest) =>
+          (urgencyOrder[a.urgency_level] ?? 4) - (urgencyOrder[b.urgency_level] ?? 4) ||
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      );
+    }
+
+    return list;
   }
 
   get selectedRequest(): SosRequest | null {
@@ -82,39 +118,16 @@ export class SosComponent implements OnInit, OnDestroy {
     });
   }
 
-  refreshNow(): void {
-    this.loadRequests(false);
-  }
-
   selectRequest(request: SosRequest): void {
     this.selectedId = request.id;
-  }
-
-  updateStatus(status: 'in_progress' | 'resolved' | 'cancelled'): void {
-    if (!this.selectedRequest) return;
-
-    this.sosService.updateStatus(this.selectedRequest.id, status).subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.feedbackMessage = 'Đã cập nhật trạng thái SOS.';
-          this.feedbackType = 'success';
-          this.loadRequests(false);
-        }
-      },
-      error: () => {
-        this.feedbackMessage = 'Không thể cập nhật trạng thái.';
-        this.feedbackType = 'error';
-      },
-    });
   }
 
   getStatusLabel(status: string): string {
     const map: Record<string, string> = {
       pending: 'Đang chờ',
-      assigned: 'Đã phân công',
+      assigned: 'Đang xử lý', // ← đổi từ 'Đã phân công'
       in_progress: 'Đang xử lý',
-      resolved: 'Đã hoàn tất',
-      cancelled: 'Đã hủy',
+      resolved: 'Đã xử lý',
     };
     return map[status] || status;
   }
@@ -125,9 +138,22 @@ export class SosComponent implements OnInit, OnDestroy {
       assigned: 'tone-assigned',
       in_progress: 'tone-progress',
       resolved: 'tone-resolved',
-      cancelled: 'tone-cancelled',
     };
-    return map[status] || 'tone-idle';
+    return map[status] || '';
+  }
+
+  resolveTask(id: number): void {
+    this.sosService.updateStatus(id, 'resolved').subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.toastr.success('Đã xác nhận hoàn thành!', 'Thành công');
+          this.loadRequests(false);
+        }
+      },
+      error: () => {
+        this.toastr.error('Không thể cập nhật trạng thái.', 'Lỗi');
+      },
+    });
   }
 
   getUrgencyLabel(level: string): string {
@@ -142,5 +168,84 @@ export class SosComponent implements OnInit, OnDestroy {
 
   getResponderLabel(request: SosRequest): string {
     return request.responder_name || request.team_name || 'Chưa có người nhận';
+  }
+
+  getInitials(name: string): string {
+    return name
+      .trim()
+      .split(' ')
+      .filter((n) => n)
+      .map((n) => n[0])
+      .slice(-2)
+      .join('')
+      .toUpperCase();
+  }
+
+  getAvatarColor(name: string): string {
+    const colors = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
+    return colors[(name.charCodeAt(0) || 0) % colors.length];
+  }
+  // method
+  loadResponders(): void {
+    this.userService.getAllUsers().subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.responders = res.data.filter((u: any) => u.role === 'responder');
+        }
+      },
+    });
+  }
+
+  assignResponder(): void {
+    if (!this.selectedRequest || !this.selectedResponderId) return;
+
+    if (this.selectedRequest.status === 'in_progress' || this.selectedRequest.responder_id) {
+      this.toastr.error('Yêu cầu này đã có người nhận, không thể phân công!', 'Lỗi');
+      return;
+    }
+
+    this.sosService.assignResponder(this.selectedRequest.id, this.selectedResponderId).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.toastr.success('Đã phân công người cứu hộ!', 'Thành công');
+          this.selectedResponderId = null;
+          this.loadRequests(false);
+        }
+      },
+      error: () => {
+        this.toastr.error('Không thể phân công — người này chưa có đội cứu hộ.', 'Lỗi');
+      },
+    });
+  }
+  getSortLabel(): string {
+    const map: Record<string, string> = {
+      priority: 'Ưu tiên',
+      newest: 'Mới nhất',
+      oldest: 'Cũ nhất',
+    };
+    return map[this.sortBy];
+  }
+
+  getTimeAgo(dateStr: string): string {
+    const now = new Date();
+    const date = new Date(dateStr);
+    const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (diff < 60) return `${diff} giây trước`;
+    if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)} giờ trước`;
+    if (diff < 2592000) return `${Math.floor(diff / 86400)} ngày trước`;
+    if (diff < 31536000) return `${Math.floor(diff / 2592000)} tháng trước`;
+    return `${Math.floor(diff / 31536000)} năm trước`;
+  }
+
+  getAge(dob: string): number | null {
+    if (!dob) return null;
+    const today = new Date();
+    const birth = new Date(dob);
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+    return age;
   }
 }

@@ -26,6 +26,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
   usersLoading = false;
   userQuery = '';
   private apiUrl = environment.apiUrl;
+  roleFilter = '';
 
   // Map
   private map!: L.Map;
@@ -100,11 +101,46 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
     }
   }
 
+  get filteredUsers() {
+    return this.users.filter((u) => {
+      if (u.role === 'admin') return false; // ← ẩn admin
+      const matchQuery =
+        !this.userQuery ||
+        (u.full_name || '').toLowerCase().includes(this.userQuery.toLowerCase()) ||
+        (u.phone || '').includes(this.userQuery);
+      const matchRole = !this.roleFilter || u.role === this.roleFilter;
+      return matchQuery && matchRole;
+    });
+  }
+
+  getHealthLabel(status: string): string {
+    const map: Record<string, string> = {
+      safe: 'An toàn',
+      danger: 'Nguy hiểm',
+      injured: 'Bị thương',
+      unknown: 'Chưa rõ',
+    };
+    return map[status] || 'Chưa rõ';
+  }
+
+  getHealthClass(status: string): string {
+    const map: Record<string, string> = {
+      safe: 'health-safe',
+      danger: 'health-danger',
+      injured: 'health-injured',
+      unknown: 'health-unknown',
+    };
+    return map[status] || 'health-unknown';
+  }
+
   loadUsers() {
     this.usersLoading = true;
     this.userService.getAllUsers().subscribe({
       next: (res) => {
-        if (res.success) this.users = res.data || [];
+        if (res.success) {
+          this.users = res.data || [];
+          console.log('user sample:', this.users[0]); // ← thêm dòng này
+        }
         this.usersLoading = false;
       },
       error: () => (this.usersLoading = false),
@@ -112,6 +148,14 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   onChangeRole(u: any, role: any) {
+    if (u.role === 'admin') {
+      alert('Không thể thay đổi role của Admin!');
+      return;
+    }
+    if (role === 'admin') {
+      alert('Không thể cấp quyền Admin qua giao diện!');
+      return;
+    }
     const prev = u.role;
     u.role = role;
     this.userService.updateRole(u.id, role).subscribe({

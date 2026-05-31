@@ -417,21 +417,59 @@
 .users-actions input {
   padding: 8px 10px;
   border-radius: 8px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.04);
   color: #e2e8f0;
 }
 
-.btn { padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,0.04); border: none; color: #e2e8f0; cursor:pointer }
-.btn.small { padding: 6px 8px; font-size: 12px }
+.btn {
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: none;
+  color: #e2e8f0;
+  cursor: pointer;
+}
+.btn.small {
+  padding: 6px 8px;
+  font-size: 12px;
+}
 
-.users-table-wrap { margin-top: 12px; overflow:auto; }
-.users-table { width:100%; border-collapse: collapse; font-size:13px }
-.users-table th, .users-table td { text-align:left; padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.03); color:#cbd5e1 }
-.users-table th { font-size:12px; color:#94a3b8 }
-.users-table tr:hover td { background: rgba(255,255,255,0.01) }
-.users-table select { padding:6px 8px; border-radius:8px; background:transparent; color:#e2e8f0; border:1px solid rgba(255,255,255,0.04) }
-.empty { text-align:center; padding:24px; color:#64748b }
+.users-table-wrap {
+  margin-top: 12px;
+  overflow: auto;
+}
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.users-table th,
+.users-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  color: #cbd5e1;
+}
+.users-table th {
+  font-size: 12px;
+  color: #94a3b8;
+}
+.users-table tr:hover td {
+  background: rgba(255, 255, 255, 0.01);
+}
+.users-table select {
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: transparent;
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+.empty {
+  text-align: center;
+  padding: 24px;
+  color: #64748b;
+}
 
 // ========== RESPONSIVE ==========
 @media (max-width: 1024px) {
@@ -920,5 +958,231 @@
   }
   .sos-popup-wrap .leaflet-popup-tip {
     background: #ffffff !important;
+  }
+}
+
+.users-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.users-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 305px;
+  padding: 10px 14px;
+  border-radius: 24px;
+  background: var(--color-input);
+  border: 1px solid var(--color-border);
+
+  .material-symbols-outlined {
+    font-size: 18px;
+    color: var(--color-text-muted);
+  }
+
+  input {
+    border: none;
+    background: transparent;
+    color: var(--color-text);
+    font-size: 14px;
+    outline: none;
+    width: 100%;
+    &::placeholder {
+      color: var(--color-text-muted);
+    }
+  }
+}
+
+.users-filters {
+  display: flex;
+  gap: 6px;
+}
+
+.filter-btn {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-input);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+  }
+
+  &:hover:not(.active) {
+    background: var(--color-input-hover);
+    color: var(--color-text);
+  }
+}
+
+.btn-reload {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-input);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  &:hover {
+    background: var(--color-input-hover);
+  }
+  .material-symbols-outlined {
+    font-size: 18px;
+  }
+}
+
+.user-list {
+  display: grid;
+  gap: 10px;
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  transition: box-shadow 0.2s;
+  flex-wrap: wrap;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.user-card-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.user-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.user-phone {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+.user-address {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: auto;
+}
+
+.user-card-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.role-select {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--primary);
+  background: var(--color-input);
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+
+  &:hover {
+    background: var(--color-input-hover);
+  }
+
+  option {
+    background: var(--color-card);
+    color: var(--color-text);
+  }
+}
+
+.btn-delete {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  &:hover {
+    background: rgba(239, 68, 68, 0.15);
+  }
+  .material-symbols-outlined {
+    font-size: 16px;
+  }
+}
+
+.health-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+
+  &.health-safe {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+  }
+  &.health-danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  }
+  &.health-injured {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+  }
+  &.health-unknown {
+    background: var(--color-input);
+    color: var(--color-text-muted);
   }
 }

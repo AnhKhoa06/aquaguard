@@ -1,0 +1,272 @@
+<div class="admin-sos-page">
+  <!-- Header -->
+  <section class="page-header">
+    <div>
+      <h1>Yêu cầu cứu hộ</h1>
+      <p>Quản lý và theo dõi các yêu cầu cứu hộ</p>
+    </div>
+  </section>
+
+  <!-- Stat Cards -->
+  <section class="stats-grid">
+    <article class="stat-card default">
+      <div class="stat-icon">
+        <span class="material-symbols-outlined">list_alt</span>
+      </div>
+      <div class="stat-body">
+        <strong>{{ stats.total }}</strong>
+        <span class="stat-label">Tổng số</span>
+      </div>
+    </article>
+    <article class="stat-card amber">
+      <div class="stat-icon">
+        <span class="material-symbols-outlined">schedule</span>
+      </div>
+      <div class="stat-body">
+        <strong>{{ stats.pending }}</strong>
+        <span class="stat-label">Đang chờ</span>
+      </div>
+    </article>
+    <article class="stat-card blue">
+      <div class="stat-icon">
+        <span class="material-symbols-outlined">local_shipping</span>
+      </div>
+      <div class="stat-body">
+        <strong>{{ stats.in_progress }}</strong>
+        <span class="stat-label">Đang xử lý</span>
+      </div>
+    </article>
+    <article class="stat-card green">
+      <div class="stat-icon">
+        <span class="material-symbols-outlined">check_circle</span>
+      </div>
+      <div class="stat-body">
+        <strong>{{ stats.resolved }}</strong>
+        <span class="stat-label">Đã xử lý</span>
+      </div>
+    </article>
+  </section>
+
+  <!-- Filter + Sort bar -->
+  <section class="filter-bar">
+    <div class="filter-chips-row">
+      <button
+        class="filter-chip"
+        [class.active]="filterStatus === 'all'"
+        (click)="setFilter('all')"
+      >
+        <span class="material-symbols-outlined">list</span>
+        Tất cả <span class="chip-count">{{ stats.total }}</span>
+      </button>
+      <button
+        class="filter-chip"
+        [class.active]="filterStatus === 'pending'"
+        (click)="setFilter('pending')"
+      >
+        <span class="material-symbols-outlined">schedule</span>
+        Đang chờ <span class="chip-count">{{ stats.pending }}</span>
+      </button>
+      <button
+        class="filter-chip"
+        [class.active]="filterStatus === 'in_progress'"
+        (click)="setFilter('in_progress')"
+      >
+        <span class="material-symbols-outlined">local_shipping</span>
+        Đang xử lý <span class="chip-count">{{ stats.in_progress }}</span>
+      </button>
+      <button
+        class="filter-chip"
+        [class.active]="filterStatus === 'resolved'"
+        (click)="setFilter('resolved')"
+      >
+        <span class="material-symbols-outlined">check_circle</span>
+        Đã xử lý <span class="chip-count">{{ stats.resolved }}</span>
+      </button>
+
+      <div class="search-box">
+        <span class="material-symbols-outlined">search</span>
+        <input
+          type="search"
+          placeholder="Tìm theo tên, địa chỉ..."
+          [value]="searchQuery"
+          (input)="searchQuery = $any($event.target).value"
+        />
+      </div>
+    </div>
+
+    <div class="sort-row">
+      <div class="sort-box">
+        <span class="material-symbols-outlined">sort</span>
+        <span>Sắp xếp</span>
+        <select [(ngModel)]="sortBy" class="sort-select">
+          <option value="priority">Ưu tiên</option>
+          <option value="newest">Mới nhất</option>
+          <option value="oldest">Cũ nhất</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Grid -->
+  <div class="admin-sos-grid" *ngIf="!loading">
+    <!-- List -->
+    <section class="list-panel panel">
+      <div class="panel-head">
+        <div class="panel-head-row">
+          <span class="panel-kicker">Hàng đợi ({{ filteredRequests.length }})</span>
+          <span class="panel-sort-label">{{ getSortLabel() }}</span>
+        </div>
+      </div>
+
+      <div class="loading-state" *ngIf="loading">
+        <div class="skeleton-card" *ngFor="let _ of [1, 2, 3]"></div>
+      </div>
+
+      <div class="list-empty" *ngIf="!loading && filteredRequests.length === 0">
+        <span class="material-symbols-outlined">inbox</span>
+        <p>Không có yêu cầu phù hợp</p>
+      </div>
+
+      <article
+        class="sos-row"
+        *ngFor="let req of filteredRequests"
+        [class.active]="selectedId === req.id"
+        (click)="selectRequest(req)"
+      >
+        <div class="row-top">
+          <div class="row-info">
+            <div class="row-name-row">
+              <strong>{{ req.citizen_name || 'Ẩn danh' }}</strong>
+              <span style="margin-left: auto"></span>
+              <span class="urgency-badge urgency-{{ req.urgency_level }}">
+                {{ getUrgencyLabel(req.urgency_level) }}
+              </span>
+              <span class="status-pill" [ngClass]="getStatusTone(req.status)">
+                {{ getStatusLabel(req.status) }}
+              </span>
+            </div>
+            <p class="row-time">{{ getTimeAgo(req.created_at) }}</p>
+            <p class="row-address" *ngIf="req.address">
+              <span class="material-symbols-outlined">location_on</span>
+              {{ req.address }}
+            </p>
+            <p class="row-desc" *ngIf="req.description">{{ req.description }}</p>
+            <div class="row-meta-row">
+              <span *ngIf="req.responder_name"
+                >Được giao cho:
+                <span style="color: var(--color-text)">{{ req.responder_name }}</span></span
+              >
+              <span *ngIf="!req.responder_name"
+                >Được giao cho: <span style="color: var(--color-text)">Chưa giao</span></span
+              >
+            </div>
+            <!-- Thêm vào đây -->
+            <div style="display: flex; justify-content: flex-end; margin-top: 8px">
+              <button
+                class="accept-row-btn"
+                *ngIf="req.status === 'pending'"
+                (click)="acceptTask(req.id); $event.stopPropagation()"
+              >
+                <span class="material-symbols-outlined">check</span>
+                Nhận
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- Detail -->
+    <aside class="detail-panel panel" *ngIf="selectedRequest; else noSelection">
+      <div class="detail-hero">
+        <div class="detail-hero-info">
+          <h2>{{ selectedRequest.citizen_name || 'Ẩn danh' }}</h2>
+          <p class="detail-time">{{ selectedRequest.created_at | date: 'HH:mm:ss d/M/yyyy' }}</p>
+        </div>
+        <div class="detail-badges">
+          <span class="urgency-badge urgency-{{ selectedRequest.urgency_level }}">
+            {{ getUrgencyLabel(selectedRequest.urgency_level) }}
+          </span>
+          <span class="status-pill" [ngClass]="getStatusTone(selectedRequest.status)">
+            {{ getStatusLabel(selectedRequest.status) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="detail-stack">
+        <div class="detail-row" *ngIf="selectedRequest!.address">
+          <span class="material-symbols-outlined detail-row-icon location">location_on</span>
+          <span>{{ selectedRequest!.address }}</span>
+        </div>
+
+        <div class="detail-row">
+          <span class="material-symbols-outlined detail-row-icon" style="color: var(--primary)"
+            >local_fire_department</span
+          >
+          <span
+            >Được giao cho:
+            <strong>{{ selectedRequest!.responder_name || 'Chưa phân công' }}</strong></span
+          >
+        </div>
+
+        <div class="detail-row" *ngIf="selectedRequest!.description">
+          <span class="detail-row-text">{{ selectedRequest!.description }}</span>
+        </div>
+
+        <div
+          class="detail-row"
+          *ngIf="selectedRequest!.citizen_phone || selectedRequest!.citizen_dob"
+        >
+          <span class="material-symbols-outlined detail-row-icon person">person</span>
+          <span class="detail-row-meta">
+            <span *ngIf="selectedRequest!.citizen_dob"
+              >{{ getAge(selectedRequest!.citizen_dob) }} tuổi</span
+            >
+            <span *ngIf="selectedRequest!.citizen_phone">
+              • {{ selectedRequest!.citizen_phone }}</span
+            >
+          </span>
+        </div>
+
+        <div class="detail-row" *ngIf="selectedRequest!.latitude">
+          <span class="material-symbols-outlined detail-row-icon" style="color: #22c55e"
+            >my_location</span
+          >
+          <span style="color: #22c55e; font-size: 12px; font-weight: 500"
+            >GPS: {{ selectedRequest!.latitude }}, {{ selectedRequest!.longitude }}</span
+          >
+        </div>
+      </div>
+
+      <div class="actions" style="justify-content: flex-end; gap: 8px; display: flex">
+        <button
+          class="assign-btn"
+          style="background: #10b981"
+          *ngIf="selectedRequest!.status === 'in_progress'"
+          (click)="resolveTask(selectedRequest!.id)"
+        >
+          <span class="material-symbols-outlined">check_circle</span>
+          Hoàn thành
+        </button>
+        <button
+          class="assign-btn"
+          *ngIf="selectedRequest!.status === 'pending'"
+          (click)="acceptTask(selectedRequest!.id)"
+        >
+          <span class="material-symbols-outlined">check_circle</span>
+          Nhận nhiệm vụ
+        </button>
+      </div>
+    </aside>
+
+    <ng-template #noSelection>
+      <aside class="detail-panel panel">
+        <div class="empty-detail">
+          <span class="material-symbols-outlined">sos</span>
+          <h3>Chọn một yêu cầu SOS</h3>
+          <p>Chi tiết và thao tác xử lý sẽ hiện ở đây.</p>
+        </div>
+      </aside>
+    </ng-template>
+  </div>
+</div>

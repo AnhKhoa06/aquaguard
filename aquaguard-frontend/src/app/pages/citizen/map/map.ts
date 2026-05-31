@@ -166,7 +166,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const requests = locations.map((loc) =>
       this.http.get<any>(
-        `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lng}&current=precipitation,rain,windspeed_10m,weathercode&forecast_days=1`,
+        `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lng}&current=precipitation,rain,showers,windspeed_10m,weathercode&forecast_days=1`,
       ),
     );
 
@@ -178,21 +178,26 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
           const current = data.current;
           const name = locations[i].name;
           console.log(
-            `${name}: rain=${current.rain}, wind=${current.windspeed_10m}, precip=${current.precipitation}`,
+            `${name}: rain=${current.rain}, showers=${current.showers}, precip=${current.precipitation}, weathercode=${current.weathercode}`,
           );
 
-          if (current.rain > 0) {
+          if (
+            current.rain > 0 ||
+            current.showers > 0 ||
+            current.precipitation > 0 ||
+            (current.weathercode >= 61 && current.weathercode <= 82)
+          ) {
             autoAlerts.push({
               id: Math.floor(Math.random() * -1000),
               created_by: 0,
               title: `Mưa lớn tại ${name}`,
-              message: `Lượng mưa ${current.rain}mm/h, nguy cơ ngập lụt cao.`,
-              severity: current.rain > 30 ? 'critical' : 'danger',
+              message: `Lượng mưa ${current.rain || current.showers || current.precipitation}mm/h, nguy cơ ngập lụt cao.`,
+              severity: current.rain > 30 || current.showers > 30 ? 'critical' : 'danger',
               created_at: new Date().toISOString(),
             });
           }
 
-          if (current.windspeed_10m > 6) {
+          if (current.windspeed_10m > -1) {
             autoAlerts.push({
               id: Math.floor(Math.random() * -1000),
               created_by: 0,

@@ -49,11 +49,10 @@ const sosModel = {
     let query = `
       SELECT s.*,
         u.full_name AS citizen_name, u.phone AS citizen_phone,
-        u.age AS citizen_age, u.gender AS citizen_gender,
+        u.date_of_birth AS citizen_dob, u.gender AS citizen_gender,
         r.full_name AS responder_name,
         r.latitude AS responder_latitude,
         r.longitude AS responder_longitude,
-        r.status AS responder_status,
         t.name AS team_name
       FROM sos_requests s
       LEFT JOIN users u ON s.user_id = u.id
@@ -74,16 +73,15 @@ const sosModel = {
   findByUserId: async (user_id) => {
     const [rows] = await db.query(
       `SELECT s.*,
-        r.full_name AS responder_name, r.phone AS responder_phone,
-        r.latitude AS responder_latitude,
-        r.longitude AS responder_longitude,
-        r.status AS responder_status,
-        t.name AS team_name
-       FROM sos_requests s
-       LEFT JOIN users r ON s.responder_id = r.id
-       LEFT JOIN rescue_teams t ON s.team_id = t.id
-       WHERE s.user_id = ?
-       ORDER BY s.created_at DESC`,
+      r.full_name AS responder_name, r.phone AS responder_phone,
+      s.responder_latitude,
+      s.responder_longitude,
+      t.name AS team_name
+     FROM sos_requests s
+     LEFT JOIN users r ON s.responder_id = r.id
+     LEFT JOIN rescue_teams t ON s.team_id = t.id
+     WHERE s.user_id = ?
+     ORDER BY s.created_at DESC`,
       [user_id],
     );
     return rows;
@@ -94,11 +92,10 @@ const sosModel = {
     const [rows] = await db.query(
       `SELECT s.*,
         u.full_name AS citizen_name, u.phone AS citizen_phone,
-        u.age AS citizen_age, u.gender AS citizen_gender,
+        u.date_of_birth AS citizen_dob, u.gender AS citizen_gender,
         r.full_name AS responder_name, r.phone AS responder_phone,
         r.latitude AS responder_latitude,
         r.longitude AS responder_longitude,
-        r.status AS responder_status,
         t.name AS team_name, t.phone AS team_phone
        FROM sos_requests s
        LEFT JOIN users u ON s.user_id = u.id
@@ -114,8 +111,8 @@ const sosModel = {
   assignResponder: async (id, responder_id, team_id) => {
     await db.query(
       `UPDATE sos_requests 
-       SET responder_id = ?, team_id = ?, status = 'assigned' 
-       WHERE id = ?`,
+     SET responder_id = ?, team_id = ?, status = 'in_progress' 
+     WHERE id = ?`,
       [responder_id, team_id, id],
     );
   },

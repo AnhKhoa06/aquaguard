@@ -4,6 +4,7 @@ const sosController = require("../controllers/sosController");
 const authMiddleware = require("../middlewares/authMiddleware");
 const authorizeRoles = require("../middlewares/roleMiddleware");
 const upload = require("../config/upload");
+const db = require("../config/db");
 
 // Citizen — gửi SOS (upload tối đa 5 ảnh)
 router.post(
@@ -60,6 +61,27 @@ router.patch(
   authMiddleware,
   authorizeRoles("responder"),
   sosController.accept,
+);
+
+// Cứu hộ cập nhật vị trí realtime
+router.patch(
+  "/:id/location",
+  authMiddleware,
+  authorizeRoles("responder"),
+  async (req, res, next) => {
+    try {
+      const { latitude, longitude } = req.body;
+      await db.query(
+        `UPDATE sos_requests 
+         SET responder_latitude = ?, responder_longitude = ?
+         WHERE id = ? AND responder_id = ?`,
+        [latitude, longitude, req.params.id, req.user.id],
+      );
+      return res.json({ success: true, message: "Đã cập nhật vị trí!" });
+    } catch (err) {
+      next(err);
+    }
+  },
 );
 
 module.exports = router;

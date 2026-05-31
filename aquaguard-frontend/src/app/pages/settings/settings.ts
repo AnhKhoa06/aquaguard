@@ -30,15 +30,15 @@ export class SettingsComponent implements OnInit {
   showAddMember = false;
   private isSaving = false;
   selectedTheme: Theme = 'dark';
-  
-  
+
+
   familyMembers: User[] = [];
   loadingFamily = false;
   addingMember = false;
   newMemberPhone = '';
   selectedHealth: string = '';
   healthNote: string = '';
-  
+
 
   profile = {
     full_name: '',
@@ -298,6 +298,7 @@ export class SettingsComponent implements OnInit {
   }
 
   removeMember(memberId: number) {
+    if (!confirm('Bạn có chắc muốn xóa người thân này không?')) return;
     this.familyService.removeMember(memberId).subscribe({
       next: (res) => {
         if (res.success) {

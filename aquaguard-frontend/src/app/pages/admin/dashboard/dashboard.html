@@ -6,7 +6,7 @@
         <span class="material-symbols-outlined page-icon">admin_panel_settings</span>
         <h1 class="page-title">Admin Dashboard</h1>
       </div>
-      <p class="page-subtitle">Manage users, rescue teams, and monitor system status</p>
+      <p class="page-subtitle">Quản lý người dùng, đội cứu hộ và giám sát hệ thống</p>
     </div>
   </div>
 
@@ -14,19 +14,19 @@
   <div class="tab-nav">
     <button class="tab-btn" [class.active]="activeTab === 'overview'" (click)="setTab('overview')">
       <span class="material-symbols-outlined">dashboard</span>
-      Overview
+      Tổng quan
     </button>
     <button class="tab-btn" [class.active]="activeTab === 'users'" (click)="setTab('users')">
       <span class="material-symbols-outlined">manage_accounts</span>
-      User Management
+      Người dùng
     </button>
     <button class="tab-btn" [class.active]="activeTab === 'teams'" (click)="setTab('teams')">
       <span class="material-symbols-outlined">groups</span>
-      Rescue Teams
+      Đội cứu hộ
     </button>
     <button class="tab-btn" [class.active]="activeTab === 'map'" (click)="setTab('map')">
       <span class="material-symbols-outlined">map</span>
-      Flood Map
+      Bản đồ lũ
     </button>
   </div>
 
@@ -46,7 +46,7 @@
         </div>
         <div class="stat-card-body">
           <span class="stat-number">{{ stats?.total_users ?? 0 }}</span>
-          <span class="stat-label">Total Users</span>
+          <span class="stat-label">Tổng người dùng</span>
         </div>
       </div>
 
@@ -56,7 +56,7 @@
         </div>
         <div class="stat-card-body">
           <span class="stat-number">{{ stats?.total_citizens ?? 0 }}</span>
-          <span class="stat-label">Citizens</span>
+          <span class="stat-label">Công dân</span>
         </div>
       </div>
 
@@ -66,7 +66,7 @@
         </div>
         <div class="stat-card-body">
           <span class="stat-number">{{ stats?.total_rescuers ?? 0 }}</span>
-          <span class="stat-label">Rescuers</span>
+          <span class="stat-label">Cứu hộ</span>
         </div>
       </div>
 
@@ -76,7 +76,7 @@
         </div>
         <div class="stat-card-body">
           <span class="stat-number">{{ stats?.pending_sos ?? 0 }}</span>
-          <span class="stat-label">Pending SOS</span>
+          <span class="stat-label">SOS đang chờ</span>
         </div>
       </div>
     </div>
@@ -87,34 +87,34 @@
       <div class="card system-status-card">
         <div class="card-header">
           <span class="material-symbols-outlined card-icon">monitoring</span>
-          <h2 class="card-title">System Status</h2>
+          <h2 class="card-title">Trạng thái hệ thống</h2>
         </div>
         <div class="status-list">
           <div class="status-row">
             <div class="status-row-left">
               <span class="material-symbols-outlined status-icon amber">shield</span>
-              <span class="status-row-label">Active Rescuers</span>
+              <span class="status-row-label">Cứu hộ đang hoạt động</span>
             </div>
             <span class="status-row-value">{{ stats?.active_rescuers ?? 0 }}</span>
           </div>
           <div class="status-row">
             <div class="status-row-left">
               <span class="material-symbols-outlined status-icon red">emergency</span>
-              <span class="status-row-label">Active SOS</span>
+              <span class="status-row-label">SOS đang xử lý</span>
             </div>
             <span class="status-row-value">{{ stats?.active_sos ?? 0 }}</span>
           </div>
           <div class="status-row">
             <div class="status-row-left">
               <span class="material-symbols-outlined status-icon green">check_circle</span>
-              <span class="status-row-label">Resolved Today</span>
+              <span class="status-row-label">Đã giải quyết hôm nay</span>
             </div>
             <span class="status-row-value">{{ stats?.resolved_today ?? 0 }}</span>
           </div>
           <div class="status-row">
             <div class="status-row-left">
               <span class="material-symbols-outlined status-icon teal">admin_panel_settings</span>
-              <span class="status-row-label">System Admins</span>
+              <span class="status-row-label">Quản trị viên</span>
             </div>
             <span class="status-row-value">{{ stats?.total_admins ?? 0 }}</span>
           </div>
@@ -125,7 +125,7 @@
       <div class="card rescue-teams-card">
         <div class="card-header">
           <span class="material-symbols-outlined card-icon">local_fire_department</span>
-          <h2 class="card-title">Rescue Teams</h2>
+          <h2 class="card-title">Đội cứu hộ</h2>
         </div>
         <div class="team-list" *ngIf="stats?.rescue_teams?.length > 0">
           <div class="team-item" *ngFor="let team of stats.rescue_teams">
@@ -148,52 +148,82 @@
 
   <!-- ===== TAB USERS ===== -->
   <div class="tab-content" *ngIf="!loading && activeTab === 'users'">
-    <div class="users-header">
-      <div class="users-actions">
-        <input placeholder="Tìm theo tên hoặc số điện thoại" [(ngModel)]="userQuery" />
-        <button (click)="loadUsers()" class="btn">Tải lại</button>
+    <!-- Header + Search -->
+    <div class="users-toolbar">
+      <div class="users-search">
+        <span class="material-symbols-outlined">search</span>
+        <input placeholder="Tìm theo tên hoặc số điện thoại..." [(ngModel)]="userQuery" />
       </div>
+      <div class="users-filters">
+        <button class="filter-btn" [class.active]="roleFilter === ''" (click)="roleFilter = ''">
+          Tất cả
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="roleFilter === 'citizen'"
+          (click)="roleFilter = 'citizen'"
+        >
+          Công dân
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="roleFilter === 'responder'"
+          (click)="roleFilter = 'responder'"
+        >
+          Cứu hộ
+        </button>
+      </div>
+      <button class="btn-reload" (click)="loadUsers()">
+        <span class="material-symbols-outlined">refresh</span>
+      </button>
     </div>
 
-    <div class="users-table-wrap" *ngIf="!usersLoading">
-      <table class="users-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Họ tên</th>
-            <th>Phone</th>
-            <th>Role</th>
-            <th>Trạng thái</th>
-            <th>Thao tác</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let u of users | slice:0:200; let i = index" [hidden]="userQuery && !(u.full_name || '').toLowerCase().includes(userQuery.toLowerCase()) && !(u.phone||'').includes(userQuery)">
-            <td>{{ i + 1 }}</td>
-            <td>{{ u.full_name || '-' }}</td>
-            <td>{{ u.phone || '-' }}</td>
-            <td>
-              <select [value]="u.role" (change)="onChangeRole(u, $any($event.target).value)">
-                <option value="citizen">Citizen</option>
-                <option value="responder">Rescue Team</option>
-                <option value="admin">Admin</option>
-              </select>
-            </td>
-            <td>{{ u.health_status || '-' }}</td>
-            <td>
-              <button class="btn small" (click)="onDeleteUser(u)">Delete</button>
-            </td>
-          </tr>
-          <tr *ngIf="users.length === 0">
-            <td colspan="6" class="empty">Chưa có người dùng</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div *ngIf="usersLoading" class="loading-state">
+    <!-- Loading -->
+    <div class="loading-state" *ngIf="usersLoading">
       <span class="material-symbols-outlined spin">autorenew</span>
-      <p>Đang tải danh sách người dùng...</p>
+      <p>Đang tải...</p>
+    </div>
+
+    <!-- User Cards -->
+    <div class="user-list" *ngIf="!usersLoading">
+      <div class="user-card" *ngFor="let u of filteredUsers; let i = index">
+        <div class="user-card-left">
+          <div class="user-avatar" [style.background]="getAvatarColor(u.full_name || u.phone)">
+            {{ getInitials(u.full_name || u.phone || '?') }}
+          </div>
+          <div class="user-info">
+            <span class="user-name">{{ u.full_name || 'Chưa đặt tên' }}</span>
+            <span class="user-phone">{{ u.phone || '-' }}</span>
+            <span class="user-email" *ngIf="u.email">{{ u.email }}</span>
+            <span class="user-address" *ngIf="u.address">{{ u.address }}</span>
+          </div>
+        </div>
+
+        <div class="user-card-right">
+          <span class="health-badge" [ngClass]="getHealthClass(u.health_status)">
+            {{ getHealthLabel(u.health_status) }}
+          </span>
+          <select
+            class="role-select"
+            [value]="u.role"
+            (change)="onChangeRole(u, $any($event.target).value)"
+            [ngClass]="'role-' + u.role"
+            [disabled]="u.role === 'admin'"
+            [title]="u.role === 'admin' ? 'Không thể thay đổi role Admin' : ''"
+          >
+            <option value="citizen">Công dân</option>
+            <option value="responder">Cứu hộ</option>
+          </select>
+          <button class="btn-delete" (click)="onDeleteUser(u)">
+            <span class="material-symbols-outlined">delete</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="filteredUsers.length === 0">
+        <span class="material-symbols-outlined">person_off</span>
+        <p>Không tìm thấy người dùng</p>
+      </div>
     </div>
   </div>
 

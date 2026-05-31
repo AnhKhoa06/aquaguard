@@ -39,6 +39,7 @@ export interface SosRequest {
   responder_status?: string;
   team_name?: string;
   images?: SosImage[];
+  citizen_dob?: string;
 }
 
 export interface SosImage {
