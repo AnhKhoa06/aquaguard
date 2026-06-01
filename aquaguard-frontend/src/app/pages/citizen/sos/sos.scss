@@ -37,9 +37,7 @@
 }
 
 .hero-sub {
-  margin: 4px 0 0;
-  font-size: 14px;
-  color: var(--color-text-secondary);
+  display: none;
 }
 
 .primary-btn {
@@ -914,6 +912,82 @@ input[type='text'] {
 
     &:hover {
       background: #cbd5e1;
+    }
+  }
+}
+
+//responsive
+// ===== RESPONSIVE MOBILE =====
+@media (max-width: 768px) {
+  .sos-page {
+    padding: 16px;
+  }
+
+  .hero-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .primary-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .sos-card {
+    padding: 16px;
+  }
+
+  .sos-thumb {
+    height: 120px;
+    width: 160px;
+  }
+
+  .sos-card-footer {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .track-btn {
+    width: 100%;
+    justify-content: center;
+    margin-left: 0;
+  }
+
+  .urgency-pills {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .urgency-pill {
+    flex: 1;
+    min-width: calc(50% - 4px);
+  }
+
+  .modal-backdrop {
+    padding: 0;
+    align-items: flex-start; // ← đổi từ flex-end thành flex-start
+    padding-top: 25px; // ← cách top 1 chút
+  }
+
+  .sos-modal {
+    width: 100vw;
+    max-height: calc(100vh - 130px); // ← trừ bottom nav và top
+    border-radius: 24px 24px 0 0;
+    overflow-y: auto;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    padding-bottom: 16px;
+  }
+
+  .tracking-modal {
+    border-radius: 0;
+  }
+  .modal-header {
+    p {
+      display: none;
     }
   }
 }

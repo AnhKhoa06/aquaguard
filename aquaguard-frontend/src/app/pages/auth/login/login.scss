@@ -479,3 +479,48 @@
   color: #556677;
   text-align: center;
 }
+
+//responsive cho mobile
+// ===== RESPONSIVE MOBILE =====
+@media (max-width: 768px) {
+  .auth-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+    overflow-y: auto;
+    height: 100vh;
+  }
+
+  .auth-left {
+    display: none; // ← ẩn phần left trên mobile
+  }
+
+  .auth-right {
+    width: 100%;
+    padding: 24px 20px;
+    min-height: 100vh;
+    justify-content: center;
+  }
+
+  .auth-card {
+    max-width: 100%;
+    padding: 28px 20px 24px 20px;
+    border-radius: 20px;
+  }
+
+  .glow-1 {
+    width: 300px;
+    height: 300px;
+    top: -100px;
+    left: -100px;
+  }
+
+  .glow-2 {
+    width: 250px;
+    height: 250px;
+  }
+
+  .glow-3 {
+    width: 200px;
+    height: 200px;
+  }
+}

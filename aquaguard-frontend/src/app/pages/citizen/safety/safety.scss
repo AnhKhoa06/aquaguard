@@ -13,9 +13,8 @@
       margin-bottom: 8px;
     }
 
-    p {
-      color: var(--color-text-secondary);
-      font-size: 15px;
+    .page-header p {
+      display: none;
     }
   }
 
@@ -249,4 +248,54 @@
 
 .safety-item.open .toggle-btn .material-symbols-outlined {
   transform: rotate(180deg);
+}
+
+//responsive
+// ===== RESPONSIVE MOBILE =====
+@media (max-width: 768px) {
+  .safety-page {
+    padding: 20px 16px;
+  }
+
+  .emergency-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .emergency-card {
+    padding: 16px 20px;
+  }
+
+  .safety-header {
+    padding: 16px;
+  }
+
+  .safety-body {
+    padding: 0 16px;
+
+    ul {
+      padding-bottom: 16px;
+    }
+
+    li {
+      font-size: 14px;
+    }
+  }
+
+  .safety-item.open .safety-body {
+    padding-top: 14px;
+  }
+
+  .safety-icon {
+    width: 42px;
+    height: 42px;
+
+    .material-symbols-outlined {
+      font-size: 22px;
+    }
+  }
+
+  .safety-title {
+    font-size: 14px;
+  }
 }

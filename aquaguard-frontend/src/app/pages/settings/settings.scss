@@ -706,9 +706,13 @@ input[disabled] {
   flex-shrink: 0;
   transition: background 0.2s;
 
-  &:hover { background: #2d3748; }
+  &:hover {
+    background: #2d3748;
+  }
 
-  .material-symbols-outlined { font-size: 20px; }
+  .material-symbols-outlined {
+    font-size: 20px;
+  }
 }
 :host-context(body.theme-light) {
   .tab-btn {
@@ -735,18 +739,28 @@ input[disabled] {
     border-color: #e2e8f0;
 
     .member-info {
-      .member-name { color: #0f172a; }
-      .member-relation { color: #64748b; }
+      .member-name {
+        color: #0f172a;
+      }
+      .member-relation {
+        color: #64748b;
+      }
       .member-phone,
       .member-address,
-      .member-health-note { color: #64748b; }
+      .member-health-note {
+        color: #64748b;
+      }
     }
   }
 
   .invite-item {
     .invite-info {
-      .invite-name { color: #0f172a; }
-      .invite-meta { color: #64748b; }
+      .invite-name {
+        color: #0f172a;
+      }
+      .invite-meta {
+        color: #64748b;
+      }
     }
   }
 
@@ -764,15 +778,21 @@ input[disabled] {
     background: #f8fafc;
     border-color: #e2e8f0;
 
-    .search-result-name { color: #0f172a; }
-    .search-result-phone { color: #64748b; }
+    .search-result-name {
+      color: #0f172a;
+    }
+    .search-result-phone {
+      color: #64748b;
+    }
 
     .relationship-input {
       background: #f1f5f9;
       border-color: #e2e8f0;
       color: #0f172a;
 
-      &::placeholder { color: #94a3b8; }
+      &::placeholder {
+        color: #94a3b8;
+      }
     }
   }
 
@@ -785,16 +805,19 @@ input[disabled] {
     border-color: #e2e8f0;
     color: #0f172a;
 
-    &::placeholder { color: #94a3b8; }
+    &::placeholder {
+      color: #94a3b8;
+    }
   }
 
-  .invites-header { color: #b45309; }
+  .invites-header {
+    color: #b45309;
+  }
 
   .invite-item {
     background: rgba(245, 158, 11, 0.06);
     border-color: rgba(245, 158, 11, 0.25);
   }
-  
 }
 
 // Search
@@ -1089,7 +1112,6 @@ input[disabled] {
       font-size: 12px;
       color: #8891a8;
       margin-top: 4px;
-    
 
       .material-symbols-outlined {
         font-size: 14px;
@@ -1106,7 +1128,7 @@ input[disabled] {
 
       .material-symbols-outlined {
         font-size: 14px;
-        color: var(--primary);// xanh lá — phân biệt với phone/address
+        color: var(--primary); // xanh lá — phân biệt với phone/address
       }
     }
   }
@@ -1128,5 +1150,151 @@ input[disabled] {
 
   .material-symbols-outlined {
     font-size: 20px;
+  }
+}
+
+//responsive
+@media (max-width: 768px) {
+  .settings-page {
+    padding: 1rem;
+
+    .page-header {
+      margin-bottom: 1rem;
+      h1 {
+        font-size: 1.4rem;
+      }
+    }
+
+    .tabs {
+      gap: 6px;
+      margin-bottom: 1rem;
+    }
+
+    .tab-btn {
+      padding: 8px 14px;
+      font-size: 13px;
+
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    // Avatar card
+    .avatar-card {
+      padding: 1.2rem;
+      gap: 1rem;
+    }
+
+    .avatar {
+      width: 52px;
+      height: 52px;
+      font-size: 1.3rem;
+    }
+
+    // Form card
+    .form-card {
+      padding: 1.2rem;
+    }
+
+    // Form grid 2 cột → 1 cột
+    .form-grid {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    // Address row dọc
+    .address-row {
+      flex-direction: column;
+
+      .location-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    // Save btn full width
+    .save-btn {
+      width: 100%;
+      text-align: center;
+      justify-content: center;
+    }
+
+    // Health buttons wrap
+    .health-btns {
+      gap: 6px;
+    }
+
+    .health-btn {
+      padding: 7px 12px;
+      font-size: 11px;
+    }
+
+    // Family section header dọc
+    .family-section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+
+      .btn-primary {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    // Search result dọc
+    .search-result {
+      flex-wrap: wrap;
+
+      .search-result-info {
+        flex: 1;
+        min-width: 120px;
+      }
+
+      .relationship-input {
+        width: 100%;
+      }
+
+      .connect-btn {
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    // Invite buttons
+    .invite-item {
+      flex-wrap: wrap;
+
+      .invite-info {
+        flex: 1;
+        min-width: 120px;
+      }
+
+      .accept-btn,
+      .reject-btn {
+        flex: 1;
+        text-align: center;
+      }
+    }
+
+    // Member item
+    .member-item {
+      flex-wrap: wrap;
+
+      .health-badge {
+        order: 3;
+      }
+
+      .remove-btn {
+        order: 4;
+        margin-left: auto;
+      }
+    }
+
+    // Theme grid 1 cột
+    .theme-grid {
+      grid-template-columns: 1fr;
+    }
   }
 }

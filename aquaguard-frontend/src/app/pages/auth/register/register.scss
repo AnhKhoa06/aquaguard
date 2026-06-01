@@ -263,3 +263,46 @@
     }
   }
 }
+
+//responsive cho mobile
+// ===== RESPONSIVE MOBILE =====
+@media (max-width: 768px) {
+  .auth-right {
+    width: 100%;
+    padding: 24px 20px;
+    max-height: 100vh;
+    justify-content: flex-start; // ← thêm dòng này
+    padding-top: 95px; // ← thêm dòng này
+  }
+
+  .auth-card {
+    max-width: 100%;
+    padding: 24px 20px 20px 20px;
+  }
+
+  .gender-group {
+    gap: 6px;
+
+    .gender-btn {
+      padding: 10px 6px;
+      font-size: 13px;
+    }
+  }
+
+  .role-group {
+    gap: 6px;
+
+    .role-btn {
+      padding: 12px 6px;
+      font-size: 13px;
+    }
+  }
+
+  .btn-group {
+    gap: 8px;
+  }
+
+  .summary {
+    padding: 12px;
+  }
+}

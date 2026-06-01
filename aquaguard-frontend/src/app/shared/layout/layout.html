@@ -4,13 +4,8 @@
     <div class="sidebar-top">
       <!-- Logo only -->
       <div class="brand">
-        <img 
-          *ngIf="!collapsed" 
-          [src]="getLogoSrc()" 
-          alt="AquaGuard" 
-          class="logo" 
-        />
-        
+        <img *ngIf="!collapsed" [src]="getLogoSrc()" alt="AquaGuard" class="logo" />
+
         <div *ngIf="collapsed" class="logo-mini">
           <span class="material-symbols-outlined">water_drop</span>
         </div>
@@ -75,4 +70,18 @@
   <main class="main-content">
     <router-outlet></router-outlet>
   </main>
+
+  <!-- Bottom Nav (mobile only) -->
+  <nav class="bottom-nav" style="display: none">
+    <ng-container *ngFor="let item of navItems">
+      <a class="bottom-nav-item" [routerLink]="item.route" routerLinkActive="active">
+        <span class="material-symbols-outlined">{{ item.icon }}</span>
+        <span>{{ item.labelVi }}</span>
+      </a>
+    </ng-container>
+    <a class="bottom-nav-item" [routerLink]="['/settings']" routerLinkActive="active">
+      <span class="material-symbols-outlined">settings</span>
+      <span>Cài đặt</span>
+    </a>
+  </nav>
 </div>

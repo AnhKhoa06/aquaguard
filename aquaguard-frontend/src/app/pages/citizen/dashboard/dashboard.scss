@@ -585,7 +585,7 @@
 
 .member-note {
   font-size: 11px;
-  color: #94a3b8;  // sáng hơn
+  color: #94a3b8; // sáng hơn
   margin-top: 3px;
   font-style: italic;
 }
@@ -1053,4 +1053,113 @@
 
 .invites-card .card-header .card-title {
   color: var(--color-text); // ← dùng variable thay vì hardcode #ffffff
+}
+
+//resonsive
+// ===== RESPONSIVE MOBILE =====
+@media (max-width: 768px) {
+  .dashboard-wrapper {
+    padding: 20px 16px 24px;
+    gap: 16px;
+  }
+
+  // Header
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .user-name {
+    font-size: 22px;
+  }
+
+  .header-right {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .status-badges {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .status-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 8px 8px;
+    font-size: 12px;
+
+    span:last-child {
+      display: none; // ẩn chữ, chỉ hiện icon
+    }
+  }
+
+  // SOS Banner
+  .active-sos-banner {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .sos-banner-address {
+    font-size: 12px;
+  }
+
+  // Grid → 1 cột
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  // Invites card
+  .invites-card {
+    width: 100%;
+  }
+
+  // Quick actions — 3 cột giữ nguyên nhưng nhỏ hơn
+  .quick-actions-grid {
+    gap: 8px;
+  }
+
+  .quick-btn {
+    padding: 16px 6px;
+  }
+
+  .quick-btn-icon-wrap {
+    width: 34px;
+    height: 34px;
+  }
+
+  .quick-btn-label {
+    font-size: 11px;
+  }
+
+  .quick-btn-sub {
+    font-size: 9px;
+  }
+
+  // History
+  .history-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .history-item-right {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .history-address {
+    max-width: 100%;
+  }
+
+  // Family item
+  .family-item {
+    padding: 12px;
+    gap: 10px;
+  }
 }
