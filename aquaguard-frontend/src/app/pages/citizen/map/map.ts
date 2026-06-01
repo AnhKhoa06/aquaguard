@@ -9,8 +9,8 @@ import { SafePipe } from '../../../core/pipes/safe.pipe';
 import { SosRequest, Alert, User } from '../../../models/interfaces';
 import { FloodService } from '../../../core/services/flood.service';
 import { HttpClient } from '@angular/common/http';
-import { ShelterService } from '../../../core/services/shelter.service';
 import { forkJoin } from 'rxjs';
+import 'leaflet.markercluster';
 @Component({
   selector: 'app-map',
   standalone: true,
@@ -26,7 +26,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   private userCircle: L.Circle | null = null;
 
   private floodLayers: any[] = [];
-  private shelterMarkers: L.Marker[] = [];
 
   private familyMarkers: L.Marker[] = [];
 
@@ -64,16 +63,15 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     private familyService: FamilyService,
     private floodService: FloodService,
     private http: HttpClient,
-    private shelterService: ShelterService,
   ) {}
 
   ngOnInit() {
+    console.log('ngOnInit called');
     this.loadSos();
     this.loadAlerts();
     this.loadFamily();
     this.loadWeatherAlerts();
     this.loadFloodData();
-    this.loadShelters();
     this.locateMe();
   }
 
@@ -122,15 +120,12 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   private loadAlerts() {
     this.alertService.getAll().subscribe({
       next: (res) => {
-        console.log('alerts response:', res); // ← thêm dòng này
         if (res.success) {
           this.alerts = res.data;
           this.computeRisk();
         }
       },
-      error: (err) => {
-        console.log('alerts error:', err); // ← thêm dòng này
-      },
+      error: (err) => {},
     });
   }
 
@@ -177,9 +172,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         results.forEach((data, i) => {
           const current = data.current;
           const name = locations[i].name;
-          console.log(
-            `${name}: rain=${current.rain}, showers=${current.showers}, precip=${current.precipitation}, weathercode=${current.weathercode}`,
-          );
 
           if (
             current.rain > 0 ||
@@ -223,7 +215,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         this.alerts = [...autoAlerts, ...this.alerts];
         this.computeRisk();
       },
-      error: (err) => console.log('Weather error:', err.message),
+      error: () => {},
     });
 
     // Tính riskLevel theo vị trí hiện tại
@@ -307,108 +299,81 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Thêm method
   private loadFloodData() {
+    console.log('loadFloodData called');
     this.floodService.getFloodData().subscribe({
       next: (res) => {
-        console.log('flood data:', res); // ← thêm dòng này
         if (res.success) {
           this.floodLayers.forEach((l) => l.remove());
           this.floodLayers = [];
 
-          res.data.forEach((point: any) => {
-            const color: Record<string, string> = {
-              critical: '#ef4444',
-              high: '#f97316',
-              moderate: '#f59e0b',
-              safe: '#22c55e',
-            };
+          const icons: Record<string, L.DivIcon> = {};
+          const color: Record<string, string> = {
+            critical: '#ef4444',
+            high: '#f97316',
+            moderate: '#f59e0b',
+            safe: '#22c55e',
+          };
 
-            const c = color[point.risk_level] || '#64748b';
-
-            const icon = L.divIcon({
+          Object.keys(color).forEach((level) => {
+            icons[level] = L.divIcon({
               className: '',
-              html: `<div style="
-                width: 24px;
-                height: 24px;
-                border-radius: 50% 50% 50% 0;
-                background: ${c};
-                transform: rotate(-45deg);
-                border: 2px solid white;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-              ">
-                <div style="
-                  width: 8px;
-                  height: 8px;
-                  border-radius: 50%;
-                  background: white;
-                  transform: rotate(45deg);
-                "></div>
-              </div>`,
-              iconSize: [24, 24],
-              iconAnchor: [12, 24],
+              html: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="32" viewBox="0 0 24 32">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 9 12 20 12 20s12-11 12-20C24 5.37 18.63 0 12 0z" fill="${color[level]}"/>
+              <circle cx="12" cy="11" r="5" fill="white" opacity="0.9"/>
+            </svg>`,
+              iconSize: [24, 32],
+              iconAnchor: [12, 32],
             });
-
-            const marker = L.marker([point.latitude, point.longitude], { icon })
-              .bindTooltip(point.risk_level, { permanent: false })
-              .addTo(this.map);
-
-            this.floodLayers.push(marker as any);
           });
+
+          const clusterGroup = (L as any).markerClusterGroup({
+            maxClusterRadius: 60,
+            showCoverageOnHover: false,
+            zoomToBoundsOnClick: true,
+            spiderfyOnMaxZoom: false,
+            disableClusteringAtZoom: 10,
+            iconCreateFunction: (cluster: any) => {
+              // Lấy marker đầu tiên trong cluster để lấy màu
+              const firstMarker = cluster.getAllChildMarkers()[0];
+              const firstIcon = firstMarker.options.icon.options.html;
+
+              // Extract màu từ SVG
+              const colorMap: Record<string, string> = {
+                critical: '#ef4444',
+                high: '#f97316',
+                moderate: '#f59e0b',
+                safe: '#22c55e',
+              };
+
+              // Tìm point tương ứng theo latlng
+              const lat = firstMarker.getLatLng().lat;
+              const point = res.data.find((p: any) => p.latitude === lat);
+              const c = point ? colorMap[point.risk_level] || '#64748b' : '#64748b';
+
+              return L.divIcon({
+                className: '',
+                html: `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="42" viewBox="0 0 24 32">
+      <path d="M12 0C5.37 0 0 5.37 0 12c0 9 12 20 12 20s12-11 12-20C24 5.37 18.63 0 12 0z" fill="${c}"/>
+      <circle cx="12" cy="11" r="5" fill="white" opacity="0.9"/>
+    </svg>`,
+                iconSize: [32, 42],
+                iconAnchor: [16, 42],
+              });
+            },
+          });
+
+          res.data.forEach((point: any) => {
+            const icon = icons[point.risk_level] || icons['safe'];
+            const marker = L.marker([point.latitude, point.longitude], { icon });
+            clusterGroup.addLayer(marker);
+          });
+
+          this.map.addLayer(clusterGroup);
+          this.floodLayers.push(clusterGroup as any);
           this.showFloodZone = true;
         }
       },
-      error: (err) => {
-        console.log('flood error:', err); // ← thêm dòng này
-      },
-    });
-  }
-
-  private loadShelters() {
-    this.shelterService.getAll().subscribe({
-      next: (res) => {
-        if (res.success) {
-          const list = res.data || [];
-          // store and render if map already initialized
-          this.renderShelterMarkers(list);
-        }
-      },
-      error: (err) => {
-        console.log('shelters error:', err);
-      },
-    });
-  }
-
-  private renderShelterMarkers(list: any[]) {
-    // remove old markers
-    this.shelterMarkers.forEach((m) => m.remove());
-    this.shelterMarkers = [];
-
-    list.forEach((s) => {
-      if (!s.latitude || !s.longitude) return;
-
-      const statusColor = s.current_count >= s.capacity ? '#ef4444' : '#10b981';
-
-      const icon = L.divIcon({
-        className: '',
-        html: `<div style="width:18px;height:18px;border-radius:50%;background:${statusColor};border:2px solid #fff;box-shadow:0 1px 6px rgba(0,0,0,0.3)"></div>`,
-        iconSize: [18, 18],
-        iconAnchor: [9, 9],
-      });
-
-      const marker = L.marker([s.latitude, s.longitude], { icon })
-        .bindPopup(
-          `
-          <div style="min-width:180px;font-family:inherit;padding:8px">
-            <strong style="display:block;color:#e2e8f0">${s.name}</strong>
-            <div style="font-size:12px;color:#94a3b8">${s.address || ''}</div>
-            <div style="margin-top:8px;font-size:12px;color:#cbd5e1">Sức chứa: ${s.current_count}/${s.capacity}</div>
-          </div>
-        `,
-        )
-        .addTo(this.map);
-
-      this.shelterMarkers.push(marker);
+      error: () => {},
     });
   }
 
@@ -666,7 +631,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       (err) => {
         this.locating = false;
-        console.log('GPS error:', err);
       },
       {
         enableHighAccuracy: true,

@@ -1764,3 +1764,69 @@
     }
   }
 }
+
+// ========== TEAM TAB ==========
+.team-info-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.team-info-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.team-avatar-big {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.team-name {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.team-area,
+.team-phone {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #64748b;
+  margin: 0 0 4px;
+
+  .material-symbols-outlined {
+    font-size: 14px;
+  }
+}
+
+.team-members-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #556677;
+  margin-bottom: 10px;
+
+  .material-symbols-outlined {
+    font-size: 16px;
+  }
+}

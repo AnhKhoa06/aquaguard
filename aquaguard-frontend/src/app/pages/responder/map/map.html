@@ -253,9 +253,45 @@
 
       <!-- Tab đội nhóm -->
       <div class="tab-content" *ngIf="activeTab === 'team'">
-        <div class="family-empty">
-          <span class="material-symbols-outlined">groups</span>
-          <p>Tính năng đang phát triển</p>
+        <!-- Chưa có đội -->
+        <div class="family-empty" *ngIf="!myTeam">
+          <span class="material-symbols-outlined">group_off</span>
+          <p>Bạn chưa thuộc đội cứu hộ nào</p>
+        </div>
+
+        <!-- Có đội -->
+        <div *ngIf="myTeam">
+          <div class="team-info-card">
+            <div class="team-info-header">
+              <div class="team-avatar-big">{{ getInitials(myTeam.name) }}</div>
+              <div>
+                <h3 class="team-name">{{ myTeam.name }}</h3>
+                <p class="team-area" *ngIf="myTeam.area">
+                  <span class="material-symbols-outlined">location_on</span>
+                  {{ myTeam.area }}
+                </p>
+                <p class="team-phone" *ngIf="myTeam.phone">
+                  <span class="material-symbols-outlined">call</span>
+                  {{ myTeam.phone }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="team-members-title">
+            <span class="material-symbols-outlined">group</span>
+            Thành viên ({{ myTeam.members?.length || 0 }})
+          </div>
+
+          <div class="family-list">
+            <div class="family-item" *ngFor="let m of myTeam.members">
+              <div class="member-avatar">{{ getInitials(m.full_name || m.phone) }}</div>
+              <div class="member-info">
+                <span class="member-name">{{ m.full_name || 'Chưa đặt tên' }}</span>
+                <span class="member-phone">{{ m.phone }}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

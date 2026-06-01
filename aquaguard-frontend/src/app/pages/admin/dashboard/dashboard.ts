@@ -9,6 +9,8 @@ import { SosService } from '../../../core/services/sos.service';
 import { UserService } from '../../../core/services/user.service';
 import { FloodService } from '../../../core/services/flood.service';
 import { SafePipe } from '../../../core/pipes/safe.pipe';
+import { RescueTeamService } from '../../../core/services/rescue-team.service';
+import 'leaflet.markercluster';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -27,6 +29,16 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
   userQuery = '';
   private apiUrl = environment.apiUrl;
   roleFilter = '';
+
+  // Teams
+  teams: any[] = [];
+  teamsLoading = false;
+  selectedTeamId: number | null = null;
+  joinRequests: any[] = [];
+  showCreateTeam = false;
+  newTeam = { name: '', phone: '', area: '' };
+  addMemberUserId: number | null = null;
+  responders: any[] = [];
 
   // Map
   private map!: L.Map;
@@ -55,6 +67,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
     private sosService: SosService,
     private floodService: FloodService,
     private userService: UserService,
+    private rescueTeamService: RescueTeamService,
   ) {}
 
   ngOnInit() {
@@ -98,6 +111,12 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
 
     if (tab === 'users') {
       this.loadUsers();
+    }
+
+    if (tab === 'teams') {
+      this.loadTeams();
+      this.loadJoinRequests();
+      this.loadResponders();
     }
   }
 
@@ -176,6 +195,99 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
       },
       error: () => alert('Xoá không thành công'),
     });
+  }
+
+  loadTeams(): void {
+    this.teamsLoading = true;
+    this.rescueTeamService.getAll().subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.teams = res.data;
+          if (this.teams.length > 0 && !this.selectedTeamId) {
+            this.selectedTeamId = this.teams[0].id;
+          }
+        }
+        this.teamsLoading = false;
+      },
+      error: () => {
+        this.teamsLoading = false;
+      },
+    });
+  }
+
+  loadJoinRequests(): void {
+    this.rescueTeamService.getJoinRequests().subscribe({
+      next: (res) => {
+        if (res.success) this.joinRequests = res.data;
+      },
+    });
+  }
+
+  loadResponders(): void {
+    this.userService.getAllUsers().subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.responders = res.data.filter((u: any) => u.role === 'responder');
+        }
+      },
+    });
+  }
+
+  get selectedTeam(): any {
+    return this.teams.find((t) => t.id === this.selectedTeamId) || null;
+  }
+
+  createTeam(): void {
+    if (!this.newTeam.name) return;
+    this.rescueTeamService.createTeam(this.newTeam).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.showCreateTeam = false;
+          this.newTeam = { name: '', phone: '', area: '' };
+          this.loadTeams();
+        }
+      },
+    });
+  }
+
+  addMember(): void {
+    if (!this.selectedTeamId || !this.addMemberUserId) return;
+    this.rescueTeamService.addMember(this.selectedTeamId, this.addMemberUserId).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.addMemberUserId = null;
+          this.loadTeams();
+        }
+      },
+    });
+  }
+
+  deleteTeam(teamId: number): void {
+    if (!confirm('Xoá đội cứu hộ này?')) return;
+    this.rescueTeamService.deleteTeam(teamId).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.selectedTeamId = null;
+          this.loadTeams();
+        }
+      },
+    });
+  }
+
+  handleJoinRequest(requestId: number, status: 'approved' | 'rejected'): void {
+    this.rescueTeamService.handleJoinRequest(requestId, status).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.loadJoinRequests();
+          this.loadTeams();
+        }
+      },
+    });
+  }
+
+  getMemberName(userId: number): string {
+    const user = this.responders.find((u) => u.id === userId);
+    return user ? user.full_name : `User #${userId}`;
   }
 
   private initMap() {
@@ -262,44 +374,64 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
     this.floodService.getFloodData().subscribe({
       next: (res) => {
         if (res.success) {
-          res.data.forEach((point: any) => {
-            const color: Record<string, string> = {
-              critical: '#ef4444',
-              high: '#f97316',
-              moderate: '#f59e0b',
-              safe: '#22c55e',
-            };
-            const c = color[point.risk_level] || '#64748b';
-            const icon = L.divIcon({
+          this.floodLayers.forEach((l) => l.remove());
+          this.floodLayers = [];
+
+          const color: Record<string, string> = {
+            critical: '#ef4444',
+            high: '#f97316',
+            moderate: '#f59e0b',
+            safe: '#22c55e',
+          };
+
+          const icons: Record<string, L.DivIcon> = {};
+          Object.keys(color).forEach((level) => {
+            icons[level] = L.divIcon({
               className: '',
-              html: `<div style="
-                width: 24px;
-                height: 24px;
-                border-radius: 50% 50% 50% 0;
-                background: ${c};
-                transform: rotate(-45deg);
-                border: 2px solid white;
-              ">
-                <div style="
-                  width: 8px;
-                  height: 8px;
-                  border-radius: 50%;
-                  background: white;
-                  transform: rotate(45deg);
-                  margin: 6px auto 0;
-                "></div>
-              </div>`,
-              iconSize: [24, 24],
-              iconAnchor: [12, 24],
+              html: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="32" viewBox="0 0 24 32">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 9 12 20 12 20s12-11 12-20C24 5.37 18.63 0 12 0z" fill="${color[level]}"/>
+              <circle cx="12" cy="11" r="5" fill="white" opacity="0.9"/>
+            </svg>`,
+              iconSize: [24, 32],
+              iconAnchor: [12, 32],
             });
-            const marker = L.marker([point.latitude, point.longitude], { icon })
-              .bindTooltip(point.risk_level)
-              .addTo(this.map);
-            this.floodLayers.push(marker as any);
           });
+
+          const clusterGroup = (L as any).markerClusterGroup({
+            maxClusterRadius: 60,
+            showCoverageOnHover: false,
+            zoomToBoundsOnClick: true,
+            spiderfyOnMaxZoom: false,
+            disableClusteringAtZoom: 10,
+            iconCreateFunction: (cluster: any) => {
+              const firstMarker = cluster.getAllChildMarkers()[0];
+              const lat = firstMarker.getLatLng().lat;
+              const point = res.data.find((p: any) => p.latitude === lat);
+              const c = point ? color[point.risk_level] || '#64748b' : '#64748b';
+              return L.divIcon({
+                className: '',
+                html: `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="42" viewBox="0 0 24 32">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 9 12 20 12 20s12-11 12-20C24 5.37 18.63 0 12 0z" fill="${c}"/>
+                <circle cx="12" cy="11" r="5" fill="white" opacity="0.9"/>
+              </svg>`,
+                iconSize: [32, 42],
+                iconAnchor: [16, 42],
+              });
+            },
+          });
+
+          res.data.forEach((point: any) => {
+            const icon = icons[point.risk_level] || icons['safe'];
+            const marker = L.marker([point.latitude, point.longitude], { icon });
+            clusterGroup.addLayer(marker);
+          });
+
+          this.map.addLayer(clusterGroup);
+          this.floodLayers.push(clusterGroup as any);
           this.showFloodZone = true;
         }
       },
+      error: () => {},
     });
   }
 

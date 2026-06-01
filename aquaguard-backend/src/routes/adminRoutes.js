@@ -10,6 +10,14 @@ router.use(authMiddleware, authorizeRoles("admin"));
 // Dashboard thống kê
 router.get("/dashboard", adminController.getDashboard);
 
+//analytics chi tiết
+router.get(
+  "/analytics",
+  authMiddleware,
+  authorizeRoles("admin"),
+  adminController.getAnalytics,
+);
+
 // Quản lý users
 router.get("/users", adminController.getUsers);
 router.patch("/users/:id/role", adminController.updateRole);

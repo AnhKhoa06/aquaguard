@@ -327,6 +327,7 @@ export class SosComponent implements OnInit, OnDestroy {
             this.sosRequests.length > 0
               ? this.sosRequests[0] // lấy cái mới nhất
               : null;
+          console.log('activeSos:', this.activeSos);
           this.syncTrackingMeta();
           if (this.showTracking) {
             this.renderTrackingRoute();

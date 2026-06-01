@@ -228,10 +228,177 @@
   </div>
 
   <!-- ===== TAB TEAMS (placeholder) ===== -->
+  <!-- ===== TAB TEAMS ===== -->
   <div class="tab-content" *ngIf="!loading && activeTab === 'teams'">
-    <div class="coming-soon">
-      <span class="material-symbols-outlined">groups</span>
-      <p>Rescue Teams — đang phát triển</p>
+    <!-- Join Requests Banner -->
+    <div class="join-requests-banner" *ngIf="joinRequests.length > 0">
+      <div class="join-banner-header">
+        <span class="material-symbols-outlined">notifications_active</span>
+        <span>Yêu cầu tham gia đội ({{ joinRequests.length }})</span>
+      </div>
+      <div class="join-request-list">
+        <div class="join-request-item" *ngFor="let req of joinRequests">
+          <div class="join-request-info">
+            <span class="material-symbols-outlined">person</span>
+            <div>
+              <strong>{{ req.full_name }}</strong>
+              <span>{{ req.phone }}</span>
+            </div>
+            <span class="join-arrow">→</span>
+            <span class="material-symbols-outlined">groups</span>
+            <span class="join-team-name">{{ req.team_name }}</span>
+          </div>
+          <div class="join-request-actions">
+            <button class="join-approve-btn" (click)="handleJoinRequest(req.id, 'approved')">
+              <span class="material-symbols-outlined">check</span>
+              Duyệt
+            </button>
+            <button class="join-reject-btn" (click)="handleJoinRequest(req.id, 'rejected')">
+              <span class="material-symbols-outlined">close</span>
+              Từ chối
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Teams toolbar -->
+    <div class="teams-toolbar">
+      <h2 class="teams-title">
+        <span class="material-symbols-outlined">groups</span>
+        Đội cứu hộ ({{ teams.length }})
+      </h2>
+      <button class="btn-create-team" (click)="showCreateTeam = !showCreateTeam">
+        <span class="material-symbols-outlined">add</span>
+        Tạo đội mới
+      </button>
+    </div>
+
+    <!-- Create team form -->
+    <div class="create-team-form" *ngIf="showCreateTeam">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Tên đội *</label>
+          <input [(ngModel)]="newTeam.name" placeholder="Nhập tên đội cứu hộ..." />
+        </div>
+        <div class="form-group">
+          <label>Số điện thoại</label>
+          <input [(ngModel)]="newTeam.phone" placeholder="0911..." />
+        </div>
+        <div class="form-group">
+          <label>Khu vực</label>
+          <input [(ngModel)]="newTeam.area" placeholder="Quy Nhơn, Bình Định..." />
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-cancel" (click)="showCreateTeam = false">Huỷ</button>
+        <button class="btn-submit" (click)="createTeam()" [disabled]="!newTeam.name">
+          <span class="material-symbols-outlined">save</span>
+          Tạo đội
+        </button>
+      </div>
+    </div>
+
+    <!-- Teams grid -->
+    <div class="teams-grid" *ngIf="!teamsLoading">
+      <!-- Team list -->
+      <div class="teams-list-panel panel">
+        <div class="list-empty" *ngIf="teams.length === 0">
+          <span class="material-symbols-outlined">groups_off</span>
+          <p>Chưa có đội cứu hộ nào</p>
+        </div>
+        <div
+          class="team-row"
+          *ngFor="let team of teams"
+          [class.active]="selectedTeamId === team.id"
+          (click)="selectedTeamId = team.id"
+        >
+          <div class="team-row-top">
+            <div class="team-avatar-wrap">
+              <span class="material-symbols-outlined">groups</span>
+            </div>
+            <div class="team-row-info">
+              <div class="team-row-name">
+                <strong>{{ team.name }}</strong>
+              </div>
+              <p class="team-row-meta">
+                <span class="material-symbols-outlined">person</span>
+                {{ team.members?.length || 0 }} thành viên
+                <span *ngIf="team.area"> · {{ team.area }}</span>
+              </p>
+              <p class="team-row-phone" *ngIf="team.phone">
+                <span class="material-symbols-outlined">phone</span>
+                {{ team.phone }}
+              </p>
+            </div>
+            <button class="btn-delete-team" (click)="deleteTeam(team.id); $event.stopPropagation()">
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Team detail -->
+      <div class="team-detail-panel panel" *ngIf="selectedTeam">
+        <div class="detail-hero">
+          <div class="team-detail-icon">
+            <span class="material-symbols-outlined">groups</span>
+          </div>
+          <div class="detail-hero-info">
+            <h2>{{ selectedTeam.name }}</h2>
+            <p *ngIf="selectedTeam.area">
+              <span class="material-symbols-outlined">location_on</span>
+              {{ selectedTeam.area }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Add member -->
+        <div class="add-member-section">
+          <p class="section-label">
+            <span class="material-symbols-outlined">person_add</span>
+            Thêm thành viên
+          </p>
+          <div class="add-member-row">
+            <select class="member-select" [(ngModel)]="addMemberUserId">
+              <option [value]="null">Chọn cứu hộ viên...</option>
+              <option *ngFor="let r of responders" [value]="r.id">
+                {{ r.full_name }} — {{ r.phone }}
+              </option>
+            </select>
+            <button class="btn-add-member" (click)="addMember()" [disabled]="!addMemberUserId">
+              <span class="material-symbols-outlined">add</span>
+              Thêm
+            </button>
+          </div>
+        </div>
+
+        <!-- Members list -->
+        <div class="members-section">
+          <p class="section-label">
+            <span class="material-symbols-outlined">person</span>
+            Thành viên ({{ selectedTeam.members?.length || 0 }})
+          </p>
+          <div class="members-empty" *ngIf="!selectedTeam.members?.length">
+            <span class="material-symbols-outlined">person_off</span>
+            <p>Chưa có thành viên</p>
+          </div>
+          <div class="member-list">
+            <div class="member-item" *ngFor="let member of selectedTeam.members">
+              <div class="member-avatar" [style.background]="getAvatarColor(member.full_name)">
+                {{ getInitials(member.full_name) }}
+              </div>
+              <div class="member-info">
+                <span class="member-name">{{ member.full_name }}</span>
+                <span class="member-phone">{{ member.phone }}</span>
+              </div>
+              <span class="health-badge" [ngClass]="getHealthClass(member.health_status)">
+                {{ getHealthLabel(member.health_status) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

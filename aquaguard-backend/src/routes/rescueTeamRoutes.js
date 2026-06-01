@@ -20,6 +20,8 @@ router.get(
   rescueTeamController.findAll,
 );
 
+router.get("/my-team", authMiddleware, rescueTeamController.getMyTeam);
+
 // Admin + Responder — xem chi tiết 1 đội
 router.get(
   "/:id",
@@ -42,6 +44,38 @@ router.delete(
   authMiddleware,
   authorizeRoles("admin"),
   rescueTeamController.delete,
+);
+
+// Responder — gửi yêu cầu tham gia đội
+router.post(
+  "/:id/join-request",
+  authMiddleware,
+  authorizeRoles("responder"),
+  rescueTeamController.requestJoin,
+);
+
+// Admin — xem danh sách xin tham gia
+router.get(
+  "/join-requests/all",
+  authMiddleware,
+  authorizeRoles("admin"),
+  rescueTeamController.getJoinRequests,
+);
+
+// Admin — duyệt/từ chối
+router.patch(
+  "/join-requests/:requestId",
+  authMiddleware,
+  authorizeRoles("admin"),
+  rescueTeamController.handleJoinRequest,
+);
+
+// Responder — xem request của mình
+router.get(
+  "/join-requests/mine",
+  authMiddleware,
+  authorizeRoles("responder"),
+  rescueTeamController.getMyJoinRequest,
 );
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const rescueTeamModel = require("../models/rescueTeamModel");
 const userModel = require("../models/userModel");
 const { successResponse, errorResponse } = require("../utils/response");
+const db = require("../config/db");
 
 const rescueTeamController = {
   // Tạo đội cứu hộ
@@ -99,6 +100,128 @@ const rescueTeamController = {
       await rescueTeamModel.delete(req.params.id);
 
       return successResponse(res, null, "Xoá đội cứu hộ thành công!");
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  requestJoin: async (req, res, next) => {
+    try {
+      const teamId = req.params.id;
+      const userId = req.user.id;
+
+      const [existing] = await db.query(
+        `SELECT id FROM join_requests WHERE user_id = ? AND status = 'pending'`,
+        [userId],
+      );
+      if (existing.length > 0) {
+        return errorResponse(
+          res,
+          "Bạn đã có yêu cầu tham gia đang chờ duyệt!",
+          400,
+        );
+      }
+
+      const [inTeam] = await db.query(
+        `SELECT id FROM rescue_team_members WHERE user_id = ?`,
+        [userId],
+      );
+      if (inTeam.length > 0) {
+        return errorResponse(res, "Bạn đã thuộc một đội cứu hộ!", 400);
+      }
+
+      await db.query(
+        `INSERT INTO join_requests (user_id, team_id) VALUES (?, ?)`,
+        [userId, teamId],
+      );
+
+      return successResponse(res, null, "Đã gửi yêu cầu tham gia đội!");
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  getMyJoinRequest: async (req, res, next) => {
+    try {
+      const [rows] = await db.query(
+        `SELECT jr.*, rt.name as team_name 
+       FROM join_requests jr
+       JOIN rescue_teams rt ON jr.team_id = rt.id
+       WHERE jr.user_id = ?
+       ORDER BY jr.created_at DESC
+       LIMIT 1`,
+        [req.user.id],
+      );
+      return successResponse(res, rows[0] || null, "OK");
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  getJoinRequests: async (req, res, next) => {
+    try {
+      const [rows] = await db.query(
+        `SELECT jr.*, u.full_name, u.phone, rt.name as team_name
+       FROM join_requests jr
+       JOIN users u ON jr.user_id = u.id
+       JOIN rescue_teams rt ON jr.team_id = rt.id
+       WHERE jr.status = 'pending'
+       ORDER BY jr.created_at DESC`,
+      );
+      return successResponse(res, rows, "OK");
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  handleJoinRequest: async (req, res, next) => {
+    try {
+      const { status } = req.body;
+      const requestId = req.params.requestId;
+
+      const [rows] = await db.query(
+        `SELECT * FROM join_requests WHERE id = ?`,
+        [requestId],
+      );
+      if (!rows[0]) return errorResponse(res, "Không tìm thấy yêu cầu!", 404);
+
+      const request = rows[0];
+
+      await db.query(`UPDATE join_requests SET status = ? WHERE id = ?`, [
+        status,
+        requestId,
+      ]);
+
+      if (status === "approved") {
+        await db.query(
+          `INSERT INTO rescue_team_members (team_id, user_id) VALUES (?, ?)`,
+          [request.team_id, request.user_id],
+        );
+      }
+
+      return successResponse(
+        res,
+        null,
+        status === "approved" ? "Đã duyệt!" : "Đã từ chối!",
+      );
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  getMyTeam: async (req, res, next) => {
+    try {
+      const teamMember = await rescueTeamModel.findTeamByUserId(req.user.id);
+      if (!teamMember) {
+        return successResponse(res, null, "Bạn chưa có đội cứu hộ");
+      }
+      const team = await rescueTeamModel.findById(teamMember.team_id);
+      const members = await rescueTeamModel.getMembers(teamMember.team_id);
+      return successResponse(
+        res,
+        { ...team, members },
+        "Lấy thông tin đội thành công!",
+      );
     } catch (err) {
       next(err);
     }

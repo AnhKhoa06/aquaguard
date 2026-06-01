@@ -20,7 +20,7 @@ export class MyTasksComponent implements OnInit, OnDestroy {
   sosRequests: SosRequest[] = [];
   selectedId: number | null = null;
   hasTeam = false;
-  checkingTeam = false;
+  checkingTeam = true;
   filterStatus = 'open';
   searchQuery = '';
   currentUserId: number | null = null;
@@ -36,7 +36,7 @@ export class MyTasksComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.currentUserId = this.authService.getCurrentUser()?.id || null;
-    // this.checkTeam();
+    this.checkTeam();
     this.loadRequests();
     this.refreshHandle = setInterval(() => this.loadRequests(), 10000);
     this.startLocationTracking();
@@ -115,9 +115,13 @@ export class MyTasksComponent implements OnInit, OnDestroy {
 
     return this.sosRequests
       .filter((r) => {
-        if (this.filterStatus === 'open') return ['pending', 'assigned'].includes(r.status);
-        if (this.filterStatus === 'mine') return r.status === 'in_progress';
-        if (this.filterStatus === 'resolved') return r.status === 'resolved';
+        if (this.filterStatus === 'open') return r.status === 'pending'; // ← chỉ pending chưa ai nhận
+        if (this.filterStatus === 'mine')
+          return (
+            ['assigned', 'in_progress'].includes(r.status) && r.responder_id === this.currentUserId
+          ); // ← chỉ task của mình
+        if (this.filterStatus === 'resolved')
+          return r.status === 'resolved' && r.responder_id === this.currentUserId; // ← chỉ task mình đã xong
         return true;
       })
       .filter(
@@ -138,11 +142,15 @@ export class MyTasksComponent implements OnInit, OnDestroy {
   }
 
   get stats() {
-    const currentUserId = /* lấy từ authService */ 0;
     return {
-      open: this.sosRequests.filter((r) => ['pending', 'assigned'].includes(r.status)).length,
-      mine: this.sosRequests.filter((r) => r.status === 'in_progress').length,
-      resolved: this.sosRequests.filter((r) => r.status === 'resolved').length,
+      open: this.sosRequests.filter((r) => r.status === 'pending').length,
+      mine: this.sosRequests.filter(
+        (r) =>
+          ['assigned', 'in_progress'].includes(r.status) && r.responder_id === this.currentUserId,
+      ).length,
+      resolved: this.sosRequests.filter(
+        (r) => r.status === 'resolved' && r.responder_id === this.currentUserId,
+      ).length,
     };
   }
 

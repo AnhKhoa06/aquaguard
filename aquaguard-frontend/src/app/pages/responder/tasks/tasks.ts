@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { SosService } from '../../../core/services/sos.service';
 import { SosRequest } from '../../../models/interfaces';
 import { ToastrService } from 'ngx-toastr';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-responder-tasks',
@@ -16,6 +17,7 @@ export class TasksComponent implements OnInit, OnDestroy {
   loading = true;
   sosRequests: SosRequest[] = [];
   selectedId: number | null = null;
+  currentUserId: number | null = null;
   filterStatus = 'all';
   searchQuery = '';
   sortBy: 'priority' | 'newest' | 'oldest' = 'priority';
@@ -25,12 +27,14 @@ export class TasksComponent implements OnInit, OnDestroy {
   constructor(
     private sosService: SosService,
     private toastr: ToastrService,
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
     this.loadRequests();
     this.refreshHandle = setInterval(() => this.loadRequests(), 10000);
     this.startLocationTracking(); // ← thêm
+    this.currentUserId = this.authService.getCurrentUser()?.id || null;
   }
 
   ngOnDestroy(): void {
@@ -85,31 +89,24 @@ export class TasksComponent implements OnInit, OnDestroy {
   }
 
   get filteredRequests(): SosRequest[] {
-    let list = this.sosRequests.filter(
-      (r) =>
-        (this.filterStatus === 'all' || r.status === this.filterStatus) &&
-        (!this.searchQuery ||
-          r.citizen_name?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          r.address?.toLowerCase().includes(this.searchQuery.toLowerCase())),
-    );
+    const urgencyOrder: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 };
 
-    if (this.sortBy === 'newest') {
-      list = list.sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-      );
-    } else if (this.sortBy === 'oldest') {
-      list = list.sort(
-        (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
-      );
-    } else {
-      const urgencyOrder: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 };
-      list = list.sort(
+    return this.sosRequests
+      .filter((r) => {
+        if (this.filterStatus === 'all') return true; //  hiển thị tất cả
+        return r.status === this.filterStatus;
+      })
+      .filter(
+        (r) =>
+          !this.searchQuery ||
+          r.citizen_name?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          r.address?.toLowerCase().includes(this.searchQuery.toLowerCase()),
+      )
+      .sort(
         (a, b) =>
           (urgencyOrder[a.urgency_level] ?? 4) - (urgencyOrder[b.urgency_level] ?? 4) ||
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
       );
-    }
-    return list;
   }
 
   get selectedRequest(): SosRequest | null {

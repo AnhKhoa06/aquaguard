@@ -242,7 +242,10 @@
         <button
           class="assign-btn"
           style="background: #10b981"
-          *ngIf="selectedRequest!.status === 'in_progress'"
+          *ngIf="
+            selectedRequest!.status === 'in_progress' &&
+            selectedRequest!.responder_id === currentUserId
+          "
           (click)="resolveTask(selectedRequest!.id)"
         >
           <span class="material-symbols-outlined">check_circle</span>

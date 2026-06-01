@@ -12,23 +12,18 @@
 
 // Header
 .page-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 18px;
   margin-bottom: 24px;
 
   h1 {
-    margin: 6px 0 4px;
     font-size: clamp(1.3rem, 2.5vw, 1.7rem);
     font-weight: 800;
-    color: var(--color-text);
+    margin: 0 0 4px;
   }
 
   p {
     margin: 0;
-    color: var(--color-text-secondary);
     font-size: 14px;
+    color: var(--color-text-secondary);
   }
 }
 

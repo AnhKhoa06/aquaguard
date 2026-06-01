@@ -1,0 +1,181 @@
+<div class="team-page">
+  <!-- Header -->
+  <section class="page-header">
+    <div>
+      <h1>Đội cứu hộ</h1>
+      <p>Xem thông tin các đội cứu hộ và thành viên</p>
+    </div>
+  </section>
+
+  <!-- My team banner -->
+  <section class="my-team-banner" *ngIf="!loading && myTeam">
+    <div class="banner-left">
+      <div class="banner-icon-wrap">
+        <span class="material-symbols-outlined">shield_person</span>
+      </div>
+      <div>
+        <strong>Đội của bạn: {{ myTeam.name }}</strong>
+        <p>
+          {{ myTeam.members?.length || 0 }} thành viên{{ myTeam.area ? ' · ' + myTeam.area : '' }}
+        </p>
+      </div>
+    </div>
+    <span class="my-team-chip">Đội của tôi</span>
+  </section>
+
+  <section class="no-team-banner" *ngIf="!loading && !myTeam">
+    <div class="banner-left">
+      <div class="banner-icon-wrap">
+        <span class="material-symbols-outlined">shield</span>
+      </div>
+      <div>
+        <strong>Bạn chưa thuộc đội cứu hộ nào</strong>
+        <p>Liên hệ admin để được thêm vào đội cứu hộ.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main grid -->
+  <div class="team-grid" *ngIf="!loading">
+    <!-- Danh sách đội -->
+    <section class="list-panel panel">
+      <div class="panel-head-row">
+        <span class="panel-kicker">Tất cả đội ({{ teams.length }})</span>
+      </div>
+
+      <div class="list-empty" *ngIf="teams.length === 0">
+        <span class="material-symbols-outlined">groups_off</span>
+        <p>Chưa có đội cứu hộ nào</p>
+      </div>
+
+      <article
+        class="team-row"
+        *ngFor="let team of teams"
+        [class.active]="selectedTeamId === team.id"
+        [class.my-team]="isMyTeam(team)"
+        (click)="selectedTeamId = team.id"
+      >
+        <div class="team-row-top">
+          <div class="team-avatar-wrap">
+            <span class="material-symbols-outlined">groups</span>
+          </div>
+          <div class="team-row-info">
+            <div class="team-row-name">
+              <strong>{{ team.name }}</strong>
+              <span class="my-team-chip small" *ngIf="isMyTeam(team)">Của tôi</span>
+            </div>
+            <p class="team-row-meta">
+              <span class="material-symbols-outlined">person</span>
+              {{ team.members?.length || 0 }} thành viên
+              <span *ngIf="team.area"> · {{ team.area }}</span>
+            </p>
+            <p class="team-row-phone" *ngIf="team.phone">
+              <span class="material-symbols-outlined">phone</span>
+              {{ team.phone }}
+            </p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- Chi tiết đội -->
+    <aside class="detail-panel panel" *ngIf="selectedTeam">
+      <div class="detail-hero">
+        <div class="detail-hero-icon">
+          <span class="material-symbols-outlined">groups</span>
+        </div>
+        <div class="detail-hero-info">
+          <div class="detail-hero-name">
+            <h2>{{ selectedTeam.name }}</h2>
+            <span class="my-team-chip" *ngIf="isMyTeam(selectedTeam)">Đội của tôi</span>
+          </div>
+          <p class="detail-time" *ngIf="selectedTeam.area">
+            <span class="material-symbols-outlined">location_on</span>
+            {{ selectedTeam.area }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Thông tin đội -->
+      <div class="detail-info-row" *ngIf="selectedTeam.phone">
+        <span class="material-symbols-outlined">phone</span>
+        <span>{{ selectedTeam.phone }}</span>
+      </div>
+
+      <!-- Nút xin tham gia — chỉ hiện khi chưa có team và chưa gửi request -->
+      <div class="join-section" *ngIf="!myTeam">
+        <!-- Chưa gửi request -->
+        <button
+          class="join-btn"
+          *ngIf="!myJoinRequest"
+          [disabled]="joiningTeamId === selectedTeam.id"
+          (click)="requestJoin(selectedTeam.id)"
+        >
+          <span class="material-symbols-outlined">group_add</span>
+          {{ joiningTeamId === selectedTeam.id ? 'Đang gửi...' : 'Xin tham gia đội này' }}
+        </button>
+
+        <!-- Đã gửi request cho đội này -->
+        <div class="join-status pending" *ngIf="getJoinStatus(selectedTeam.id) === 'pending'">
+          <span class="material-symbols-outlined">schedule</span>
+          Đang chờ admin duyệt
+        </div>
+
+        <!-- Bị từ chối -->
+        <div class="join-status rejected" *ngIf="getJoinStatus(selectedTeam.id) === 'rejected'">
+          <span class="material-symbols-outlined">cancel</span>
+          Yêu cầu bị từ chối
+        </div>
+
+        <!-- Đã gửi request cho đội khác -->
+        <div
+          class="join-status other"
+          *ngIf="myJoinRequest && myJoinRequest.team_id !== selectedTeam.id"
+        >
+          <span class="material-symbols-outlined">info</span>
+          Bạn đã gửi yêu cầu tham gia đội <strong>{{ myJoinRequest.team_name }}</strong>
+        </div>
+      </div>
+
+      <!-- Danh sách thành viên -->
+      <div class="members-section">
+        <p class="members-title">
+          <span class="material-symbols-outlined">person</span>
+          Thành viên ({{ selectedTeam.members?.length || 0 }})
+        </p>
+
+        <div class="members-empty" *ngIf="!selectedTeam.members?.length">
+          <span class="material-symbols-outlined">person_off</span>
+          <p>Chưa có thành viên</p>
+        </div>
+
+        <div class="member-list">
+          <div
+            class="member-item"
+            *ngFor="let member of selectedTeam.members"
+            [class.is-me]="isMember(member)"
+          >
+            <div class="member-avatar" [style.background]="getAvatarColor(member.full_name)">
+              {{ getInitials(member.full_name) }}
+            </div>
+            <div class="member-info">
+              <div class="member-name-row">
+                <span class="member-name">{{ member.full_name }}</span>
+                <span class="me-chip" *ngIf="isMember(member)">Bạn</span>
+              </div>
+              <span class="member-phone" *ngIf="member.phone">{{ member.phone }}</span>
+            </div>
+            <span class="health-badge" [ngClass]="getHealthClass(member.health_status)">
+              {{ getHealthLabel(member.health_status) }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Loading -->
+    <div class="loading-state" *ngIf="loading">
+      <div class="skeleton-card" *ngFor="let _ of [1, 2, 3]"></div>
+    </div>
+  </div>
+</div>

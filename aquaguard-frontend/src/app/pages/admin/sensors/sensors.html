@@ -1,0 +1,109 @@
+<div class="sensors-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1>Cảm biến lũ</h1>
+      <p>Theo dõi các điểm đo mực nước và lượng mưa theo thời gian thực</p>
+    </div>
+    <button class="refresh-btn" (click)="loadData()">
+      <span class="material-symbols-outlined">refresh</span>
+      Làm mới
+    </button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon" style="background: rgba(100, 116, 139, 0.15); color: #64748b">
+        <span class="material-symbols-outlined">sensors</span>
+      </div>
+      <div class="stat-info">
+        <div class="stat-value">{{ totalPoints }}</div>
+        <div class="stat-label">Tổng điểm đo</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background: rgba(239, 68, 68, 0.15); color: #ef4444">
+        <span class="material-symbols-outlined">emergency</span>
+      </div>
+      <div class="stat-info">
+        <div class="stat-value">{{ criticalCount }}</div>
+        <div class="stat-label">Nguy hiểm nghiêm trọng</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background: rgba(249, 115, 22, 0.15); color: #f97316">
+        <span class="material-symbols-outlined">warning</span>
+      </div>
+      <div class="stat-info">
+        <div class="stat-value">{{ highCount }}</div>
+        <div class="stat-label">Nguy hiểm cao</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b">
+        <span class="material-symbols-outlined">thunderstorm</span>
+      </div>
+      <div class="stat-info">
+        <div class="stat-value">{{ moderateCount }}</div>
+        <div class="stat-label">Trung bình</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background: rgba(34, 197, 94, 0.15); color: #22c55e">
+        <span class="material-symbols-outlined">verified_user</span>
+      </div>
+      <div class="stat-info">
+        <div class="stat-value">{{ safeCount }}</div>
+        <div class="stat-label">An toàn</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-grid">
+    <!-- Map -->
+    <div class="card map-card">
+      <div class="card-header">
+        <span class="material-symbols-outlined card-icon">map</span>
+        <h2 class="card-title">Bản đồ điểm đo</h2>
+      </div>
+      <div id="sensor-map" class="sensor-map"></div>
+    </div>
+
+    <!-- List -->
+    <div class="card list-card">
+      <div class="card-header">
+        <span class="material-symbols-outlined card-icon">list</span>
+        <h2 class="card-title">Danh sách điểm đo</h2>
+      </div>
+
+      <div class="loading-state" *ngIf="loading">
+        <span class="material-symbols-outlined loading-icon">autorenew</span>
+        <p>Đang tải...</p>
+      </div>
+
+      <div class="sensor-list" *ngIf="!loading">
+        <div class="sensor-item" *ngFor="let point of floodData">
+          <div class="sensor-dot" [ngClass]="getRiskClass(point.risk_level)"></div>
+          <div class="sensor-info">
+            <div class="sensor-id">Điểm đo #{{ point.id }}</div>
+            <div class="sensor-coords">
+              {{ point.latitude.toFixed(4) }}, {{ point.longitude.toFixed(4) }}
+            </div>
+            <div class="sensor-time">{{ formatDate(point.recorded_at) }}</div>
+          </div>
+          <div class="sensor-right">
+            <div class="sensor-rain">
+              <span class="material-symbols-outlined">water_drop</span>
+              {{ point.precipitation_mm }} mm
+            </div>
+            <span class="risk-badge" [ngClass]="getRiskClass(point.risk_level)">
+              {{ getRiskLabel(point.risk_level) }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

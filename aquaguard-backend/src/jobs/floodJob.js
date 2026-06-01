@@ -12,9 +12,9 @@ const locations = [
 ];
 
 const getRiskLevel = (precipitation) => {
-  if (precipitation > 0.01) return "critical";
-  if (precipitation > 15) return "high";
-  if (precipitation > 5) return "moderate";
+  if (precipitation > 0.05) return "critical";
+  if (precipitation > 0.02) return "high";
+  if (precipitation > 0.01) return "moderate";
   return "safe";
 };
 
@@ -38,6 +38,7 @@ const fetchAndSave = async () => {
         longitude: loc.lng,
         precipitation_mm: precipitation,
         risk_level,
+        location_name: loc.name,
       });
 
       console.log(` ${loc.name}: ${precipitation}mm → ${risk_level}`);

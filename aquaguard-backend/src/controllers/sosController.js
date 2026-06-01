@@ -128,7 +128,16 @@ const sosController = {
         return errorResponse(res, "Không tìm thấy yêu cầu SOS!", 404);
       }
 
-      await sosModel.assignResponder(req.params.id, responder_id, team_id);
+      // ← Tự động lấy team_id từ responder_id
+      const rescueTeamModel = require("../models/rescueTeamModel");
+      const teamMember = await rescueTeamModel.findTeamByUserId(responder_id);
+      const resolvedTeamId = team_id || teamMember?.team_id || null;
+
+      await sosModel.assignResponder(
+        req.params.id,
+        responder_id,
+        resolvedTeamId,
+      );
 
       return successResponse(res, null, "Phân công cứu hộ thành công!");
     } catch (err) {

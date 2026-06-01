@@ -61,6 +61,104 @@ const adminController = {
     }
   },
 
+  getAnalytics: async (req, res, next) => {
+    try {
+      const db = require("../config/db");
+
+      // User growth 30 ngày
+      const [userGrowth] = await db.query(`
+      SELECT DATE(created_at) as date, COUNT(*) as count
+      FROM users
+      WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+      GROUP BY DATE(created_at)
+      ORDER BY date ASC
+    `);
+
+      // SOS trend 30 ngày
+      const [sosTrend] = await db.query(`
+      SELECT DATE(created_at) as date, COUNT(*) as count
+      FROM sos_requests
+      WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+      GROUP BY DATE(created_at)
+      ORDER BY date ASC
+    `);
+
+      // SOS by urgency
+      const [urgencyBreakdown] = await db.query(`
+      SELECT urgency_level, COUNT(*) as count
+      FROM sos_requests
+      GROUP BY urgency_level
+    `);
+
+      // Role distribution
+      const [roleDistribution] = await db.query(`
+      SELECT role, COUNT(*) as count
+      FROM users
+      GROUP BY role
+    `);
+
+      // New users 7 ngày
+      const [newUsers] = await db.query(`
+      SELECT COUNT(*) as count
+      FROM users
+      WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+    `);
+
+      // Avg response time (phút) — tính từ lúc tạo đến lúc resolved
+      const [avgResponse] = await db.query(`
+      SELECT AVG(TIMESTAMPDIFF(MINUTE, created_at, updated_at)) as avg_minutes
+      FROM sos_requests
+      WHERE status = 'resolved'
+    `);
+
+      // SOS by status
+      const [statusBreakdown] = await db.query(`
+      SELECT status, COUNT(*) as count
+      FROM sos_requests
+      GROUP BY status
+    `);
+
+      // Fastest/Slowest response
+      const [responseStats] = await db.query(`
+      SELECT 
+        MIN(TIMESTAMPDIFF(MINUTE, created_at, updated_at)) as fastest,
+        MAX(TIMESTAMPDIFF(MINUTE, created_at, updated_at)) as slowest,
+        COUNT(*) as total_resolved
+      FROM sos_requests
+      WHERE status = 'resolved'
+    `);
+
+      const totalSos = await db.query(
+        `SELECT COUNT(*) as count FROM sos_requests`,
+      );
+      const resolutionRate =
+        totalSos[0][0].count > 0
+          ? Math.round(
+              (responseStats[0].total_resolved / totalSos[0][0].count) * 100,
+            )
+          : 0;
+
+      return successResponse(
+        res,
+        {
+          user_growth: userGrowth,
+          sos_trend: sosTrend,
+          urgency_breakdown: urgencyBreakdown,
+          role_distribution: roleDistribution,
+          new_users_7days: newUsers[0].count,
+          avg_response_minutes: Math.round(avgResponse[0].avg_minutes || 0),
+          status_breakdown: statusBreakdown,
+          fastest_response: responseStats[0].fastest || 0,
+          slowest_response: responseStats[0].slowest || 0,
+          resolution_rate: resolutionRate,
+        },
+        "Lấy analytics thành công!",
+      );
+    } catch (err) {
+      next(err);
+    }
+  },
+
   // Lấy tất cả users
   getUsers: async (req, res, next) => {
     try {

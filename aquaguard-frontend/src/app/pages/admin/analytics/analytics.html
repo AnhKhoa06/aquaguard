@@ -1,0 +1,138 @@
+<div class="analytics-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1>Phân tích hệ thống</h1>
+      <p>Thống kê và theo dõi hiệu suất hệ thống</p>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="analytics-loading" *ngIf="loading">
+    <span class="material-symbols-outlined spin">autorenew</span>
+    <p>Đang tải dữ liệu...</p>
+  </div>
+
+  <div *ngIf="!loading && analytics">
+    <!-- Stat Cards -->
+    <div class="analytics-stats">
+      <div class="analytics-stat-card teal">
+        <div class="analytics-stat-icon">
+          <span class="material-symbols-outlined">group</span>
+        </div>
+        <div>
+          <strong>{{ getTotalUsers() }}</strong>
+          <span class="stat-label">Tổng người dùng</span>
+        </div>
+      </div>
+      <div class="analytics-stat-card blue">
+        <div class="analytics-stat-icon">
+          <span class="material-symbols-outlined">person_add</span>
+        </div>
+        <div>
+          <strong>{{ analytics.new_users_7days }}</strong>
+          <span class="stat-label">Người dùng mới (7 ngày)</span>
+        </div>
+      </div>
+      <div class="analytics-stat-card red">
+        <div class="analytics-stat-icon">
+          <span class="material-symbols-outlined">sos</span>
+        </div>
+        <div>
+          <strong>{{ getTotalSos() }}</strong>
+          <span class="stat-label">Tổng SOS</span>
+        </div>
+      </div>
+      <div class="analytics-stat-card amber">
+        <div class="analytics-stat-icon">
+          <span class="material-symbols-outlined">timer</span>
+        </div>
+        <div>
+          <strong>{{ analytics.avg_response_minutes }}<small>ph</small></strong>
+          <span class="stat-label">Thời gian xử lý TB</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="analytics-grid">
+      <!-- User Growth -->
+      <div class="chart-card wide">
+        <div class="chart-card-header">
+          <span class="material-symbols-outlined">trending_up</span>
+          <h3>Tăng trưởng người dùng (30 ngày)</h3>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="userGrowthChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Role Distribution -->
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <span class="material-symbols-outlined">donut_large</span>
+          <h3>Phân bổ vai trò</h3>
+        </div>
+        <div class="chart-wrap donut">
+          <canvas id="roleChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Status Overview -->
+      <div class="chart-card wide">
+        <div class="chart-card-header">
+          <span class="material-symbols-outlined">bar_chart</span>
+          <h3>Trạng thái yêu cầu SOS</h3>
+        </div>
+        <div class="status-bars">
+          <div class="status-bar-row" *ngFor="let s of analytics.status_breakdown">
+            <div class="status-bar-label">
+              <span class="status-dot" [style.background]="getStatusColor(s.status)"></span>
+              <span>{{ getStatusLabel(s.status) }}</span>
+            </div>
+            <div class="status-bar-track">
+              <div
+                class="status-bar-fill"
+                [style.width.%]="getTotalSos() > 0 ? (s.count / getTotalSos()) * 100 : 0"
+                [style.background]="getStatusColor(s.status)"
+              ></div>
+            </div>
+            <span class="status-bar-count">
+              {{ s.count }} ({{
+                getTotalSos() > 0 ? ((s.count / getTotalSos()) * 100 | number: '1.0-0') : 0
+              }}%)
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Response Performance -->
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <span class="material-symbols-outlined">speed</span>
+          <h3>Hiệu suất xử lý</h3>
+        </div>
+        <div class="perf-grid">
+          <div class="perf-highlight">
+            <span class="perf-label">Tỉ lệ hoàn thành</span>
+            <span class="perf-value teal">{{ analytics.resolution_rate }}%</span>
+          </div>
+          <div class="perf-highlight">
+            <span class="perf-label">TB thời gian xử lý</span>
+            <span class="perf-value amber">{{ analytics.avg_response_minutes }}ph</span>
+          </div>
+          <div class="perf-row">
+            <span class="material-symbols-outlined" style="color: #22c55e">bolt</span>
+            <span>Nhanh nhất</span>
+            <span class="perf-row-value">{{ analytics.fastest_response }}ph</span>
+          </div>
+          <div class="perf-row">
+            <span class="material-symbols-outlined" style="color: #ef4444">hourglass_empty</span>
+            <span>Chậm nhất</span>
+            <span class="perf-row-value">{{ analytics.slowest_response }}ph</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
