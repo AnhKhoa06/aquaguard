@@ -10,7 +10,6 @@ import { SosRequest, Alert, User } from '../../../models/interfaces';
 import { FloodService } from '../../../core/services/flood.service';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
-import 'leaflet.markercluster';
 @Component({
   selector: 'app-map',
   standalone: true,
