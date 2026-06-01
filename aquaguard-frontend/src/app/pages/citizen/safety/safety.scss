@@ -13,8 +13,9 @@
       margin-bottom: 8px;
     }
 
-    .page-header p {
-      display: none;
+    p {
+      color: var(--color-text-secondary);
+      font-size: 15px;
     }
   }
 
@@ -297,9 +298,5 @@
 
   .safety-title {
     font-size: 14px;
-  }
-
-  .page-header p {
-    display: none;
   }
 }
