@@ -10,6 +10,7 @@ import { SosRequest, Alert, User } from '../../../models/interfaces';
 import { FloodService } from '../../../core/services/flood.service';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
+import 'leaflet.markercluster';
 @Component({
   selector: 'app-map',
   standalone: true,
@@ -70,12 +71,12 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadAlerts();
     this.loadFamily();
     this.loadWeatherAlerts();
-    this.loadFloodData();
     this.locateMe();
   }
 
   ngAfterViewInit() {
     this.initMap();
+    this.loadFloodData();
   }
 
   ngOnDestroy() {

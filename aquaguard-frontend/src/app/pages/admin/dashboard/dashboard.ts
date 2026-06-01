@@ -10,7 +10,6 @@ import { UserService } from '../../../core/services/user.service';
 import { FloodService } from '../../../core/services/flood.service';
 import { SafePipe } from '../../../core/pipes/safe.pipe';
 import { RescueTeamService } from '../../../core/services/rescue-team.service';
-import 'leaflet.markercluster';
 
 @Component({
   selector: 'app-admin-dashboard',
