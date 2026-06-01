@@ -136,9 +136,7 @@
               <span class="member-time">• {{ getTimeAgo(member.updated_at) }}</span>
             </div>
             <!-- Thêm vào đây -->
-            <div class="member-note" *ngIf="member.health_note">
-              "{{ member.health_note }}"
-            </div>
+            <div class="member-note" *ngIf="member.health_note">"{{ member.health_note }}"</div>
           </div>
 
           <!-- Health icon box -->
