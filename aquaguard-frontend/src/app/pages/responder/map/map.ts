@@ -66,13 +66,13 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadSos();
     this.loadAlerts();
     this.loadWeatherAlerts();
-    this.loadFloodData();
     this.locateMe();
     this.loadMyTeam();
   }
 
   ngAfterViewInit() {
     this.initMap();
+    this.loadFloodData();
     // Lắng nghe event nhận nhiệm vụ từ popup
     window.addEventListener('accept-sos', (e: any) => {
       this.acceptTask(e.detail);

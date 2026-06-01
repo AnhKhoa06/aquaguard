@@ -34,12 +34,11 @@ export class SensorsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private floodService: FloodService) {}
 
-  ngOnInit() {
-    this.loadData();
-  }
+  ngOnInit() {}
 
   ngAfterViewInit() {
     this.initMap();
+    this.loadData();
   }
 
   ngOnDestroy() {
