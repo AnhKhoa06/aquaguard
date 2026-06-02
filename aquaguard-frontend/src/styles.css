@@ -408,3 +408,8 @@ body.theme-dark {
 body.theme-light {
   color-scheme: light;
 }
+
+body.theme-light app-login,
+body.theme-light app-register {
+  --color-text: #ffffff;
+}
