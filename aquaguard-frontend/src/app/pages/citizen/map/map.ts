@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import * as L from 'leaflet';
@@ -63,6 +63,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     private familyService: FamilyService,
     private floodService: FloodService,
     private http: HttpClient,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -71,12 +72,12 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadAlerts();
     this.loadFamily();
     this.loadWeatherAlerts();
-    this.locateMe();
   }
 
   ngAfterViewInit() {
     this.initMap();
     this.loadFloodData();
+    this.locateMe();
   }
 
   ngOnDestroy() {
@@ -299,14 +300,12 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Thêm method
   private loadFloodData() {
-    console.log('loadFloodData called');
     this.floodService.getFloodData().subscribe({
       next: (res) => {
         if (res.success) {
           this.floodLayers.forEach((l) => l.remove());
           this.floodLayers = [];
 
-          const icons: Record<string, L.DivIcon> = {};
           const color: Record<string, string> = {
             critical: '#ef4444',
             high: '#f97316',
@@ -314,6 +313,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
             safe: '#22c55e',
           };
 
+          const icons: Record<string, L.DivIcon> = {};
           Object.keys(color).forEach((level) => {
             icons[level] = L.divIcon({
               className: '',
@@ -326,6 +326,19 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
             });
           });
 
+          // Fix lỗi markerClusterGroup is not a function
+          if (!(L as any).markerClusterGroup) {
+            console.warn('markerClusterGroup not available, skipping clusters');
+            res.data.forEach((point: any) => {
+              const icon = icons[point.risk_level] || icons['safe'];
+              const marker = L.marker([point.latitude, point.longitude], { icon }).addTo(this.map);
+              this.floodLayers.push(marker as any);
+            });
+            this.showFloodZone = true;
+            this.cdr.detectChanges(); // ← fix NG0100
+            return;
+          }
+
           const clusterGroup = (L as any).markerClusterGroup({
             maxClusterRadius: 60,
             showCoverageOnHover: false,
@@ -333,29 +346,16 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
             spiderfyOnMaxZoom: false,
             disableClusteringAtZoom: 10,
             iconCreateFunction: (cluster: any) => {
-              // Lấy marker đầu tiên trong cluster để lấy màu
               const firstMarker = cluster.getAllChildMarkers()[0];
-              const firstIcon = firstMarker.options.icon.options.html;
-
-              // Extract màu từ SVG
-              const colorMap: Record<string, string> = {
-                critical: '#ef4444',
-                high: '#f97316',
-                moderate: '#f59e0b',
-                safe: '#22c55e',
-              };
-
-              // Tìm point tương ứng theo latlng
               const lat = firstMarker.getLatLng().lat;
               const point = res.data.find((p: any) => p.latitude === lat);
-              const c = point ? colorMap[point.risk_level] || '#64748b' : '#64748b';
-
+              const c = point ? color[point.risk_level] || '#64748b' : '#64748b';
               return L.divIcon({
                 className: '',
                 html: `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="42" viewBox="0 0 24 32">
-      <path d="M12 0C5.37 0 0 5.37 0 12c0 9 12 20 12 20s12-11 12-20C24 5.37 18.63 0 12 0z" fill="${c}"/>
-      <circle cx="12" cy="11" r="5" fill="white" opacity="0.9"/>
-    </svg>`,
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 9 12 20 12 20s12-11 12-20C24 5.37 18.63 0 12 0z" fill="${c}"/>
+                <circle cx="12" cy="11" r="5" fill="white" opacity="0.9"/>
+              </svg>`,
                 iconSize: [32, 42],
                 iconAnchor: [16, 42],
               });
@@ -371,6 +371,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
           this.map.addLayer(clusterGroup);
           this.floodLayers.push(clusterGroup as any);
           this.showFloodZone = true;
+          this.cdr.detectChanges(); // ← fix NG0100
         }
       },
       error: () => {},
@@ -590,54 +591,49 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   locateMe() {
-    this.locating = true; // ← thêm property này
-    //lấy vị trí chính xác hiện tại
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        this.locating = false;
-        //getCurrentPosition chỉ lấy 1 lần khi bấm nút
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
+    setTimeout(() => {
+      this.locating = true; // ← thêm property này
+      //lấy vị trí chính xác hiện tại
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          this.locating = false;
+          //getCurrentPosition chỉ lấy 1 lần khi bấm nút
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
 
-        this.userLat = +lat.toFixed(6);
-        this.userLng = +lng.toFixed(6);
-        this.getLocationName(lat, lng);
+          this.userLat = +lat.toFixed(6);
+          this.userLng = +lng.toFixed(6);
+          this.getLocationName(lat, lng);
 
-        if (this.map) {
-          // Xóa marker cũ nếu có
-          if (this.userMarker) this.userMarker.remove();
-          // if (this.userCircle) this.userCircle.remove();
+          if (!this.map) return;
 
-          // Chấm xanh vị trí hiện tại
-          const icon = L.divIcon({
-            //Leaflet tạo icon tùy chỉnh
-            className: '',
-            html: `<div style="
-              width: 14px;
-              height: 14px;
-              border-radius: 50%;
-              background: #4285f4;
-              border: 2px solid white;
-              box-shadow: 0 0 0 6px rgba(66,133,244,0.2), 0 2px 6px rgba(0,0,0,0.3);
-            "></div>`,
-            iconSize: [14, 14],
-            iconAnchor: [7, 7],
-          });
-
-          this.userMarker = L.marker([lat, lng], { icon }).addTo(this.map);
-
-          this.map.setView([lat, lng], 15); // zoom 15 gần hơn
-        }
-      },
-      (err) => {
-        this.locating = false;
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0,
-      },
-    );
+          try {
+            // ← wrap trong try-catch
+            if (this.userMarker) this.userMarker.remove();
+            const icon = L.divIcon({
+              className: '',
+              html: `<div style="width:14px;height:14px;border-radius:50%;background:#4285f4;border:2px solid white;box-shadow:0 0 0 6px rgba(66,133,244,0.2),0 2px 6px rgba(0,0,0,0.3);"></div>`,
+              iconSize: [14, 14],
+              iconAnchor: [7, 7],
+            });
+            this.userMarker = L.marker([lat, lng], { icon }).addTo(this.map);
+            this.map.setView([lat, lng], 15);
+            this.cdr.detectChanges();
+          } catch (e) {
+            // Map đã bị destroy, bỏ qua
+          }
+        },
+        (err) => {
+          this.locating = false;
+          this.cdr.detectChanges();
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        },
+      );
+    }, 0);
   }
 
   getUrgencyLabel(level: string): string {

@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import * as L from 'leaflet';
@@ -60,19 +60,20 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     private alertService: AlertService,
     private floodService: FloodService,
     private http: HttpClient,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
     this.loadSos();
     this.loadAlerts();
     this.loadWeatherAlerts();
-    this.locateMe();
     this.loadMyTeam();
   }
 
   ngAfterViewInit() {
     this.initMap();
     this.loadFloodData();
+    this.locateMe();
     // Lắng nghe event nhận nhiệm vụ từ popup
     window.addEventListener('accept-sos', (e: any) => {
       this.acceptTask(e.detail);
@@ -288,6 +289,19 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
             });
           });
 
+          // Fix lỗi markerClusterGroup is not a function
+          if (!(L as any).markerClusterGroup) {
+            console.warn('markerClusterGroup not available, skipping clusters');
+            res.data.forEach((point: any) => {
+              const icon = icons[point.risk_level] || icons['safe'];
+              const marker = L.marker([point.latitude, point.longitude], { icon }).addTo(this.map);
+              this.floodLayers.push(marker as any);
+            });
+            this.showFloodZone = true;
+            this.cdr.detectChanges(); // ← fix NG0100
+            return;
+          }
+
           const clusterGroup = (L as any).markerClusterGroup({
             maxClusterRadius: 60,
             showCoverageOnHover: false,
@@ -320,6 +334,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
           this.map.addLayer(clusterGroup);
           this.floodLayers.push(clusterGroup as any);
           this.showFloodZone = true;
+          this.cdr.detectChanges(); // ← fix NG0100
         }
       },
       error: () => {},
@@ -490,32 +505,41 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   locateMe() {
-    this.locating = true;
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        this.locating = false;
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        this.userLat = +lat.toFixed(6);
-        this.userLng = +lng.toFixed(6);
-        this.getLocationName(lat, lng);
-        if (this.map) {
-          if (this.userMarker) this.userMarker.remove();
-          const icon = L.divIcon({
-            className: '',
-            html: `<div style="width:14px;height:14px;border-radius:50%;background:#4285f4;border:2px solid white;box-shadow:0 0 0 6px rgba(66,133,244,0.2),0 2px 6px rgba(0,0,0,0.3);"></div>`,
-            iconSize: [14, 14],
-            iconAnchor: [7, 7],
-          });
-          this.userMarker = L.marker([lat, lng], { icon }).addTo(this.map);
-          this.map.setView([lat, lng], 15);
-        }
-      },
-      (err) => {
-        this.locating = false;
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
-    );
+    setTimeout(() => {
+      this.locating = true;
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          this.locating = false;
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          this.userLat = +lat.toFixed(6);
+          this.userLng = +lng.toFixed(6);
+          this.getLocationName(lat, lng);
+
+          if (!this.map) return;
+
+          try {
+            if (this.userMarker) this.userMarker.remove();
+            const icon = L.divIcon({
+              className: '',
+              html: `<div style="width:14px;height:14px;border-radius:50%;background:#4285f4;border:2px solid white;box-shadow:0 0 0 6px rgba(66,133,244,0.2),0 2px 6px rgba(0,0,0,0.3);"></div>`,
+              iconSize: [14, 14],
+              iconAnchor: [7, 7],
+            });
+            this.userMarker = L.marker([lat, lng], { icon }).addTo(this.map);
+            this.map.setView([lat, lng], 15);
+            this.cdr.detectChanges();
+          } catch (e) {
+            // Map đã bị destroy
+          }
+        },
+        (err) => {
+          this.locating = false;
+          this.cdr.detectChanges();
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+      );
+    }, 0);
   }
 
   getUrgencyLabel(level: string): string {

@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
@@ -32,7 +32,10 @@ export class SensorsComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.floodData.filter((d) => d.risk_level === 'safe').length;
   }
 
-  constructor(private floodService: FloodService) {}
+  constructor(
+    private floodService: FloodService,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit() {}
 
@@ -54,9 +57,11 @@ export class SensorsComponent implements OnInit, AfterViewInit, OnDestroy {
           this.renderMarkers();
         }
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.loading = false;
+        this.cdr.detectChanges();
       },
     });
   }

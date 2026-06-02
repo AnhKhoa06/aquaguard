@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -68,6 +68,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
     private floodService: FloodService,
     private userService: UserService,
     private rescueTeamService: RescueTeamService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -397,6 +398,19 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
             });
           });
 
+          // Fix lỗi markerClusterGroup is not a function
+          if (!(L as any).markerClusterGroup) {
+            console.warn('markerClusterGroup not available, skipping clusters');
+            res.data.forEach((point: any) => {
+              const icon = icons[point.risk_level] || icons['safe'];
+              const marker = L.marker([point.latitude, point.longitude], { icon }).addTo(this.map);
+              this.floodLayers.push(marker as any);
+            });
+            this.showFloodZone = true;
+            this.cdr.detectChanges(); // ← fix NG0100
+            return;
+          }
+
           const clusterGroup = (L as any).markerClusterGroup({
             maxClusterRadius: 60,
             showCoverageOnHover: false,
@@ -429,6 +443,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
           this.map.addLayer(clusterGroup);
           this.floodLayers.push(clusterGroup as any);
           this.showFloodZone = true;
+          this.cdr.detectChanges(); // ← fix NG0100
         }
       },
       error: () => {},
