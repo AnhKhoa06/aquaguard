@@ -372,82 +372,86 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   private loadFloodData() {
-    this.floodService.getFloodData().subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.floodLayers.forEach((l) => l.remove());
-          this.floodLayers = [];
+    setTimeout(() => {
+      this.floodService.getFloodData().subscribe({
+        next: (res) => {
+          if (res.success) {
+            this.floodLayers.forEach((l) => l.remove());
+            this.floodLayers = [];
 
-          const color: Record<string, string> = {
-            critical: '#ef4444',
-            high: '#f97316',
-            moderate: '#f59e0b',
-            safe: '#22c55e',
-          };
+            const color: Record<string, string> = {
+              critical: '#ef4444',
+              high: '#f97316',
+              moderate: '#f59e0b',
+              safe: '#22c55e',
+            };
 
-          const icons: Record<string, L.DivIcon> = {};
-          Object.keys(color).forEach((level) => {
-            icons[level] = L.divIcon({
-              className: '',
-              html: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="32" viewBox="0 0 24 32">
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 9 12 20 12 20s12-11 12-20C24 5.37 18.63 0 12 0z" fill="${color[level]}"/>
-              <circle cx="12" cy="11" r="5" fill="white" opacity="0.9"/>
-            </svg>`,
-              iconSize: [24, 32],
-              iconAnchor: [12, 32],
-            });
-          });
-
-          // Fix lỗi markerClusterGroup is not a function
-          if (!(L as any).markerClusterGroup) {
-            console.warn('markerClusterGroup not available, skipping clusters');
-            res.data.forEach((point: any) => {
-              const icon = icons[point.risk_level] || icons['safe'];
-              const marker = L.marker([point.latitude, point.longitude], { icon }).addTo(this.map);
-              this.floodLayers.push(marker as any);
-            });
-            this.showFloodZone = true;
-            this.cdr.detectChanges(); // ← fix NG0100
-            return;
-          }
-
-          const clusterGroup = (L as any).markerClusterGroup({
-            maxClusterRadius: 60,
-            showCoverageOnHover: false,
-            zoomToBoundsOnClick: true,
-            spiderfyOnMaxZoom: false,
-            disableClusteringAtZoom: 10,
-            iconCreateFunction: (cluster: any) => {
-              const firstMarker = cluster.getAllChildMarkers()[0];
-              const lat = firstMarker.getLatLng().lat;
-              const point = res.data.find((p: any) => p.latitude === lat);
-              const c = point ? color[point.risk_level] || '#64748b' : '#64748b';
-              return L.divIcon({
+            const icons: Record<string, L.DivIcon> = {};
+            Object.keys(color).forEach((level) => {
+              icons[level] = L.divIcon({
                 className: '',
-                html: `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="42" viewBox="0 0 24 32">
-                <path d="M12 0C5.37 0 0 5.37 0 12c0 9 12 20 12 20s12-11 12-20C24 5.37 18.63 0 12 0z" fill="${c}"/>
+                html: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="32" viewBox="0 0 24 32">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 9 12 20 12 20s12-11 12-20C24 5.37 18.63 0 12 0z" fill="${color[level]}"/>
                 <circle cx="12" cy="11" r="5" fill="white" opacity="0.9"/>
               </svg>`,
-                iconSize: [32, 42],
-                iconAnchor: [16, 42],
+                iconSize: [24, 32],
+                iconAnchor: [12, 32],
               });
-            },
-          });
+            });
 
-          res.data.forEach((point: any) => {
-            const icon = icons[point.risk_level] || icons['safe'];
-            const marker = L.marker([point.latitude, point.longitude], { icon });
-            clusterGroup.addLayer(marker);
-          });
+            // Fix lỗi markerClusterGroup is not a function
+            if (!(L as any).markerClusterGroup) {
+              console.warn('markerClusterGroup not available, skipping clusters');
+              res.data.forEach((point: any) => {
+                const icon = icons[point.risk_level] || icons['safe'];
+                const marker = L.marker([point.latitude, point.longitude], { icon }).addTo(
+                  this.map,
+                );
+                this.floodLayers.push(marker as any);
+              });
+              this.showFloodZone = true;
+              this.cdr.detectChanges(); // ← fix NG0100
+              return;
+            }
 
-          this.map.addLayer(clusterGroup);
-          this.floodLayers.push(clusterGroup as any);
-          this.showFloodZone = true;
-          this.cdr.detectChanges(); // ← fix NG0100
-        }
-      },
-      error: () => {},
-    });
+            const clusterGroup = (L as any).markerClusterGroup({
+              maxClusterRadius: 60,
+              showCoverageOnHover: false,
+              zoomToBoundsOnClick: true,
+              spiderfyOnMaxZoom: false,
+              disableClusteringAtZoom: 10,
+              iconCreateFunction: (cluster: any) => {
+                const firstMarker = cluster.getAllChildMarkers()[0];
+                const lat = firstMarker.getLatLng().lat;
+                const point = res.data.find((p: any) => p.latitude === lat);
+                const c = point ? color[point.risk_level] || '#64748b' : '#64748b';
+                return L.divIcon({
+                  className: '',
+                  html: `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="42" viewBox="0 0 24 32">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 9 12 20 12 20s12-11 12-20C24 5.37 18.63 0 12 0z" fill="${c}"/>
+                  <circle cx="12" cy="11" r="5" fill="white" opacity="0.9"/>
+                </svg>`,
+                  iconSize: [32, 42],
+                  iconAnchor: [16, 42],
+                });
+              },
+            });
+
+            res.data.forEach((point: any) => {
+              const icon = icons[point.risk_level] || icons['safe'];
+              const marker = L.marker([point.latitude, point.longitude], { icon });
+              clusterGroup.addLayer(marker);
+            });
+
+            this.map.addLayer(clusterGroup);
+            this.floodLayers.push(clusterGroup as any);
+            this.showFloodZone = true;
+            this.cdr.detectChanges(); // ← fix NG0100
+          }
+        },
+        error: () => {},
+      });
+    }, 100);
   }
 
   toggleFloodZone() {
