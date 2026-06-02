@@ -28,6 +28,11 @@ router.get(
   sosController.findAll,
 );
 
+// Citizen — xem tất cả SOS active trên bản đồ
+router.get("/map/active", authMiddleware, sosController.getActive);
+
+router.get("/map/all", authMiddleware, sosController.getAllForMap);
+
 // Admin + Responder — xem chi tiết 1 SOS
 router.get(
   "/:id",
@@ -35,11 +40,6 @@ router.get(
   authorizeRoles("admin", "responder"),
   sosController.findById,
 );
-
-// Citizen — xem tất cả SOS active trên bản đồ
-router.get("/map/active", authMiddleware, sosController.getActive);
-
-router.get("/map/all", authMiddleware, sosController.getAllForMap);
 
 // Admin — phân công cứu hộ
 router.patch(
