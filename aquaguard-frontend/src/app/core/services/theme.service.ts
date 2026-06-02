@@ -7,7 +7,7 @@ export class ThemeService {
   private current: Theme = 'dark';
 
   init() {
-    const saved = localStorage.getItem('theme') as Theme || 'dark';
+    const saved = (localStorage.getItem('theme') as Theme) || 'dark';
     this.apply(saved);
   }
 
@@ -22,5 +22,12 @@ export class ThemeService {
     document.body.classList.add(isDark ? 'theme-dark' : 'theme-light');
   }
 
-  getTheme(): Theme { return this.current; }
+  applyAuthTheme() {
+    document.body.classList.remove('theme-light', 'theme-dark');
+    document.body.classList.add('theme-dark'); // auth page luôn dark
+  }
+
+  getTheme(): Theme {
+    return this.current;
+  }
 }

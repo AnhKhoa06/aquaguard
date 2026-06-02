@@ -24,7 +24,11 @@ export class AppComponent implements OnInit {
   }
 
   get isAuthPage(): boolean {
-    return this.router.url.startsWith('/auth');
+    const isAuth = this.router.url.startsWith('/auth');
+    if (isAuth) {
+      this.themeService.applyAuthTheme();
+    }
+    return isAuth;
   }
 
   toggleLang() {
