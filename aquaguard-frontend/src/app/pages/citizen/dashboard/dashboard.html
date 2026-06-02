@@ -215,39 +215,40 @@
       <span class="material-symbols-outlined card-icon">history</span>
       <h2 class="card-title">Lịch sử yêu cầu</h2>
     </div>
-    <div class="card-body">
-      <!-- Loading -->
-      <div class="empty-state" *ngIf="loadingSos">
-        <span class="material-symbols-outlined loading-icon">autorenew</span>
-        <p>Đang tải...</p>
-      </div>
-      <!-- Empty -->
-      <div class="empty-state" *ngIf="!loadingSos && sosHistory.length === 0">
-        <span class="material-symbols-outlined empty-icon">inbox</span>
-        <p class="empty-title">Chưa có yêu cầu nào</p>
-        <p class="empty-sub">Nếu bạn gặp nguy hiểm, hãy bấm nút SOS phía trên</p>
-      </div>
-      <!-- History list -->
-      <div class="history-list" *ngIf="!loadingSos && sosHistory.length > 0">
-        <div class="history-item" *ngFor="let sos of sosHistory">
-          <div class="history-item-left">
-            <div class="history-icon">
-              <span class="material-symbols-outlined">sos</span>
-            </div>
-            <div class="history-info">
-              <span class="history-title">Yêu cầu SOS #{{ sos.id }}</span>
-              <span class="history-address" *ngIf="sos.address">{{ sos.address }}</span>
-              <span class="history-date">{{ sos.created_at | date: 'd/M/yyyy HH:mm' }}</span>
-            </div>
+
+    <!-- Loading -->
+    <div class="empty-state" *ngIf="loadingSos">
+      <span class="material-symbols-outlined loading-icon">autorenew</span>
+      <p>Đang tải...</p>
+    </div>
+
+    <!-- Empty -->
+    <div class="empty-state" *ngIf="!loadingSos && sosHistory.length === 0">
+      <span class="material-symbols-outlined empty-icon">inbox</span>
+      <p class="empty-title">Chưa có yêu cầu nào</p>
+      <p class="empty-sub">Nếu bạn gặp nguy hiểm, hãy bấm nút SOS phía trên</p>
+    </div>
+
+    <!-- History list -->
+    <div class="history-list" *ngIf="!loadingSos && sosHistory.length > 0">
+      <div class="history-item" *ngFor="let sos of sosHistory">
+        <div class="history-item-left">
+          <div class="history-icon">
+            <span class="material-symbols-outlined">sos</span>
           </div>
-          <div class="history-item-right">
-            <span class="urgency-badge urgency-{{ sos.urgency_level }}">
-              {{ getUrgencyLabel(sos.urgency_level) }}
-            </span>
-            <span class="sos-status-chip" [ngClass]="getStatusClass(sos.status)">
-              {{ getStatusLabel(sos.status) }}
-            </span>
+          <div class="history-info">
+            <span class="history-title">Yêu cầu SOS #{{ sos.id }}</span>
+            <span class="history-address" *ngIf="sos.address">{{ sos.address }}</span>
+            <span class="history-date">{{ sos.created_at | date: 'd/M/yyyy HH:mm' }}</span>
           </div>
+        </div>
+        <div class="history-item-right">
+          <span class="urgency-badge urgency-{{ sos.urgency_level }}">
+            {{ getUrgencyLabel(sos.urgency_level) }}
+          </span>
+          <span class="sos-status-chip" [ngClass]="getStatusClass(sos.status)">
+            {{ getStatusLabel(sos.status) }}
+          </span>
         </div>
       </div>
     </div>

@@ -1034,3 +1034,188 @@
 .stats-grid {
   grid-template-columns: repeat(3, 1fr); // ← override 4 cột thành 3
 }
+
+/* =========================
+   TABLET
+========================= */
+@media (max-width: 1200px) {
+  .admin-sos-page {
+    padding: 20px;
+  }
+
+  .admin-sos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .list-panel,
+  .detail-panel {
+    height: auto;
+  }
+
+  .search-box {
+    min-width: 280px;
+  }
+
+  .panel {
+    padding: 18px;
+  }
+
+  .detail-hero {
+    flex-wrap: wrap;
+  }
+
+  .detail-badges {
+    margin-left: 0;
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media (max-width: 768px) {
+  .admin-sos-page {
+    padding: 16px;
+  }
+
+  /* Banner */
+  .no-team-banner {
+    padding: 14px;
+    gap: 14px;
+  }
+
+  .banner-left {
+    width: 100%;
+  }
+
+  .banner-btn {
+    width: 100%;
+    justify-content: center;
+    margin-left: 0;
+    margin-top: 0;
+  }
+
+  /* Stats */
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 14px;
+  }
+
+  .stat-body strong {
+    font-size: 1.3rem;
+  }
+
+  /* Filter */
+  .filter-chips-row {
+    gap: 6px;
+  }
+
+  .filter-chip {
+    margin-top: 0;
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  .filter-chip .material-symbols-outlined {
+    font-size: 13px;
+  }
+
+  .search-box {
+    width: 100%;
+    min-width: 100%;
+    margin-left: 0;
+  }
+
+  /* Panel */
+  .panel {
+    padding: 16px;
+  }
+
+  /* List item */
+  .sos-row {
+    padding: 12px;
+  }
+
+  .row-name-row {
+    gap: 6px;
+  }
+
+  .row-name-row strong {
+    width: 100%;
+    margin-bottom: 4px;
+  }
+
+  .row-address {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    align-items: flex-start;
+  }
+
+  .row-desc {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  }
+
+  /* Detail */
+  .detail-hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .detail-badges {
+    margin-left: 0;
+  }
+
+  .detail-row {
+    align-items: flex-start;
+  }
+
+  .detail-row-text {
+    padding-left: 0;
+  }
+}
+
+/* =========================
+   SMALL MOBILE
+========================= */
+@media (max-width: 480px) {
+  .page-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .page-header p {
+    font-size: 12px;
+  }
+
+  .filter-chip {
+    font-size: 11px;
+    padding: 7px 10px;
+  }
+
+  .chip-count {
+    font-size: 10px;
+  }
+
+  .stat-body strong {
+    font-size: 1.15rem;
+  }
+
+  .status-pill,
+  .urgency-badge {
+    font-size: 10px;
+  }
+
+  .row-name-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .empty-detail {
+    min-height: 220px;
+  }
+}

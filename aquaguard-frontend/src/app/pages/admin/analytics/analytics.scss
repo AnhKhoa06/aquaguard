@@ -290,3 +290,208 @@
     grid-column: 1;
   }
 }
+
+/* =========================
+   TABLET
+========================= */
+@media (max-width: 1100px) {
+  .analytics-page {
+    padding: 20px;
+  }
+
+  .analytics-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-card.wide {
+    grid-column: auto;
+  }
+
+  .chart-wrap,
+  .chart-wrap.donut {
+    height: 260px;
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media (max-width: 768px) {
+  .analytics-page {
+    padding: 16px;
+  }
+
+  .page-header {
+    margin-bottom: 18px;
+
+    h1 {
+      font-size: 1.2rem;
+    }
+
+    p {
+      font-size: 13px;
+    }
+  }
+
+  .analytics-loading {
+    padding: 40px 20px;
+
+    .material-symbols-outlined {
+      font-size: 30px;
+    }
+
+    p {
+      font-size: 13px;
+    }
+  }
+
+  .analytics-stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .analytics-stat-card {
+    padding: 14px;
+    gap: 10px;
+
+    strong {
+      font-size: 1.2rem;
+    }
+
+    .stat-label {
+      font-size: 11px;
+    }
+  }
+
+  .analytics-stat-icon {
+    width: 40px;
+    height: 40px;
+
+    .material-symbols-outlined {
+      font-size: 20px;
+    }
+  }
+
+  .analytics-grid {
+    gap: 12px;
+  }
+
+  .chart-card {
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .chart-card-header {
+    margin-bottom: 12px;
+
+    h3 {
+      font-size: 13px;
+    }
+
+    .material-symbols-outlined {
+      font-size: 16px;
+    }
+  }
+
+  .chart-wrap {
+    height: 220px;
+  }
+
+  .chart-wrap.donut {
+    height: 240px;
+  }
+
+  .status-bar-row {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .status-bar-label {
+    width: 100%;
+    font-size: 11px;
+  }
+
+  .status-bar-track {
+    width: 100%;
+    order: 2;
+  }
+
+  .status-bar-count {
+    width: auto;
+    margin-left: auto;
+    font-size: 11px;
+  }
+
+  .perf-highlight {
+    padding: 10px 12px;
+  }
+
+  .perf-label {
+    font-size: 11px;
+  }
+
+  .perf-value {
+    font-size: 1.1rem;
+  }
+
+  .perf-row {
+    font-size: 11px;
+
+    .material-symbols-outlined {
+      font-size: 16px;
+    }
+  }
+
+  .perf-row-value {
+    font-size: 12px;
+  }
+}
+
+/* =========================
+   SMALL MOBILE
+========================= */
+@media (max-width: 480px) {
+  .analytics-page {
+    padding: 12px;
+  }
+
+  .analytics-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .analytics-stat-card {
+    padding: 12px;
+  }
+
+  .analytics-stat-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .analytics-stat-card strong {
+    font-size: 1.1rem;
+  }
+
+  .chart-card {
+    padding: 12px;
+  }
+
+  .chart-wrap {
+    height: 200px;
+  }
+
+  .chart-wrap.donut {
+    height: 220px;
+  }
+
+  .status-bar-count {
+    width: 100%;
+    text-align: left;
+    margin-left: 0;
+  }
+}

@@ -340,10 +340,10 @@
 
 // ========== CARD ==========
 .card {
-  background: transparent;
-  border: none;
+  background: var(--color-card-body);
+  border: 1px dashed var(--color-card-body-border);
   border-radius: 16px;
-  padding: 0;
+  padding: 20px;
 }
 
 .card-header {
@@ -353,13 +353,6 @@
   margin-bottom: 22px;
   padding: 0 4px;
   margin-top: 10px;
-}
-
-.card-body {
-  background: var(--color-card-body);
-  border: 1px dashed var(--color-card-body-border);
-  border-radius: 16px;
-  padding: 20px;
 }
 
 .card-icon {
@@ -801,12 +794,27 @@
 // ========== HISTORY CARD ==========
 .history-card {
   width: 100%;
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 
 .history-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-top: -8px;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 4px;
+  }
 }
 
 .history-item {
@@ -814,9 +822,9 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 12px 16px;
+  padding: 24px 26px; // ← tăng padding
   background: var(--color-history-item);
-  border-radius: 12px;
+  border-radius: 24px; // ← bo hơn
   border: 1px solid var(--color-family-item-border);
   transition: border-color 0.2s;
 
@@ -832,9 +840,9 @@
 }
 
 .history-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
+  width: 46px; // ← tăng từ 38px
+  height: 46px;
+  border-radius: 12px;
   background: rgba(0, 188, 212, 0.1);
   display: flex;
   align-items: center;
@@ -842,7 +850,7 @@
   flex-shrink: 0;
 
   .material-symbols-outlined {
-    font-size: 18px;
+    font-size: 22px; // ← tăng từ 18px
     color: var(--primary);
   }
 }
@@ -854,13 +862,13 @@
 }
 
 .history-title {
-  font-size: 13px;
+  font-size: 14px; // ← tăng từ 13px
   font-weight: 600;
   color: var(--color-text);
 }
 
 .history-address {
-  font-size: 11px;
+  font-size: 12px; // ← tăng từ 11px
   color: var(--color-text-secondary);
   max-width: 400px;
   overflow: hidden;
@@ -869,7 +877,7 @@
 }
 
 .history-date {
-  font-size: 11px;
+  font-size: 12px; // ← tăng từ 11px
   color: var(--color-text-muted);
 }
 
@@ -1059,7 +1067,7 @@
 // ===== RESPONSIVE MOBILE =====
 @media (max-width: 768px) {
   .dashboard-wrapper {
-    padding: 20px 16px 24px;
+    padding: 16px 16px 24px;
     gap: 16px;
   }
 
@@ -1161,5 +1169,30 @@
   .family-item {
     padding: 12px;
     gap: 10px;
+  }
+
+  .family-card,
+  .quick-actions-card {
+    background: transparent;
+    border: none;
+    padding: 0;
+
+    .card-header {
+      padding: 0 4px;
+    }
+
+    .family-list,
+    .quick-actions-grid {
+      background: var(--color-card-body);
+      border: 1px dashed var(--color-card-body-border);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .empty-state {
+      background: var(--color-card-body);
+      border: 1px dashed var(--color-card-body-border);
+      border-radius: 16px;
+    }
   }
 }

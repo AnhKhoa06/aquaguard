@@ -1,4 +1,36 @@
 <div class="app-shell" [class.collapsed]="collapsed">
+  <!-- Mobile Topbar -->
+  <div class="mobile-topbar">
+    <div style="width: 32px"></div>
+    <!-- ← placeholder bên trái -->
+    <img [src]="getLogoSrc()" alt="AquaGuard" class="mobile-logo" />
+    <div class="mobile-avatar-wrap">
+      <button class="mobile-avatar-btn" (click)="toggleUserMenu()">
+        {{ getInitials(currentUser?.full_name || '') }}
+      </button>
+      <div class="mobile-user-dropdown" *ngIf="showUserMenu">
+        <button class="mobile-dropdown-close" (click)="toggleUserMenu()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+        <div class="mobile-dropdown-phone">{{ currentUser?.phone }}</div>
+        <div class="mobile-dropdown-avatar">
+          {{ getInitials(currentUser?.full_name || '') }}
+        </div>
+        <div class="mobile-dropdown-name">{{ currentUser?.full_name }}</div>
+        <span class="mobile-dropdown-role">{{ getRoleLabel(currentUser?.role || '') }}</span>
+        <a class="mobile-dropdown-item" [routerLink]="['/settings']" (click)="toggleUserMenu()">
+          <span class="material-symbols-outlined">manage_accounts</span>
+          Cài đặt
+        </a>
+        <button class="mobile-dropdown-logout" (click)="logout()">
+          <span class="material-symbols-outlined">logout</span>
+          Đăng xuất
+        </button>
+      </div>
+      <div class="mobile-dropdown-backdrop" *ngIf="showUserMenu" (click)="toggleUserMenu()"></div>
+    </div>
+  </div>
+
   <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-top">
@@ -79,9 +111,5 @@
         <span>{{ item.labelVi }}</span>
       </a>
     </ng-container>
-    <a class="bottom-nav-item" [routerLink]="['/settings']" routerLinkActive="active">
-      <span class="material-symbols-outlined">settings</span>
-      <span>Cài đặt</span>
-    </a>
   </nav>
 </div>

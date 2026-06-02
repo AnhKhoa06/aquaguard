@@ -1431,3 +1431,214 @@
     }
   }
 }
+/* =========================
+   TABLET
+========================= */
+@media (max-width: 1100px) {
+  .team-page {
+    padding: 20px;
+  }
+
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .list-panel,
+  .detail-panel {
+    height: auto;
+  }
+
+  .detail-panel {
+    margin-top: 4px;
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media (max-width: 768px) {
+  .team-page {
+    padding: 16px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+
+  .page-header h1 {
+    font-size: 1.35rem;
+  }
+
+  .my-team-banner,
+  .no-team-banner {
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .my-team-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .banner-left {
+    width: 100%;
+  }
+
+  .my-team-chip {
+    align-self: flex-start;
+  }
+
+  .panel {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .team-row {
+    padding: 12px;
+  }
+
+  .team-row-name {
+    flex-wrap: wrap;
+  }
+
+  .team-row-meta,
+  .team-row-phone {
+    flex-wrap: wrap;
+  }
+
+  .detail-hero {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .detail-hero-name {
+    flex-wrap: wrap;
+  }
+
+  .detail-hero-name h2 {
+    font-size: 16px;
+  }
+
+  .join-btn {
+    width: 100%;
+    margin-left: 0;
+    justify-content: center;
+  }
+
+  .join-status {
+    font-size: 12px;
+    padding: 10px 12px;
+  }
+
+  .member-item {
+    padding: 10px 12px;
+  }
+
+  .health-badge {
+    font-size: 9px;
+    padding: 3px 6px;
+  }
+}
+
+/* =========================
+   SMALL MOBILE
+========================= */
+@media (max-width: 576px) {
+  .team-page {
+    padding: 12px;
+  }
+
+  .panel {
+    padding: 14px;
+  }
+
+  .team-avatar-wrap,
+  .detail-hero-icon {
+    flex-shrink: 0;
+  }
+
+  .detail-hero-icon {
+    width: 46px;
+    height: 46px;
+
+    .material-symbols-outlined {
+      font-size: 24px;
+    }
+  }
+
+  .detail-hero-name h2 {
+    font-size: 15px;
+  }
+
+  .member-item {
+    gap: 10px;
+  }
+
+  .member-avatar {
+    width: 34px;
+    height: 34px;
+    font-size: 11px;
+  }
+
+  .member-name {
+    font-size: 12px;
+  }
+
+  .member-phone {
+    font-size: 10px;
+  }
+
+  .health-badge {
+    margin-left: auto;
+  }
+
+  .members-title {
+    font-size: 11px;
+  }
+
+  .team-row-meta,
+  .team-row-phone,
+  .detail-info-row,
+  .detail-time {
+    font-size: 11px;
+  }
+}
+
+/* =========================
+   VERY SMALL DEVICES
+========================= */
+@media (max-width: 420px) {
+  .member-item {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .member-info {
+    width: calc(100% - 50px);
+  }
+
+  .health-badge {
+    margin-left: 50px;
+  }
+
+  .my-team-banner strong,
+  .no-team-banner strong {
+    font-size: 13px;
+  }
+
+  .my-team-banner p,
+  .no-team-banner p {
+    font-size: 11px;
+  }
+
+  .team-row-name strong {
+    font-size: 13px;
+  }
+
+  .join-btn {
+    font-size: 12px;
+  }
+}

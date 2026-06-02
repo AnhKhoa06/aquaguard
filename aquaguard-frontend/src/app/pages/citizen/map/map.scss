@@ -1498,20 +1498,43 @@
 @media (max-width: 768px) {
   .map-body {
     flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
-  // Ẩn side panel trên mobile
   .map-side-panel {
-    display: none;
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    height: auto;
+    min-height: 260px;
+
+    border-left: none;
+    border-top: 1px solid var(--color-border);
+
+    flex-shrink: 0;
+    margin-top: 15px;
+  }
+
+  .tab-content {
+    overflow-y: unset;
+  }
+
+  .map-left {
+    min-height: 68vh;
+  }
+
+  .panel-tabs {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--color-card-2);
   }
 
   // Navbar
   .map-navbar {
-    padding: 0 12px;
-    height: auto;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 10px 12px;
+    display: none;
   }
 
   .navbar-center {

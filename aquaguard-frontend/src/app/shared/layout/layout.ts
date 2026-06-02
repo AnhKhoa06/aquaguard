@@ -29,6 +29,8 @@ export class LayoutComponent implements OnInit {
 
   navItems: NavItem[] = [];
 
+  showUserMenu = false;
+
   ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
 
@@ -39,6 +41,10 @@ export class LayoutComponent implements OnInit {
     }
 
     this.buildNav();
+  }
+
+  toggleUserMenu() {
+    this.showUserMenu = !this.showUserMenu;
   }
 
   buildNav() {
@@ -97,7 +103,12 @@ export class LayoutComponent implements OnInit {
           labelEn: 'My Tasks',
           route: '/responder/my-tasks',
         },
-        { icon: 'groups', labelVi: 'Rescue Team', labelEn: 'Rescue Team', route: '/responder/team' },
+        {
+          icon: 'groups',
+          labelVi: 'Rescue Team',
+          labelEn: 'Rescue Team',
+          route: '/responder/team',
+        },
       ];
     }
   }

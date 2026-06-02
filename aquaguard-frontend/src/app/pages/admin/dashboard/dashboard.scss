@@ -1771,3 +1771,276 @@
     color: #ffffff;
   }
 }
+
+/* ===========================
+   TABLET (<= 992px)
+=========================== */
+@media (max-width: 992px) {
+  .admin-wrapper {
+    padding: 20px;
+  }
+
+  .teams-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .team-detail-panel {
+    order: -1;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .users-search {
+    width: 100%;
+    flex: 1;
+  }
+
+  .users-toolbar {
+    align-items: stretch;
+  }
+
+  .users-filters {
+    flex-wrap: wrap;
+  }
+}
+
+/* ===========================
+   MOBILE (<= 768px)
+=========================== */
+@media (max-width: 768px) {
+  .admin-wrapper {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  /* Header */
+  .page-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  /* Tabs */
+  .tab-nav {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .tab-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* Stats */
+  .stat-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: 18px;
+    min-height: auto;
+  }
+
+  .stat-number {
+    font-size: 26px;
+  }
+
+  /* Users */
+  .users-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .users-search {
+    width: 100%;
+  }
+
+  .users-filters {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  .btn-reload {
+    width: 100%;
+    border-radius: 12px;
+  }
+
+  .user-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .user-card-left {
+    width: 100%;
+  }
+
+  .user-card-right {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .role-select {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  /* Join request */
+  .join-request-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .join-request-info {
+    flex-wrap: wrap;
+  }
+
+  .join-request-actions {
+    width: 100%;
+  }
+
+  .join-approve-btn,
+  .join-reject-btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  /* Teams */
+  .teams-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .btn-create-team {
+    justify-content: center;
+  }
+
+  .team-row-top {
+    align-items: center;
+  }
+
+  .detail-hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .add-member-row {
+    flex-direction: column;
+  }
+
+  .member-select,
+  .btn-add-member {
+    width: 100%;
+  }
+
+  .member-item {
+    flex-wrap: wrap;
+  }
+
+  .health-badge {
+    margin-left: 50px;
+  }
+
+  /* Map */
+  .admin-map-wrap {
+    height: 65vh;
+    min-height: 420px;
+  }
+
+  .map-fab-col {
+    right: 10px;
+    top: 10px;
+  }
+
+  .map-legend {
+    left: 10px;
+    bottom: 10px;
+    max-width: 170px;
+  }
+
+  .windy-popup {
+    width: 200px;
+  }
+}
+
+/* ===========================
+   SMALL MOBILE (<= 480px)
+=========================== */
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 20px;
+  }
+
+  .page-subtitle {
+    font-size: 12px;
+  }
+
+  .stat-card {
+    gap: 12px;
+  }
+
+  .stat-card-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .stat-number {
+    font-size: 22px;
+  }
+
+  .user-avatar,
+  .member-avatar {
+    width: 34px;
+    height: 34px;
+    font-size: 11px;
+  }
+
+  .team-avatar-wrap {
+    width: 36px;
+    height: 36px;
+  }
+
+  .team-row-name strong {
+    font-size: 13px;
+  }
+
+  .detail-hero h2 {
+    font-size: 16px;
+  }
+
+  .windy-popup {
+    width: 180px;
+  }
+
+  .map-legend {
+    font-size: 10px;
+    padding: 8px;
+  }
+  .tab-nav {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  .tab-btn {
+    justify-content: center;
+    font-size: 10px;
+    padding: 8px 4px;
+
+    .material-symbols-outlined {
+      font-size: 14px;
+    }
+  }
+}
