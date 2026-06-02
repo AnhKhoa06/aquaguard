@@ -54,8 +54,20 @@
 
       <!-- Tabs -->
       <div class="tab-group">
-        <a routerLink="/auth/login" class="tab" data-vi="Đăng nhập" data-en="Login">Đăng nhập</a>
-        <button class="tab active" data-vi="Đăng ký" data-en="Register">Đăng ký</button>
+        <a
+          routerLink="/auth/login"
+          class="tab"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >Đăng nhập</a
+        >
+        <a
+          routerLink="/auth/register"
+          class="tab"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >Đăng ký</a
+        >
       </div>
 
       <!-- Step indicator -->
