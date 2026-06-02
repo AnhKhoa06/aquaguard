@@ -11,12 +11,21 @@ const locations = [
   { name: "Quảng Bình", lat: 17.469, lng: 106.622 },
 ];
 
+//TEST
 const getRiskLevel = (precipitation) => {
   if (precipitation > 0.05) return "critical";
   if (precipitation > 0.02) return "high";
   if (precipitation > 0.01) return "moderate";
   return "safe";
 };
+
+//mức độ chuẩn
+// const getRiskLevel = (precipitation) => {
+//   if (precipitation >= 50) return "critical"; // mưa rất to, lũ lụt
+//   if (precipitation >= 25) return "high"; // mưa to
+//   if (precipitation >= 10) return "moderate"; // mưa vừa
+//   return "safe"; // mưa nhỏ hoặc không mưa
+// };
 
 const fetchAndSave = async () => {
   console.log("🌊 Running flood data job...");

@@ -314,7 +314,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   private loadSosMarkers() {
-    this.sosService.getActive().subscribe({
+    this.sosService.getAllForMap().subscribe({
       next: (res) => {
         if (res.success) {
           const list = res.data.filter((s: any) => s.latitude && s.longitude);
@@ -337,6 +337,15 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
             };
             const bg = colorMap[sos.status] ?? '#ef4444';
             const isPending = sos.status === 'pending';
+
+            const statusLabelMap: Record<string, string> = {
+              pending: 'Chờ xử lý',
+              assigned: 'Đang xử lý',
+              in_progress: 'Đang xử lý',
+              resolved: 'Đã cứu',
+            };
+            const statusLabel = statusLabelMap[sos.status] ?? sos.status;
+
             const ringHtml = isPending
               ? `<div style="position:absolute;top:0;left:0;width:44px;height:44px;border-radius:50%;border:2.5px solid #ef4444;animation:sos-pulse 1.8s ease-out infinite;pointer-events:none;"></div>`
               : '';
@@ -344,26 +353,81 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
             const icon = L.divIcon({
               className: '',
               html: `
-                <style>@keyframes sos-pulse{0%{transform:scale(0.75);opacity:1;}70%{transform:scale(1.75);opacity:0;}100%{transform:scale(0.75);opacity:0;}}</style>
+              <style>@keyframes sos-pulse{0%{transform:scale(0.75);opacity:1;}70%{transform:scale(1.75);opacity:0;}100%{transform:scale(0.75);opacity:0;}}</style>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
                 <div style="position:relative;width:44px;height:44px;display:flex;align-items:center;justify-content:center;">
                   ${ringHtml}
                   <div style="position:relative;z-index:1;width:40px;height:40px;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;border:2.5px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,0.3);">
                     <span style="color:#fff;font-size:13px;font-weight:700;">${initials}</span>
                   </div>
-                </div>`,
-              iconSize: [44, 44],
-              iconAnchor: [22, 22],
-              popupAnchor: [0, -26],
+                </div>
+                <div style="background:${bg};color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.3);">
+                  ${statusLabel}
+                </div>
+              </div>`,
+              iconSize: [60, 70],
+              iconAnchor: [30, 70],
+              popupAnchor: [0, -72],
             });
+
+            const urgencyMap: Record<string, string> = {
+              critical: 'Cực kỳ nguy hiểm',
+              high: 'Nghiêm trọng',
+              medium: 'Trung bình',
+              low: 'Nhẹ',
+            };
+            const statusColorMap: Record<string, string> = {
+              pending: '#ef4444',
+              assigned: '#f59e0b',
+              in_progress: '#f59e0b',
+              resolved: '#22c55e',
+            };
+            const sColor = statusColorMap[sos.status] ?? '#64748b';
+            const avatarColor = (colorMap[sos.status] ?? '#ef4444').replace('#', '');
+            const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=${avatarColor}&color=fff&size=40`;
+            const time = sos.created_at
+              ? new Date(sos.created_at).toLocaleTimeString('vi-VN', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  second: '2-digit',
+                })
+              : '';
 
             L.marker([sos.latitude, sos.longitude], { icon })
               .addTo(this.map)
               .bindPopup(
-                `<div style="padding:10px;font-family:inherit;min-width:180px;">
-                <p style="margin:0 0 4px;font-size:14px;font-weight:700;color:#f1f5f9;">${name}</p>
-                ${sos.address ? `<p style="margin:0;font-size:11px;color:#64748b;">${sos.address}</p>` : ''}
+                `
+              <div style="padding:14px 14px 12px;min-width:250px;font-family:inherit;">
+                <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;padding-right:20px;">
+                  <img src="${avatarUrl}" alt="${name}" referrerpolicy="no-referrer"
+                    style="width:40px;height:40px;border-radius:50%;border:2px solid rgba(255,255,255,0.9);object-fit:cover;flex-shrink:0;"/>
+                  <div style="min-width:0;flex:1;display:flex;flex-direction:column;gap:4px;">
+                    <p style="margin:0;font-size:14px;font-weight:700;color:#f1f5f9;">${name}</p>
+                    ${
+                      sos.address
+                        ? `
+                    <div style="display:flex;align-items:flex-start;gap:4px;font-size:10px;color:#64748b;line-height:1.4;max-width:200px;">
+                      <span class="material-symbols-outlined" style="font-size:12px;flex-shrink:0;margin-top:1px;">location_on</span>
+                      <span>${sos.address}</span>
+                    </div>`
+                        : ''
+                    }
+                    <span style="display:inline-block;background:rgba(255,255,255,0.08);color:#94a3b8;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;width:fit-content;">
+                      Mức độ: ${urgencyMap[sos.urgency_level] || sos.urgency_level || 'Không rõ'}
+                    </span>
+                  </div>
+                </div>
+                ${sos.description ? `<p style="margin:0 0 10px;font-size:11px;color:#94a3b8;line-height:1.5;">${sos.description}</p>` : ''}
+                <div style="display:flex;align-items:center;gap:6px;font-size:10px;flex-wrap:wrap;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);">
+                  <span style="display:inline-flex;align-items:center;gap:4px;background:${sColor}22;color:${sColor};font-weight:700;padding:3px 10px;border-radius:999px;font-size:11px;">
+                    <span class="material-symbols-outlined" style="font-size:13px;">check_circle</span>
+                    ${statusLabel}
+                  </span>
+                  ${time ? `<span style="color:#64748b;">• ${time}</span>` : ''}
+                  ${sos.responder_name ? `<span style="color:#94a3b8;">• ${sos.responder_name}</span>` : ''}
+                </div>
               </div>`,
-                { className: 'sos-popup-wrap', maxWidth: 280 },
+                { className: 'sos-popup-wrap', maxWidth: 320, minWidth: 250 },
               );
           });
         }
@@ -462,22 +526,16 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
 
   // ===== WINDY =====
   toggleWindyPanel() {
-    this.showWindyPanel = !this.showWindyPanel;
-    if (!this.showWindyPanel) {
-      this.showWindy = false;
-      this.windyLoaded = false;
-    }
+    this.showWindyPanel = !this.showWindyPanel; // ← toggle bình thường luôn
   }
 
   toggleWindy() {
     this.showWindy = !this.showWindy;
-    console.log('showWindy:', this.showWindy);
     if (this.showWindy) {
       this.windyLoaded = true;
-      console.log('windyLoaded:', this.windyLoaded);
-      console.log('windyUrl:', this.getWindyUrl());
     } else {
       this.windyLoaded = false;
+      this.showWindyPanel = false; // ← chỉ đóng bảng khi tắt windy
     }
   }
 

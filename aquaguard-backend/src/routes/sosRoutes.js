@@ -39,6 +39,8 @@ router.get(
 // Citizen — xem tất cả SOS active trên bản đồ
 router.get("/map/active", authMiddleware, sosController.getActive);
 
+router.get("/map/all", authMiddleware, sosController.getAllForMap);
+
 // Admin — phân công cứu hộ
 router.patch(
   "/:id/assign",

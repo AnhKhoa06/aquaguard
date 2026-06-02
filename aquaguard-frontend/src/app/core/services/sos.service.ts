@@ -18,6 +18,10 @@ export class SosService {
     return this.http.get<ApiResponse<SosRequest[]>>(`${this.apiUrl}/sos/my`);
   }
 
+  getAllForMap(): Observable<ApiResponse<SosRequest[]>> {
+    return this.http.get<ApiResponse<SosRequest[]>>(`${this.apiUrl}/sos/map/all`);
+  }
+
   create(data: FormData): Observable<ApiResponse<SosRequest>> {
     return this.http.post<ApiResponse<SosRequest>>(`${this.apiUrl}/sos`, data);
   }

@@ -114,6 +114,28 @@ const sosController = {
     }
   },
 
+  getAllForMap: async (req, res, next) => {
+    try {
+      const [rows] = await pool.query(`
+      SELECT s.*, 
+        u.full_name as citizen_name,
+        u.phone as citizen_phone,
+        t.name as team_name,
+        r.full_name as responder_name
+      FROM sos_requests s
+      LEFT JOIN users u ON s.user_id = u.id
+      LEFT JOIN rescue_teams t ON s.team_id = t.id
+      LEFT JOIN users r ON s.responder_id = r.id
+      WHERE s.status NOT IN ('cancelled')
+        AND s.latitude IS NOT NULL
+        AND s.longitude IS NOT NULL
+    `);
+      return successResponse(res, rows, "Lấy danh sách SOS thành công!");
+    } catch (err) {
+      next(err);
+    }
+  },
+
   // Admin phân công responder + team
   assignResponder: async (req, res, next) => {
     try {

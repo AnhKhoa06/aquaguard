@@ -1762,3 +1762,12 @@
     }
   }
 }
+
+.map-fab.active {
+  background: #00bcd4;
+  border-color: #00bcd4;
+
+  .material-symbols-outlined {
+    color: #ffffff;
+  }
+}

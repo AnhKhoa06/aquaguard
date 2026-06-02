@@ -58,7 +58,11 @@
         <!-- Nút nổi -->
         <div class="map-fab-col">
           <div class="windy-fab-wrap">
-            <button class="map-fab windy-fab" (click)="toggleWindyPanel()">
+            <button
+              class="map-fab windy-fab"
+              (click)="toggleWindyPanel()"
+              [class.active]="showWindy"
+            >
               <span class="material-symbols-outlined">layers</span>
             </button>
             <div class="windy-popup" *ngIf="showWindyPanel">
