@@ -21,14 +21,16 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.themeService.init();
+
+    this.router.events.subscribe(() => {
+      if (this.router.url.startsWith('/auth')) {
+        this.themeService.applyAuthTheme();
+      }
+    });
   }
 
   get isAuthPage(): boolean {
-    const isAuth = this.router.url.startsWith('/auth');
-    if (isAuth) {
-      this.themeService.applyAuthTheme();
-    }
-    return isAuth;
+    return this.router.url.startsWith('/auth');
   }
 
   toggleLang() {
