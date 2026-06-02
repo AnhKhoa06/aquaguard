@@ -56,20 +56,8 @@
       </div>
 
       <div class="tab-group">
-        <a
-          routerLink="/auth/login"
-          class="tab"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          >Đăng nhập</a
-        >
-        <a
-          routerLink="/auth/register"
-          class="tab"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          >Đăng ký</a
-        >
+        <span class="tab active">Đăng nhập</span>
+        <a routerLink="/auth/register" class="tab">Đăng ký</a>
       </div>
 
       <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
