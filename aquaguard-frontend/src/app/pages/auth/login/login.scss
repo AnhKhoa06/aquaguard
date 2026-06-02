@@ -288,6 +288,10 @@
     cursor: pointer;
     text-decoration: none;
     transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
 
     &.active {
       color: #11a0b6;

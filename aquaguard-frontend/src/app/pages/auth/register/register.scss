@@ -72,6 +72,9 @@
     justify-content: center;
     gap: 6px;
     transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
 
     mat-icon {
       font-size: 18px;
@@ -111,6 +114,9 @@
     justify-content: center;
     gap: 8px;
     transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
 
     mat-icon {
       font-size: 20px;
