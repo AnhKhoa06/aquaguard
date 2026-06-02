@@ -7,8 +7,9 @@ export class ThemeService {
   private current: Theme = 'dark';
 
   init() {
-    const saved = (localStorage.getItem('theme') as Theme) || 'dark';
-    this.apply(saved);
+    // const saved = (localStorage.getItem('theme') as Theme) || 'dark';
+    // this.apply(saved);
+    this.apply('dark');
   }
 
   apply(theme: Theme) {
