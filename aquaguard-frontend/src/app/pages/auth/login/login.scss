@@ -293,10 +293,27 @@
     -webkit-user-select: none;
     user-select: none;
 
+    &:link,
+    &:visited,
+    &:hover,
+    &:active,
+    &:focus {
+      color: #8899aa !important;
+      text-decoration: none;
+    }
+
     &.active {
-      color: #11a0b6;
+      color: #11a0b6 !important;
       border-bottom: 2px solid #11a0b6;
       border-radius: 0 0 15px 15px;
+
+      &:link,
+      &:visited,
+      &:hover,
+      &:active,
+      &:focus {
+        color: #11a0b6 !important;
+      }
     }
 
     &:hover:not(.active) {
