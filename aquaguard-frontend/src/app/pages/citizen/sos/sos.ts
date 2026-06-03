@@ -257,7 +257,7 @@ export class SosComponent implements OnInit, OnDestroy {
   }
 
   get totalRequests(): number {
-    return this.activeSos ? 1 : 0;
+    return this.sosRequests.length;
   }
 
   get statusLabel(): string {

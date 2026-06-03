@@ -27,16 +27,15 @@
       </div>
 
       <ng-container *ngIf="!loading">
-        <!-- Active SOS card -->
-        <article class="sos-card" *ngIf="activeRequest; else emptyRequest">
+        <article class="sos-card" *ngFor="let req of sosRequests">
           <div class="sos-card-top">
-            <span class="status-pill" [ngClass]="getStatusTone(activeRequest.status)">
+            <span class="status-pill" [ngClass]="getStatusTone(req.status)">
               <span class="material-symbols-outlined status-icon">{{
-                getStatusIcon(activeRequest.status)
+                getStatusIcon(req.status)
               }}</span>
-              {{ getStatusLabel(activeRequest.status) }}
+              {{ getStatusLabel(req.status) }}
             </span>
-            <span class="request-date">{{ activeRequest.created_at | date: 'd/M/yyyy' }}</span>
+            <span class="request-date">{{ req.created_at | date: 'd/M/yyyy' }}</span>
           </div>
 
           <div class="sos-card-body">
@@ -49,15 +48,14 @@
             </div>
             <div class="info-row">
               <span class="material-symbols-outlined icon-red icon-lg">location_on</span>
-              <span>{{ activeRequest.address || 'Chưa có địa chỉ' }}</span>
+              <span>{{ req.address || 'Chưa có địa chỉ' }}</span>
             </div>
-            <div class="info-row description" *ngIf="activeRequest.description">
-              <span>{{ activeRequest.description }}</span>
+            <div class="info-row description" *ngIf="req.description">
+              <span>{{ req.description }}</span>
             </div>
-
-            <div class="sos-images" *ngIf="activeRequest.images && activeRequest.images.length > 0">
+            <div class="sos-images" *ngIf="req.images && req.images.length > 0">
               <img
-                *ngFor="let img of activeRequest.images"
+                *ngFor="let img of req.images"
                 [src]="getImageUrl(img.image_url)"
                 alt="Ảnh hiện trường"
                 class="sos-thumb"
@@ -66,16 +64,16 @@
           </div>
 
           <div class="sos-card-footer">
-            <span class="urgency-badge urgency-{{ activeRequest.urgency_level }}">
-              Mức độ {{ getUrgencyLabel(activeRequest.urgency_level) }}
+            <span class="urgency-badge urgency-{{ req.urgency_level }}">
+              Mức độ {{ getUrgencyLabel(req.urgency_level) }}
             </span>
             <div class="footer-info">
               <span class="material-symbols-outlined">person</span>
-              <span>Được giao cho: {{ activeRequest.responder_name || 'Chưa tiếp nhận' }}</span>
+              <span>Được giao cho: {{ req.responder_name || 'Chưa tiếp nhận' }}</span>
             </div>
-            <div class="footer-info primary" *ngIf="activeRequest.team_name">
+            <div class="footer-info primary" *ngIf="req.team_name">
               <span class="material-symbols-outlined">groups</span>
-              <span>Nhóm xử lý: {{ activeRequest.team_name }}</span>
+              <span>Nhóm xử lý: {{ req.team_name }}</span>
             </div>
             <button class="track-btn" type="button" (click)="openTracking()">
               <span class="material-symbols-outlined">map</span>
@@ -84,13 +82,11 @@
           </div>
         </article>
 
-        <ng-template #emptyRequest>
-          <div class="empty-state">
-            <span class="material-symbols-outlined">sos</span>
-            <h3>Chưa có yêu cầu SOS đang hoạt động</h3>
-            <p>Nhấn Gửi SOS khi cần hỗ trợ khẩn cấp.</p>
-          </div>
-        </ng-template>
+        <div class="empty-state" *ngIf="sosRequests.length === 0">
+          <span class="material-symbols-outlined">sos</span>
+          <h3>Chưa có yêu cầu SOS đang hoạt động</h3>
+          <p>Nhấn Gửi SOS khi cần hỗ trợ khẩn cấp.</p>
+        </div>
       </ng-container>
     </article>
   </section>
