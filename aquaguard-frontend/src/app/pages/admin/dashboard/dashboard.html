@@ -300,6 +300,12 @@
     </div>
 
     <!-- Teams grid -->
+    <div class="loading-state" *ngIf="teamsLoading">
+      <div class="skeleton-list">
+        <div class="skeleton-card" *ngFor="let _ of [1, 2, 3]"></div>
+      </div>
+    </div>
+
     <div class="teams-grid" *ngIf="!teamsLoading">
       <!-- Team list -->
       <div class="teams-list-panel panel">
