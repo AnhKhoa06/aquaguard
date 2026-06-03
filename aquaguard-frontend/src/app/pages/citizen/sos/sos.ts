@@ -143,12 +143,13 @@ export class SosComponent implements OnInit, OnDestroy {
 
     this.showTracking = true;
     this.syncTrackingMeta();
+    this.cdr.detectChanges(); // ← force Angular render DOM ngay
 
     setTimeout(() => {
       this.initTrackingMap();
       this.trackingMap?.invalidateSize();
       this.renderTrackingRoute();
-    }, 500); // ← tăng lên 500ms
+    }, 100);
 
     if (!this.trackingRefreshHandle) {
       this.trackingRefreshHandle = setInterval(() => {
