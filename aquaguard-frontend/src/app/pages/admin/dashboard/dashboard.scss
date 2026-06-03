@@ -1785,6 +1785,7 @@
   .admin-wrapper {
     padding: 16px;
     gap: 16px;
+    overflow-x: hidden;
   }
 
   /* Header */
@@ -1802,6 +1803,8 @@
     overflow-x: auto;
     flex-wrap: nowrap;
     padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
 
     &::-webkit-scrollbar {
       display: none;
@@ -2001,15 +2004,17 @@
     padding: 8px;
   }
   .tab-nav {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    display: flex; // ← đổi từ grid thành flex
+    overflow-x: auto;
+    flex-wrap: nowrap;
     gap: 6px;
   }
 
   .tab-btn {
-    justify-content: center;
+    flex-shrink: 0; // ← không co lại
     font-size: 10px;
-    padding: 8px 4px;
+    padding: 8px 10px;
+    white-space: nowrap;
 
     .material-symbols-outlined {
       font-size: 14px;
