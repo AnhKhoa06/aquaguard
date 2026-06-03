@@ -12,6 +12,7 @@ import { SosRequest, User } from '../../../models/interfaces';
 import { ToastrService } from 'ngx-toastr';
 
 import { ChangeDetectorRef } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 
 type UrgencyLevel = 'low' | 'medium' | 'high' | 'critical';
 
@@ -199,6 +200,11 @@ export class SosComponent implements OnInit, OnDestroy {
     }
     this.selectedFiles.splice(index, 1);
     this.imagePreviews.splice(index, 1);
+  }
+
+  getImageUrl(url: string): string {
+    if (url.startsWith('http')) return url;
+    return `${environment.apiUrl.replace('/api', '')}${url}`;
   }
 
   submitSos(): void {

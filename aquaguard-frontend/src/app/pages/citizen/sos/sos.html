@@ -58,11 +58,7 @@
             <div class="sos-images" *ngIf="activeRequest.images && activeRequest.images.length > 0">
               <img
                 *ngFor="let img of activeRequest.images"
-                [src]="
-                  img.image_url.startsWith('http')
-                    ? img.image_url
-                    : 'http://localhost:3000' + img.image_url
-                "
+                [src]="getImageUrl(img.image_url)"
                 alt="Ảnh hiện trường"
                 class="sos-thumb"
               />
