@@ -473,39 +473,30 @@
   }
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -400px 0;
-  }
-  100% {
-    background-position: 400px 0;
-  }
-}
-
-.skeleton-card {
-  height: 100px;
-  border-radius: 16px;
-  background: linear-gradient(90deg, #111f21 25%, rgba(255, 255, 255, 0.06) 50%, #111f21 75%);
-  background-size: 800px 100%;
-  animation: shimmer 1.4s infinite linear;
-
-  &.tall {
-    height: 220px;
-  }
-}
-
-.skeleton-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-}
-
-.skeleton-list {
+.analytics-loading {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px;
   gap: 16px;
+  color: var(--color-text-muted);
+
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(0, 188, 212, 0.3);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
 }
 
-.analytics-loading {
-  padding: 0;
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
