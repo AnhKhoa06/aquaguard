@@ -159,13 +159,14 @@ export class SosComponent implements OnInit, OnDestroy {
   }
 
   closeTracking(): void {
+    this.destroyTrackingMap();
     this.showTracking = false;
     this.hasInitialFit = false;
+    this.cdr.detectChanges(); // ← force Angular update DOM
     if (this.trackingRefreshHandle) {
       clearInterval(this.trackingRefreshHandle);
       this.trackingRefreshHandle = null;
     }
-    // Không gọi destroyTrackingMap() nữa
   }
 
   setUrgency(value: UrgencyLevel): void {
@@ -554,8 +555,6 @@ export class SosComponent implements OnInit, OnDestroy {
       this.trackingMap.invalidateSize();
       return;
     }
-
-    mapElement.innerHTML = '';
 
     this.trackingMap = L.map('tracking-map', {
       zoomControl: true,
