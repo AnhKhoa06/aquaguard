@@ -1219,3 +1219,31 @@
     min-height: 220px;
   }
 }
+
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+.skeleton-card {
+  height: 120px;
+  border-radius: 16px;
+  background: linear-gradient(
+    90deg,
+    var(--color-card-body) 25%,
+    rgba(255, 255, 255, 0.06) 50%,
+    var(--color-card-body) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

@@ -26,29 +26,6 @@
   }
 }
 
-.analytics-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 60px;
-  color: var(--color-text-secondary);
-
-  .material-symbols-outlined {
-    font-size: 36px;
-    color: var(--primary);
-  }
-}
-
-.spin {
-  animation: spin 1s linear infinite;
-}
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 // Stat Cards
 .analytics-stats {
   display: grid;
@@ -494,4 +471,41 @@
     text-align: left;
     margin-left: 0;
   }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+.skeleton-card {
+  height: 100px;
+  border-radius: 16px;
+  background: linear-gradient(90deg, #111f21 25%, rgba(255, 255, 255, 0.06) 50%, #111f21 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+
+  &.tall {
+    height: 220px;
+  }
+}
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.analytics-loading {
+  padding: 0;
 }

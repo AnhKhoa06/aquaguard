@@ -32,8 +32,9 @@
 
   <!-- Loading -->
   <div class="loading-state" *ngIf="loading">
-    <span class="material-symbols-outlined spin">autorenew</span>
-    <p>Đang tải...</p>
+    <div class="skeleton-grid">
+      <div class="skeleton-card" *ngFor="let _ of [1, 2, 3, 4]"></div>
+    </div>
   </div>
 
   <!-- ===== TAB OVERVIEW ===== -->
@@ -180,8 +181,7 @@
 
     <!-- Loading -->
     <div class="loading-state" *ngIf="usersLoading">
-      <span class="material-symbols-outlined spin">autorenew</span>
-      <p>Đang tải...</p>
+      <div class="skeleton-card" *ngFor="let _ of [1, 2, 3]"></div>
     </div>
 
     <!-- User Cards -->

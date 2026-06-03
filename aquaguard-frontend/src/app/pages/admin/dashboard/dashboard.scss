@@ -81,34 +81,6 @@
   }
 }
 
-// ========== LOADING ==========
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 60px;
-  color: #64748b;
-
-  .material-symbols-outlined {
-    font-size: 36px;
-    color: var(--primary);
-  }
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.spin {
-  animation: spin 1s linear infinite;
-}
-
 // ========== STAT CARDS ==========
 .stat-cards {
   display: grid;
@@ -2043,4 +2015,39 @@
       font-size: 14px;
     }
   }
+}
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0; // bỏ padding cũ
+}
+
+.skeleton-card {
+  height: 120px;
+  border-radius: 16px;
+  background: linear-gradient(
+    90deg,
+    #111f21 25%,
+    // ← dùng màu cứng thay vì variable
+    rgba(255, 255, 255, 0.06) 50%,
+    #111f21 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
 }

@@ -95,7 +95,7 @@
   </section>
 
   <!-- Main Grid -->
-  <div class="admin-sos-grid" *ngIf="!loading">
+  <div class="admin-sos-grid">
     <!-- List -->
     <section class="list-panel panel">
       <div class="panel-head">
@@ -108,49 +108,51 @@
         <div class="skeleton-card" *ngFor="let _ of [1, 2, 3]"></div>
       </div>
 
-      <div class="list-empty" *ngIf="!loading && filteredRequests.length === 0">
-        <span class="material-symbols-outlined">inbox</span>
-        <p>Không có yêu cầu phù hợp</p>
-      </div>
+      <ng-container *ngIf="!loading">
+        <div class="list-empty" *ngIf="!loading && filteredRequests.length === 0">
+          <span class="material-symbols-outlined">inbox</span>
+          <p>Không có yêu cầu phù hợp</p>
+        </div>
 
-      <article
-        class="sos-row"
-        *ngFor="let req of filteredRequests"
-        [class.active]="selectedId === req.id"
-        (click)="selectRequest(req)"
-      >
-        <div class="row-top">
-          <div class="row-info">
-            <div class="row-name-row">
-              <strong>{{ req.citizen_name || 'Ẩn danh' }}</strong>
-              <span style="margin-left: auto"></span>
-              <span class="urgency-badge urgency-{{ req.urgency_level }}">
-                {{ getUrgencyLabel(req.urgency_level) }}
-              </span>
-              <span class="status-pill" [ngClass]="getStatusTone(req.status)">
-                {{ getStatusLabel(req.status) }}
-              </span>
-            </div>
-            <p class="row-time">{{ getTimeAgo(req.created_at) }}</p>
-            <p class="row-address" *ngIf="req.address">
-              <span class="material-symbols-outlined">location_on</span>
-              {{ req.address }}
-            </p>
-            <p class="row-desc" *ngIf="req.description">{{ req.description }}</p>
-            <!-- Thêm vào đây -->
-            <div style="display: flex; justify-content: flex-end; margin-top: 8px">
-              <button
-                class="accept-row-btn"
-                *ngIf="req.status === 'pending'"
-                (click)="acceptTask(req.id); $event.stopPropagation()"
-              >
-                <span class="material-symbols-outlined">check</span>
-                Nhận
-              </button>
+        <article
+          class="sos-row"
+          *ngFor="let req of filteredRequests"
+          [class.active]="selectedId === req.id"
+          (click)="selectRequest(req)"
+        >
+          <div class="row-top">
+            <div class="row-info">
+              <div class="row-name-row">
+                <strong>{{ req.citizen_name || 'Ẩn danh' }}</strong>
+                <span style="margin-left: auto"></span>
+                <span class="urgency-badge urgency-{{ req.urgency_level }}">
+                  {{ getUrgencyLabel(req.urgency_level) }}
+                </span>
+                <span class="status-pill" [ngClass]="getStatusTone(req.status)">
+                  {{ getStatusLabel(req.status) }}
+                </span>
+              </div>
+              <p class="row-time">{{ getTimeAgo(req.created_at) }}</p>
+              <p class="row-address" *ngIf="req.address">
+                <span class="material-symbols-outlined">location_on</span>
+                {{ req.address }}
+              </p>
+              <p class="row-desc" *ngIf="req.description">{{ req.description }}</p>
+              <!-- Thêm vào đây -->
+              <div style="display: flex; justify-content: flex-end; margin-top: 8px">
+                <button
+                  class="accept-row-btn"
+                  *ngIf="req.status === 'pending'"
+                  (click)="acceptTask(req.id); $event.stopPropagation()"
+                >
+                  <span class="material-symbols-outlined">check</span>
+                  Nhận
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </article>
+        </article>
+      </ng-container>
     </section>
 
     <!-- Detail -->

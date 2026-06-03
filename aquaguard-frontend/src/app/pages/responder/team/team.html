@@ -36,7 +36,12 @@
   </section>
 
   <!-- Main grid -->
-  <div class="team-grid" *ngIf="!loading">
+  <div class="team-grid">
+    <!-- Loading -->
+    <div class="loading-state" *ngIf="loading">
+      <div class="skeleton-card" *ngFor="let _ of [1, 2, 3]"></div>
+    </div>
+
     <!-- Danh sách đội -->
     <section class="list-panel panel">
       <div class="panel-head-row">
@@ -44,7 +49,7 @@
       </div>
 
       <div class="list-empty" *ngIf="teams.length === 0">
-        <span class="material-symbols-outlined">groups_off</span>
+        <span class="material-symbols-outlined">group_off</span>
         <p>Chưa có đội cứu hộ nào</p>
       </div>
 
@@ -172,10 +177,5 @@
         </div>
       </div>
     </aside>
-
-    <!-- Loading -->
-    <div class="loading-state" *ngIf="loading">
-      <div class="skeleton-card" *ngFor="let _ of [1, 2, 3]"></div>
-    </div>
   </div>
 </div>
