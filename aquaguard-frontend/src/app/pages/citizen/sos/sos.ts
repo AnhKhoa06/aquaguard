@@ -143,7 +143,7 @@ export class SosComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.initTrackingMap();
       this.renderTrackingRoute();
-    }, 0);
+    }, 300);
 
     if (!this.trackingRefreshHandle) {
       this.trackingRefreshHandle = setInterval(() => {
@@ -552,6 +552,8 @@ export class SosComponent implements OnInit, OnDestroy {
       attribution: '© Google Maps',
       maxZoom: 20,
     }).addTo(this.trackingMap);
+
+    setTimeout(() => this.trackingMap?.invalidateSize(), 200);
   }
 
   private destroyTrackingMap(): void {
