@@ -165,7 +165,7 @@ export class SosComponent implements OnInit, OnDestroy {
       clearInterval(this.trackingRefreshHandle);
       this.trackingRefreshHandle = null;
     }
-    this.destroyTrackingMap();
+    // Không gọi destroyTrackingMap() nữa
   }
 
   setUrgency(value: UrgencyLevel): void {
@@ -550,7 +550,12 @@ export class SosComponent implements OnInit, OnDestroy {
     const mapElement = document.getElementById('tracking-map');
     if (!mapElement) return;
 
-    if (this.trackingMap) return; // ← chỉ return, không invalidateSize
+    if (this.trackingMap) {
+      this.trackingMap.invalidateSize();
+      return;
+    }
+
+    mapElement.innerHTML = '';
 
     this.trackingMap = L.map('tracking-map', {
       zoomControl: true,
@@ -579,6 +584,13 @@ export class SosComponent implements OnInit, OnDestroy {
     if (this.trackingMap) {
       this.trackingMap.remove();
       this.trackingMap = null;
+    }
+
+    // ← thêm: xóa sạch container để Leaflet có thể init lại
+    const el = document.getElementById('tracking-map');
+    if (el) {
+      el.innerHTML = '';
+      el.className = 'tracking-map';
     }
   }
 
@@ -698,6 +710,20 @@ export class SosComponent implements OnInit, OnDestroy {
 
     const boundsPoints: L.LatLngExpression[] = [[citizenLat, citizenLng]];
 
+    // Responder chưa có tọa độ
+    if (typeof responderLat !== 'number' || typeof responderLng !== 'number') {
+      if (!this.hasInitialFit) {
+        setTimeout(() => {
+          this.trackingMap!.invalidateSize();
+          this.trackingMap!.setView([citizenLat, citizenLng], 15);
+          this.hasInitialFit = true;
+          console.log('map size:', this.trackingMap!.getSize());
+          console.log('map center:', this.trackingMap!.getCenter());
+        }, 100);
+      }
+      return;
+    }
+
     if (typeof responderLat === 'number' && typeof responderLng === 'number') {
       const responderIcon = L.icon({
         iconUrl:
@@ -779,7 +805,6 @@ export class SosComponent implements OnInit, OnDestroy {
               }),
             }).addTo(this.trackingMap!);
 
-            // Chỉ fitBounds lần đầu
             // Chỉ fitBounds lần đầu
             if (!this.hasInitialFit) {
               const bounds = L.polyline(coords).getBounds();
