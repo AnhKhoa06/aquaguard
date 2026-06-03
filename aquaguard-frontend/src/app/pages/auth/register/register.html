@@ -266,9 +266,10 @@
             <span data-vi="Quay lại" data-en="Back">Quay lại</span>
           </button>
           <button type="button" class="btn-primary" (click)="onRegister()" [disabled]="isLoading">
-            <mat-icon>person_add</mat-icon>
+            <span class="spinner" *ngIf="isLoading"></span>
+            <mat-icon *ngIf="!isLoading">person_add</mat-icon>
             <span data-vi="Tạo tài khoản" data-en="Create account">
-              {{ isLoading ? 'Đang tạo...' : 'Tạo tài khoản' }}
+              {{ isLoading ? 'Đang tạo tài khoản...' : 'Tạo tài khoản' }}
             </span>
           </button>
         </div>

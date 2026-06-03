@@ -113,7 +113,8 @@
         <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
 
         <button type="submit" class="btn-primary" [disabled]="isLoading">
-          <mat-icon>login</mat-icon>
+          <span class="spinner" *ngIf="isLoading"></span>
+          <mat-icon *ngIf="!isLoading">login</mat-icon>
           <span data-vi="Đăng nhập" data-en="Login">
             {{ isLoading ? 'Đang đăng nhập...' : 'Đăng nhập' }}
           </span>

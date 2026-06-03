@@ -92,10 +92,16 @@
         </span>
       </div>
 
-      <!-- Loading -->
-      <div class="empty-state" *ngIf="loadingFamily">
-        <span class="material-symbols-outlined loading-icon">autorenew</span>
-        <p>Đang tải...</p>
+      <!-- Loading skeleton family -->
+      <div class="skeleton-list" *ngIf="loadingFamily">
+        <div class="skeleton-member" *ngFor="let _ of [1, 2, 3]">
+          <div class="sk sk-avatar"></div>
+          <div class="skeleton-member-info">
+            <div class="sk sk-text-md"></div>
+            <div class="sk sk-text-sm"></div>
+          </div>
+          <div class="sk sk-circle-sm"></div>
+        </div>
       </div>
       <!-- Empty state -->
       <div class="empty-state" *ngIf="!loadingFamily && familyMembers.length === 0">
@@ -216,10 +222,22 @@
       <h2 class="card-title">Lịch sử yêu cầu</h2>
     </div>
 
-    <!-- Loading -->
-    <div class="empty-state" *ngIf="loadingSos">
-      <span class="material-symbols-outlined loading-icon">autorenew</span>
-      <p>Đang tải...</p>
+    <!-- Loading skeleton history -->
+    <div class="skeleton-list" *ngIf="loadingSos">
+      <div class="skeleton-history" *ngFor="let _ of [1, 2, 3]">
+        <div class="skeleton-history-left">
+          <div class="sk sk-icon-box"></div>
+          <div class="skeleton-history-info">
+            <div class="sk sk-text-md"></div>
+            <div class="sk sk-text-sm"></div>
+            <div class="sk sk-text-xs"></div>
+          </div>
+        </div>
+        <div class="skeleton-history-right">
+          <div class="sk sk-badge"></div>
+          <div class="sk sk-badge"></div>
+        </div>
+      </div>
     </div>
 
     <!-- Empty -->

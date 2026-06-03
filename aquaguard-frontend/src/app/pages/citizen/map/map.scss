@@ -1608,3 +1608,24 @@
     z-index: 2000;
   }
 }
+
+.map-loading {
+  color: var(--primary);
+  .spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(0, 188, 212, 0.3);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
