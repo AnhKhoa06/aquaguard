@@ -11,6 +11,8 @@ import { UserService } from '../../../core/services/user.service';
 import { SosRequest, User } from '../../../models/interfaces';
 import { ToastrService } from 'ngx-toastr';
 
+import { ChangeDetectorRef } from '@angular/core';
+
 type UrgencyLevel = 'low' | 'medium' | 'high' | 'critical';
 
 @Component({
@@ -88,6 +90,7 @@ export class SosComponent implements OnInit, OnDestroy {
     private sosService: SosService,
     private userService: UserService,
     private toastr: ToastrService,
+    private cdr: ChangeDetectorRef, // ← thêm
   ) {
     this.form = this.fb.group({
       address: ['', [Validators.required, Validators.minLength(8)]],
@@ -420,6 +423,7 @@ export class SosComponent implements OnInit, OnDestroy {
       const reader = new FileReader();
       reader.onload = (e) => {
         this.imagePreviews.push(e.target?.result as string);
+        this.cdr.detectChanges(); // ← thêm dòng này
       };
       reader.readAsDataURL(file);
     });
