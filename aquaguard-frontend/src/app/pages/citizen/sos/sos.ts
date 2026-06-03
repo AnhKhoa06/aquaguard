@@ -768,8 +768,14 @@ export class SosComponent implements OnInit, OnDestroy {
           }).addTo(this.trackingMap!);
 
           // Chỉ fitBounds lần đầu
+          // Chỉ fitBounds lần đầu
           if (!this.hasInitialFit) {
-            this.trackingMap!.fitBounds(L.polyline(coords).getBounds(), { padding: [60, 60] });
+            const bounds = L.polyline(coords).getBounds();
+            if (bounds.isValid()) {
+              this.trackingMap!.fitBounds(bounds, { padding: [60, 60] });
+            } else {
+              this.trackingMap!.setView([citizenLat as number, citizenLng as number], 15);
+            }
             this.hasInitialFit = true;
           }
         });
