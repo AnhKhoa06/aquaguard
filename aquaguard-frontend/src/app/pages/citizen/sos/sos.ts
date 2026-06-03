@@ -416,13 +416,13 @@ export class SosComponent implements OnInit, OnDestroy {
 
     incoming.slice(0, remaining).forEach((file) => {
       this.selectedFiles.push(file);
-      this.imagePreviews.push(URL.createObjectURL(file));
+      // Dùng FileReader thay vì createObjectURL
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.imagePreviews.push(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     });
-
-    if (incoming.length > remaining) {
-      this.feedbackMessage = 'Đã thêm tối đa số ảnh cho phép.';
-      this.feedbackType = 'error';
-    }
   }
 
   private resetFormDefaults(): void {
