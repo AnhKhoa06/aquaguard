@@ -1163,6 +1163,9 @@
 
   .history-address {
     max-width: 100%;
+    word-break: break-word;
+    white-space: normal;
+    overflow-wrap: break-word;
   }
 
   // Family item
