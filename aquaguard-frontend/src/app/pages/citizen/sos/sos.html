@@ -210,10 +210,6 @@
   </div>
 
   <div class="tracking-backdrop" *ngIf="showTracking" (click)="closeTracking()">
-    <!-- Nút X mobile -->
-    <button class="tracking-close-mobile" type="button" (click)="closeTracking()">
-      <span class="material-symbols-outlined">close</span>
-    </button>
     <section class="tracking-modal" (click)="$event.stopPropagation()">
       <header class="tracking-header">
         <div class="tracking-header-copy">

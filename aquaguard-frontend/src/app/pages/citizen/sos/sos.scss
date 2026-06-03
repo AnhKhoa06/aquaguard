@@ -925,27 +925,6 @@ input[type='text'] {
 //responsive
 // ===== RESPONSIVE MOBILE =====
 @media (max-width: 768px) {
-  .tracking-close-mobile {
-    display: flex;
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    z-index: 9999;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(0, 0, 0, 0.6);
-    color: #ffffff;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-
-    .material-symbols-outlined {
-      font-size: 24px;
-    }
-  }
-
   .sos-page {
     padding: 16px;
   }
