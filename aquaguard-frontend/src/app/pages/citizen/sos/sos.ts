@@ -726,9 +726,13 @@ export class SosComponent implements OnInit, OnDestroy {
 
       if (distance < 10) {
         if (!this.hasInitialFit) {
-          this.trackingMap!.setView([citizenLat, citizenLng], 15);
-          this.hasInitialFit = true;
+          setTimeout(() => {
+            this.trackingMap!.invalidateSize();
+            this.trackingMap!.setView([citizenLat as number, citizenLng as number], 15);
+            this.hasInitialFit = true;
+          }, 300);
         }
+        return; // ← thêm dòng này để không fetch OSRM
       } else {
         fetch(
           `https://router.project-osrm.org/route/v1/driving/${citizenLng},${citizenLat};${responderLng},${responderLat}?overview=full&geometries=geojson`,
