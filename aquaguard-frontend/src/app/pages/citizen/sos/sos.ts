@@ -146,7 +146,10 @@ export class SosComponent implements OnInit, OnDestroy {
 
     setTimeout(() => {
       this.initTrackingMap();
-      this.renderTrackingRoute();
+      setTimeout(() => {
+        this.trackingMap!.invalidateSize();
+        this.renderTrackingRoute();
+      }, 200);
     }, 300);
 
     if (!this.trackingRefreshHandle) {
