@@ -146,11 +146,9 @@ export class SosComponent implements OnInit, OnDestroy {
 
     setTimeout(() => {
       this.initTrackingMap();
-      setTimeout(() => {
-        this.trackingMap!.invalidateSize();
-        this.renderTrackingRoute();
-      }, 200);
-    }, 300);
+      this.trackingMap?.invalidateSize();
+      this.renderTrackingRoute();
+    }, 500); // ← tăng lên 500ms
 
     if (!this.trackingRefreshHandle) {
       this.trackingRefreshHandle = setInterval(() => {
@@ -551,10 +549,7 @@ export class SosComponent implements OnInit, OnDestroy {
     const mapElement = document.getElementById('tracking-map');
     if (!mapElement) return;
 
-    if (this.trackingMap) {
-      this.trackingMap.invalidateSize();
-      return;
-    }
+    if (this.trackingMap) return; // ← chỉ return, không invalidateSize
 
     this.trackingMap = L.map('tracking-map', {
       zoomControl: true,
@@ -565,8 +560,6 @@ export class SosComponent implements OnInit, OnDestroy {
       attribution: '© Google Maps',
       maxZoom: 20,
     }).addTo(this.trackingMap);
-
-    setTimeout(() => this.trackingMap?.invalidateSize(), 200);
   }
 
   private destroyTrackingMap(): void {
