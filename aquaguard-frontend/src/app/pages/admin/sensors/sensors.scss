@@ -123,6 +123,8 @@
     height: 420px;
     border-radius: 12px;
     overflow: hidden;
+    z-index: 0 !important;
+    position: relative;
   }
 
   .loading-state {

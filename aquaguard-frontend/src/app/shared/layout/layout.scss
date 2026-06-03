@@ -532,7 +532,7 @@
     height: 56px;
     background: var(--color-sidebar);
     border-top: 1px solid var(--color-border-light);
-    z-index: 100;
+    z-index: 500 !important; // cao hơn leaflet map
     align-items: center;
     justify-content: space-around;
     padding: 0 8px;
