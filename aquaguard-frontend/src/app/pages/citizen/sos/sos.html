@@ -31,7 +31,9 @@
         <article class="sos-card" *ngIf="activeRequest; else emptyRequest">
           <div class="sos-card-top">
             <span class="status-pill" [ngClass]="getStatusTone(activeRequest.status)">
-              <span class="material-symbols-outlined status-icon">{{ getStatusIcon(activeRequest.status) }}</span>
+              <span class="material-symbols-outlined status-icon">{{
+                getStatusIcon(activeRequest.status)
+              }}</span>
               {{ getStatusLabel(activeRequest.status) }}
             </span>
             <span class="request-date">{{ activeRequest.created_at | date: 'd/M/yyyy' }}</span>
@@ -208,6 +210,10 @@
   </div>
 
   <div class="tracking-backdrop" *ngIf="showTracking" (click)="closeTracking()">
+    <!-- Nút X mobile -->
+    <button class="tracking-close-mobile" type="button" (click)="closeTracking()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
     <section class="tracking-modal" (click)="$event.stopPropagation()">
       <header class="tracking-header">
         <div class="tracking-header-copy">
