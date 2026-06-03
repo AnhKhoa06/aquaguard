@@ -1874,6 +1874,8 @@
 
   .tab-content {
     overflow-y: unset;
+    padding-bottom: 0;
+    margin-bottom: 0;
   }
 
   .panel-tabs {
@@ -1929,6 +1931,17 @@
     bottom: unset;
     width: 220px;
     z-index: 2000;
+  }
+
+  :host {
+    display: block;
+    height: calc(100vh - 64px - 56px); // ← trừ topbar và bottom nav
+    overflow: hidden;
+  }
+
+  .map-wrapper {
+    height: 100%;
+    overflow-y: auto;
   }
 }
 .map-loading {
