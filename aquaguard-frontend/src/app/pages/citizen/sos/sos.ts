@@ -719,66 +719,78 @@ export class SosComponent implements OnInit, OnDestroy {
       // Màu đường theo status
       const lineColor = this.activeSos.status === 'resolved' ? '#1a73e8' : '#f59e0b';
 
-      fetch(
-        `https://router.project-osrm.org/route/v1/driving/${citizenLng},${citizenLat};${responderLng},${responderLat}?overview=full&geometries=geojson`,
-      )
-        .then((r) => r.json())
-        .then((data) => {
-          const routeData = data.routes[0];
-          const coords = data.routes[0].geometry.coordinates.map(
-            (c: number[]) => [c[1], c[0]] as L.LatLngExpression,
-          );
+      const distance = this.trackingMap!.distance(
+        [citizenLat, citizenLng],
+        [responderLat, responderLng],
+      );
 
-          this.trackingRouteLayer = L.polyline(coords, {
-            color: lineColor,
-            weight: 5,
-            opacity: 0.9,
-          }).addTo(this.trackingMap!);
+      if (distance < 10) {
+        if (!this.hasInitialFit) {
+          this.trackingMap!.setView([citizenLat, citizenLng], 15);
+          this.hasInitialFit = true;
+        }
+      } else {
+        fetch(
+          `https://router.project-osrm.org/route/v1/driving/${citizenLng},${citizenLat};${responderLng},${responderLat}?overview=full&geometries=geojson`,
+        )
+          .then((r) => r.json())
+          .then((data) => {
+            const routeData = data.routes[0];
+            const coords = data.routes[0].geometry.coordinates.map(
+              (c: number[]) => [c[1], c[0]] as L.LatLngExpression,
+            );
 
-          // ← Thêm distance label
-          const distanceKm = (routeData.distance / 1000).toFixed(1);
-          const durationMin = Math.round(routeData.duration / 60);
-          const midIndex = Math.floor(coords.length / 2);
-          const midPoint = coords[midIndex] as [number, number];
+            this.trackingRouteLayer = L.polyline(coords, {
+              color: lineColor,
+              weight: 5,
+              opacity: 0.9,
+            }).addTo(this.trackingMap!);
 
-          L.marker(midPoint, {
-            icon: L.divIcon({
-              className: '',
-              html: `<div style="
-                background: #1a73e8;
-                color: white;
-                padding: 6px 14px;
-                border-radius: 20px;
-                font-size: 13px;
-                font-weight: 700;
-                font-family: Inter, sans-serif;
-                white-space: nowrap;
-                width: max-content;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-                display: flex;
-                align-items: center;
-                gap: 6px;
-              ">
-                <span class="material-symbols-outlined" style="font-size:16px;">route</span>
-                ${distanceKm} km · ~${durationMin} phút
-              </div>`,
-              iconSize: undefined,
-              iconAnchor: [80, 16], // ← tăng lên
-            }),
-          }).addTo(this.trackingMap!);
+            // ← Thêm distance label
+            const distanceKm = (routeData.distance / 1000).toFixed(1);
+            const durationMin = Math.round(routeData.duration / 60);
+            const midIndex = Math.floor(coords.length / 2);
+            const midPoint = coords[midIndex] as [number, number];
 
-          // Chỉ fitBounds lần đầu
-          // Chỉ fitBounds lần đầu
-          if (!this.hasInitialFit) {
-            const bounds = L.polyline(coords).getBounds();
-            if (bounds.isValid()) {
-              this.trackingMap!.fitBounds(bounds, { padding: [60, 60] });
-            } else {
-              this.trackingMap!.setView([citizenLat as number, citizenLng as number], 15);
+            L.marker(midPoint, {
+              icon: L.divIcon({
+                className: '',
+                html: `<div style="
+                  background: #1a73e8;
+                  color: white;
+                  padding: 6px 14px;
+                  border-radius: 20px;
+                  font-size: 13px;
+                  font-weight: 700;
+                  font-family: Inter, sans-serif;
+                  white-space: nowrap;
+                  width: max-content;
+                  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                  display: flex;
+                  align-items: center;
+                  gap: 6px;
+                ">
+                  <span class="material-symbols-outlined" style="font-size:16px;">route</span>
+                  ${distanceKm} km · ~${durationMin} phút
+                </div>`,
+                iconSize: undefined,
+                iconAnchor: [80, 16], // ← tăng lên
+              }),
+            }).addTo(this.trackingMap!);
+
+            // Chỉ fitBounds lần đầu
+            // Chỉ fitBounds lần đầu
+            if (!this.hasInitialFit) {
+              const bounds = L.polyline(coords).getBounds();
+              if (bounds.isValid()) {
+                this.trackingMap!.fitBounds(bounds, { padding: [60, 60] });
+              } else {
+                this.trackingMap!.setView([citizenLat as number, citizenLng as number], 15);
+              }
+              this.hasInitialFit = true;
             }
-            this.hasInitialFit = true;
-          }
-        });
+          });
+      }
 
       boundsPoints.push([responderLat, responderLng]);
     }
