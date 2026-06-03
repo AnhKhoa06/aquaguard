@@ -968,17 +968,16 @@ input[type='text'] {
 
   .modal-backdrop {
     padding: 0;
-    align-items: flex-start; // ← đổi từ flex-end thành flex-start
-    padding-top: 25px; // ← cách top 1 chút
+    align-items: flex-start;
+    padding-top: 60px; // ← chừa chỗ cho topbar
   }
 
   .sos-modal {
     width: 100vw;
-    max-height: calc(100vh - 130px); // ← trừ bottom nav và top
+    max-height: calc(100vh - 60px - 56px); // ← trừ topbar và bottom nav
     border-radius: 24px 24px 0 0;
     overflow-y: auto;
   }
-
   .modal-actions {
     flex-direction: column;
     padding-bottom: 16px;
