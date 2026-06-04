@@ -32,7 +32,7 @@ const sosController = {
 
       // Lưu hình ảnh nếu có
       if (req.files && req.files.length > 0) {
-        const imageUrls = req.files.map((file) => `/uploads/${file.filename}`);
+        const imageUrls = req.files.map((file) => file.path);
         await sosModel.saveImages(sosId, imageUrls);
       }
 
