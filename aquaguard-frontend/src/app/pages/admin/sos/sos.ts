@@ -5,7 +5,7 @@ import { SosRequest } from '../../../models/interfaces';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../core/services/user.service';
 import { ToastrService } from 'ngx-toastr';
-
+import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-admin-sos',
   standalone: true,
@@ -247,5 +247,9 @@ export class SosComponent implements OnInit, OnDestroy {
     const m = today.getMonth() - birth.getMonth();
     if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
     return age;
+  }
+  getImageUrl(url: string): string {
+    if (url.startsWith('http')) return url;
+    return `${environment.apiUrl.replace('/api', '')}${url}`;
   }
 }

@@ -152,17 +152,17 @@
             </p>
             <p class="row-desc" *ngIf="req.description">{{ req.description }}</p>
             <div class="row-meta-row">
-              <span *ngIf="req.team_name">
+              <span class="row-team" *ngIf="req.team_name">
                 <span class="material-symbols-outlined">groups</span>
                 {{ req.team_name }}
               </span>
-              <span *ngIf="req.responder_name"
-                >Được giao cho:
-                <span style="color: var(--color-text)">{{ req.responder_name }}</span></span
-              >
-              <span *ngIf="!req.responder_name"
-                >Được giao cho: <span style="color: var(--color-text)">Chưa giao</span></span
-              >
+              <span *ngIf="req.responder_name">
+                Được giao cho:
+                <span style="color: var(--color-text)">{{ req.responder_name }}</span>
+              </span>
+              <span *ngIf="!req.responder_name">
+                Được giao cho: <span style="color: var(--color-text)">Chưa giao</span>
+              </span>
             </div>
           </div>
         </div>
@@ -229,6 +229,20 @@
             >GPS: {{ selectedRequest!.latitude }}, {{ selectedRequest!.longitude }}</span
           >
         </div>
+
+        <div
+          class="detail-row"
+          *ngIf="selectedRequest!.images && selectedRequest!.images.length > 0"
+        >
+          <div class="detail-images">
+            <img
+              *ngFor="let img of selectedRequest!.images"
+              [src]="getImageUrl(img.image_url)"
+              alt="Ảnh hiện trường"
+              class="detail-thumb"
+            />
+          </div>
+        </div>
       </div>
 
       <div
@@ -236,11 +250,20 @@
         style="justify-content: flex-end; gap: 8px; display: flex; flex-direction: column"
       >
         <div class="assign-row">
-          <div class="detail-row" *ngIf="selectedRequest!.responder_name">
+          <div
+            class="detail-row"
+            *ngIf="
+              selectedRequest!.status === 'in_progress' || selectedRequest!.status === 'resolved'
+            "
+          >
             <span class="material-symbols-outlined detail-row-icon person">person</span>
-            <span
-              >Đang được xử lý bởi: <strong>{{ selectedRequest!.responder_name }}</strong></span
-            >
+            <span *ngIf="selectedRequest!.status === 'in_progress'">
+              Đang được xử lý bởi:
+              <strong>{{ selectedRequest!.responder_name || 'Chưa rõ' }}</strong>
+            </span>
+            <span *ngIf="selectedRequest!.status === 'resolved'">
+              Đã được xử lý bởi: <strong>{{ selectedRequest!.responder_name || 'Chưa rõ' }}</strong>
+            </span>
           </div>
           <div class="assign-select-wrap" *ngIf="selectedRequest!.status === 'pending'">
             <select class="assign-select" [(ngModel)]="selectedResponderId">

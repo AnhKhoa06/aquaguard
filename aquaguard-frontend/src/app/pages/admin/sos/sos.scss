@@ -848,6 +848,31 @@
   }
 }
 
+.detail-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.detail-thumb {
+  width: 225px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+}
+.row-team {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  .material-symbols-outlined {
+    font-size: 16px;
+    vertical-align: middle;
+  }
+}
+
 @media (max-width: 1100px) {
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
