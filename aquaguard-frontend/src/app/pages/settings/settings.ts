@@ -11,6 +11,7 @@ import { filter } from 'rxjs/operators';
 import { FamilyService, FamilyInvite, SearchResult } from '../../core/services/family.service';
 import { ThemeService, Theme } from '../../core/services/theme.service';
 import { ActivatedRoute } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 type Tab = 'profile' | 'family' | 'theme' | 'language';
 
@@ -31,14 +32,12 @@ export class SettingsComponent implements OnInit {
   private isSaving = false;
   selectedTheme: Theme = 'dark';
 
-
   familyMembers: User[] = [];
   loadingFamily = false;
   addingMember = false;
   newMemberPhone = '';
   selectedHealth: string = '';
   healthNote: string = '';
-
 
   profile = {
     full_name: '',
@@ -215,7 +214,7 @@ export class SettingsComponent implements OnInit {
 
       try {
         const res = await fetch(
-          `http://localhost:3000/api/users/reverse-geocode?lat=${lat}&lng=${lng}`,
+          `${environment.apiUrl}/users/reverse-geocode?lat=${lat}&lng=${lng}`,
           { headers: { Authorization: `Bearer ${this.authService.getToken()}` } },
         );
         const data = await res.json();
@@ -374,24 +373,26 @@ export class SettingsComponent implements OnInit {
 
   sendInvite() {
     if (!this.searchResult) return;
-    this.familyService.sendInvite(this.searchResult.id, this.relationship, this.healthNote).subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.toastr.success(res.message, 'Thành công');
-          this.showAddMember = false;
-          this.searchResult = null;
-          this.newMemberPhone = '';
-          this.relationship = '';
-          this.healthNote = '';  // ← reset luôn
-        } else {
-          this.toastr.warning(res.message, 'Thông báo');
-        }
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.toastr.error('Không thể kết nối server!', 'Lỗi');
-      },
-    });
+    this.familyService
+      .sendInvite(this.searchResult.id, this.relationship, this.healthNote)
+      .subscribe({
+        next: (res) => {
+          if (res.success) {
+            this.toastr.success(res.message, 'Thành công');
+            this.showAddMember = false;
+            this.searchResult = null;
+            this.newMemberPhone = '';
+            this.relationship = '';
+            this.healthNote = ''; // ← reset luôn
+          } else {
+            this.toastr.warning(res.message, 'Thông báo');
+          }
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.toastr.error('Không thể kết nối server!', 'Lỗi');
+        },
+      });
   }
 
   loadInvites() {
