@@ -35,7 +35,9 @@
               }}</span>
               {{ getStatusLabel(req.status) }}
             </span>
-            <span class="request-date">{{ req.created_at | date: 'd/M/yyyy' }}</span>
+            <span class="request-date">{{
+              req.created_at | date: 'HH:mm:ss d/M/yyyy' : '+0700'
+            }}</span>
           </div>
 
           <div class="sos-card-body">

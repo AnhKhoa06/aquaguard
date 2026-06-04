@@ -183,7 +183,9 @@
       <div class="detail-hero">
         <div class="detail-hero-info">
           <h2>{{ selectedRequest.citizen_name || 'Ẩn danh' }}</h2>
-          <p class="detail-time">{{ selectedRequest.created_at | date: 'HH:mm:ss d/M/yyyy' }}</p>
+          <p class="detail-time">
+            {{ selectedRequest.created_at | date: 'HH:mm:ss d/M/yyyy' : '+0700' }}
+          </p>
         </div>
         <div class="detail-badges">
           <span class="urgency-badge urgency-{{ selectedRequest.urgency_level }}">

@@ -68,7 +68,7 @@
           <span class="material-symbols-outlined">groups</span>
           {{ activeSos.team_name }}
         </span>
-        <span class="sos-date">• {{ activeSos.created_at | date: 'd/M/yyyy' }}</span>
+        <span class="sos-date">• {{ activeSos.created_at | date: 'd/M/yyyy' : '+0700' }}</span>
       </div>
       <p class="sos-banner-address" *ngIf="activeSos.address">
         <span class="material-symbols-outlined">location_on</span>
@@ -257,7 +257,9 @@
           <div class="history-info">
             <span class="history-title">Yêu cầu SOS #{{ sos.id }}</span>
             <span class="history-address" *ngIf="sos.address">{{ sos.address }}</span>
-            <span class="history-date">{{ sos.created_at | date: 'd/M/yyyy HH:mm' }}</span>
+            <span class="history-date">{{
+              sos.created_at | date: 'd/M/yyyy HH:mm' : '+0700'
+            }}</span>
           </div>
         </div>
         <div class="history-item-right">

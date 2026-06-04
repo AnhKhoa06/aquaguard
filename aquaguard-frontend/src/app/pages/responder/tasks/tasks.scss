@@ -261,8 +261,7 @@
 .list-panel,
 .detail-panel {
   height: auto;
-  max-height: 600px;
-  overflow-y: auto;
+  overflow-y: visible;
 }
 
 .sort-box {

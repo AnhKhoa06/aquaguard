@@ -216,7 +216,9 @@
             <div class="sos-request-info">
               <span class="sos-request-name">{{ sos.citizen_name || 'Ẩn danh' }}</span>
               <span class="sos-request-address" *ngIf="sos.address">{{ sos.address }}</span>
-              <span class="sos-request-time">{{ sos.created_at | date: 'HH:mm - d/M/yyyy' }}</span>
+              <span class="sos-request-time">{{
+                sos.created_at | date: 'HH:mm - d/M/yyyy' : '+0700'
+              }}</span>
             </div>
             <span class="sos-request-status" [ngClass]="getStatusClass(sos.status)">
               {{ getStatusLabel(sos.status) }}
