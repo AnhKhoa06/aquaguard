@@ -7,7 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { RouterModule } from '@angular/router';
 import { RescueTeamService } from '../../../core/services/rescue-team.service';
 import { AuthService } from '../../../core/services/auth.service';
-
+import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-responder-my-tasks',
   standalone: true,
@@ -108,6 +108,11 @@ export class MyTasksComponent implements OnInit, OnDestroy {
         this.toastr.error('Không thể cập nhật trạng thái.', 'Lỗi');
       },
     });
+  }
+
+  getImageUrl(url: string): string {
+    if (url.startsWith('http')) return url;
+    return `${environment.apiUrl.replace('/api', '')}${url}`;
   }
 
   get filteredRequests(): SosRequest[] {

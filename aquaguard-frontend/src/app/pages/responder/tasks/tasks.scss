@@ -260,7 +260,9 @@
 
 .list-panel,
 .detail-panel {
-  height: 500px;
+  height: auto;
+  max-height: 600px;
+  overflow-y: auto;
 }
 
 .sort-box {
@@ -912,6 +914,21 @@
   .material-symbols-outlined {
     font-size: 14px;
   }
+}
+
+.detail-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.detail-thumb {
+  width: 225px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
 }
 
 // ===== RESPONSIVE MOBILE =====

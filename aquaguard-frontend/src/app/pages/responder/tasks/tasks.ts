@@ -5,7 +5,7 @@ import { SosService } from '../../../core/services/sos.service';
 import { SosRequest } from '../../../models/interfaces';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../core/services/auth.service';
-
+import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-responder-tasks',
   standalone: true,
@@ -205,6 +205,11 @@ export class TasksComponent implements OnInit, OnDestroy {
 
   getResponderLabel(req: SosRequest): string {
     return req.responder_name || req.team_name || 'Chưa có người nhận';
+  }
+
+  getImageUrl(url: string): string {
+    if (url.startsWith('http')) return url;
+    return `${environment.apiUrl.replace('/api', '')}${url}`;
   }
 
   private startLocationTracking(): void {
