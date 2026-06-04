@@ -88,6 +88,12 @@ export class TasksComponent implements OnInit, OnDestroy {
     });
   }
 
+  setSortBy(value: 'priority' | 'newest' | 'oldest'): void {
+    this.sortBy = value;
+    const first = this.filteredRequests[0];
+    this.selectedId = first ? first.id : null;
+  }
+
   get filteredRequests(): SosRequest[] {
     const urgencyOrder: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 };
 
@@ -102,11 +108,19 @@ export class TasksComponent implements OnInit, OnDestroy {
           r.citizen_name?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           r.address?.toLowerCase().includes(this.searchQuery.toLowerCase()),
       )
-      .sort(
-        (a, b) =>
+      .sort((a, b) => {
+        if (this.sortBy === 'newest') {
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        }
+        if (this.sortBy === 'oldest') {
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        }
+        // priority (default)
+        return (
           (urgencyOrder[a.urgency_level] ?? 4) - (urgencyOrder[b.urgency_level] ?? 4) ||
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-      );
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+      });
   }
 
   get selectedRequest(): SosRequest | null {

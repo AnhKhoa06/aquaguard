@@ -98,7 +98,7 @@
       <div class="sort-box">
         <span class="material-symbols-outlined">sort</span>
         <span>Sắp xếp</span>
-        <select [(ngModel)]="sortBy" class="sort-select">
+        <select [ngModel]="sortBy" (ngModelChange)="setSortBy($event)" class="sort-select">
           <option value="priority">Ưu tiên</option>
           <option value="newest">Mới nhất</option>
           <option value="oldest">Cũ nhất</option>

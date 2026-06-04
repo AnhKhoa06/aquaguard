@@ -49,6 +49,12 @@ export class SosComponent implements OnInit, OnDestroy {
     }
   }
 
+  setSortBy(value: 'priority' | 'newest' | 'oldest'): void {
+    this.sortBy = value;
+    const first = this.filteredRequests[0];
+    this.selectedId = first ? first.id : null;
+  }
+
   get filteredRequests(): SosRequest[] {
     let list = this.sosRequests.filter(
       (r: SosRequest) =>
