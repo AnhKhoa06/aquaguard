@@ -416,3 +416,9 @@ body.theme-light app-login,
 body.theme-light app-register {
   --color-text: #ffffff;
 }
+
+@supports (-webkit-touch-callout: none) {
+  .main-content {
+    padding-bottom: calc(70px + env(safe-area-inset-bottom)) !important;
+  }
+}
