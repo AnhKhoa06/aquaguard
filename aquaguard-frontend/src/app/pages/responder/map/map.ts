@@ -286,7 +286,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
                 <circle cx="12" cy="11" r="5" fill="white" opacity="0.9"/>
               </svg>`,
                 iconSize: [24, 32],
-                iconAnchor: [12, 32],
+                iconAnchor: [12, 16],
               });
             });
 
@@ -323,7 +323,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
                   <circle cx="12" cy="11" r="5" fill="white" opacity="0.9"/>
                 </svg>`,
                   iconSize: [32, 42],
-                  iconAnchor: [16, 42],
+                  iconAnchor: [16, 21],
                 });
               },
             });
@@ -374,7 +374,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         resolved: '#22c55e',
       };
       const bg = colorMap[sos.status] ?? '#ef4444';
-      const isPending = sos.status === 'pending';
+      const ringColor = colorMap[sos.status] ?? '#ef4444';
 
       const statusLabelMap: Record<string, string> = {
         pending: 'Chờ xử lý',
@@ -384,9 +384,10 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       };
       const statusLabel = statusLabelMap[sos.status] ?? sos.status;
 
-      const ringHtml = isPending
-        ? `<div style="position:absolute;top:0;left:0;width:44px;height:44px;border-radius:50%;border:2.5px solid #ef4444;animation:sos-pulse 1.8s ease-out infinite;pointer-events:none;"></div>`
-        : '';
+      const ringHtml =
+        sos.status === 'pending'
+          ? `<div style="position:absolute;top:-3px;left:-3px;width:50px;height:50px;border-radius:50%;border:2.5px solid ${ringColor};animation:sos-pulse 1.8s ease-out infinite;pointer-events:none;"></div>`
+          : `<div style="position:absolute;top:-3px;left:-3px;width:50px;height:50px;border-radius:50%;border:2.5px solid ${ringColor};pointer-events:none;"></div>`;
 
       const icon = L.divIcon({
         className: '',
@@ -403,9 +404,9 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
             ${statusLabel}
           </div>
         </div>`,
-        iconSize: [60, 70],
-        iconAnchor: [30, 70],
-        popupAnchor: [0, -72],
+        iconSize: [44, 44],
+        iconAnchor: [22, 22],
+        popupAnchor: [0, -26],
       });
 
       const marker = L.marker([sos.latitude, sos.longitude], { icon })
