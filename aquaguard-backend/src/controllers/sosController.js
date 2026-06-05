@@ -131,6 +131,12 @@ const sosController = {
         AND s.latitude IS NOT NULL
         AND s.longitude IS NOT NULL
     `);
+
+      // Gắn ảnh cho từng SOS
+      for (const sos of rows) {
+        sos.images = await sosModel.getImages(sos.id);
+      }
+
       return successResponse(res, rows, "Lấy danh sách SOS thành công!");
     } catch (err) {
       next(err);

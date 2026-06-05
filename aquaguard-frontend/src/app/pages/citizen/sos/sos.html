@@ -56,12 +56,9 @@
               <span>{{ req.description }}</span>
             </div>
             <div class="sos-images" *ngIf="req.images && req.images.length > 0">
-              <img
-                *ngFor="let img of req.images"
-                [src]="getImageUrl(img.image_url)"
-                alt="Ảnh hiện trường"
-                class="sos-thumb"
-              />
+              <a *ngFor="let img of req.images" [href]="img.image_url" target="_blank">
+                <img [src]="getImageUrl(img.image_url)" alt="Ảnh hiện trường" class="sos-thumb" />
+              </a>
             </div>
           </div>
 

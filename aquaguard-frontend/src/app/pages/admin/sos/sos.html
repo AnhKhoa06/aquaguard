@@ -237,12 +237,9 @@
           *ngIf="selectedRequest!.images && selectedRequest!.images.length > 0"
         >
           <div class="detail-images">
-            <img
-              *ngFor="let img of selectedRequest!.images"
-              [src]="getImageUrl(img.image_url)"
-              alt="Ảnh hiện trường"
-              class="detail-thumb"
-            />
+            <a *ngFor="let img of selectedRequest!.images" [href]="img.image_url" target="_blank">
+              <img [src]="getImageUrl(img.image_url)" alt="Ảnh hiện trường" class="detail-thumb" />
+            </a>
           </div>
         </div>
       </div>

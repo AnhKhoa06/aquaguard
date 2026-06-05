@@ -527,6 +527,15 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         ${time ? `<span style="color:#64748b;">• ${time}</span>` : ''}
         ${sos.responder_name ? `<span style="color:#94a3b8;">• ${sos.responder_name}</span>` : ''}
       </div>
+        ${
+          sos.images && sos.images.length > 0
+            ? `<a href="${sos.images[0].image_url}" target="_blank"
+            style="display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-size:12px;font-weight:600;color:#3b82f6;text-decoration:none;">
+            <span class="material-symbols-outlined" style="font-size:14px;">photo_camera</span>
+            Xem ảnh
+          </a>`
+            : ''
+        }
     </div>`;
   }
 
