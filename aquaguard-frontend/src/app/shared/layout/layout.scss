@@ -341,7 +341,7 @@
 
   .main-content {
     flex: 1;
-    padding-bottom: 70px;
+    padding-bottom: calc(70px + env(safe-area-inset-bottom));
     padding-top: 64px; // ← chừa chỗ cho topbar
     background: var(--color-main) !important;
   }
@@ -529,13 +529,15 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 56px;
+    height: calc(56px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
     background: var(--color-sidebar);
     border-top: 1px solid var(--color-border-light);
-    z-index: 500 !important; // cao hơn leaflet map
+    z-index: 500 !important;
     align-items: center;
     justify-content: space-around;
-    padding: 0 8px;
+    padding-left: 8px;
+    padding-right: 8px;
   }
 
   .bottom-nav-item {
