@@ -925,6 +925,10 @@ input[type='text'] {
 //responsive
 // ===== RESPONSIVE MOBILE =====
 @media (max-width: 768px) {
+  textarea,
+  input[type='text'] {
+    font-size: 16px;
+  }
   .sos-page {
     padding: 16px;
   }

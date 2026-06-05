@@ -1165,6 +1165,19 @@ input[disabled] {
       }
     }
 
+    .form-group {
+      input,
+      select {
+        font-size: 16px;
+      }
+    }
+
+    .add-member-row input,
+    .relationship-input,
+    .health-note {
+      font-size: 16px;
+    }
+
     .tabs {
       gap: 6px;
       margin-bottom: 1rem;
