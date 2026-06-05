@@ -20,6 +20,19 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+      document.addEventListener(
+        'touchmove',
+        (e) => {
+          const target = e.target as HTMLElement;
+          const scrollable = target.closest('.main-content, .map-body, .map-wrapper, .tab-content');
+          if (!scrollable) {
+            e.preventDefault();
+          }
+        },
+        { passive: false },
+      );
+    }
     this.themeService.init();
 
     this.router.events.subscribe(() => {
