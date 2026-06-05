@@ -344,9 +344,10 @@
   .main-content {
     flex: 1;
     padding-bottom: calc(70px + env(safe-area-inset-bottom));
-    padding-top: 64px; // ← chừa chỗ cho topbar
+    padding-top: 64px;
     background: var(--color-main) !important;
     overscroll-behavior: none;
+    -webkit-overflow-scrolling: auto;
   }
 
   // ── Mobile Topbar ──
