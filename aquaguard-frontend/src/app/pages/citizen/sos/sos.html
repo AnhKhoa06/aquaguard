@@ -81,6 +81,15 @@
               <span class="material-symbols-outlined">map</span>
               <span>Xem theo dõi</span>
             </button>
+            <button
+              class="delete-btn"
+              type="button"
+              *ngIf="req.status === 'pending'"
+              (click)="deleteSos(req.id)"
+            >
+              <span class="material-symbols-outlined">delete</span>
+              Xóa yêu cầu
+            </button>
           </div>
         </article>
 

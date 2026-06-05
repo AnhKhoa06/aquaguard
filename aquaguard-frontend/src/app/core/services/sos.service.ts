@@ -49,4 +49,8 @@ export class SosService {
   updateResponderLocation(sosId: number, latitude: number, longitude: number): Observable<any> {
     return this.http.patch<any>(`${this.apiUrl}/sos/${sosId}/location`, { latitude, longitude });
   }
+
+  delete(id: number): Observable<ApiResponse<any>> {
+    return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/sos/${id}`);
+  }
 }

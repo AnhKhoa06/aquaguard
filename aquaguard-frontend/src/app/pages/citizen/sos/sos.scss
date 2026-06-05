@@ -856,6 +856,29 @@ input[type='text'] {
   display: none;
 }
 
+.delete-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 15px;
+  border-radius: 999px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+
+  .material-symbols-outlined {
+    font-size: 18px;
+  }
+  &:hover {
+    background: rgba(239, 68, 68, 0.2);
+  }
+}
+
 @media (max-width: 768px) {
   .sos-page {
     padding: 16px;

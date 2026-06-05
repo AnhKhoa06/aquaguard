@@ -500,6 +500,22 @@ export class SosComponent implements OnInit, OnDestroy {
     return this.activeSos.responder_name || this.activeSos.team_name || 'Đã có đội tiếp nhận';
   }
 
+  deleteSos(id: number): void {
+    if (!confirm('Bạn có chắc muốn xóa yêu cầu SOS này không?')) return;
+
+    this.sosService.delete(id).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.toastr.success('Đã xóa yêu cầu SOS!', 'Thành công');
+          this.loadMySos(true);
+        }
+      },
+      error: () => {
+        this.toastr.error('Không thể xóa yêu cầu.', 'Lỗi');
+      },
+    });
+  }
+
   getTimelineSteps(): Array<{ key: string; label: string; description: string }> {
     return [
       {
