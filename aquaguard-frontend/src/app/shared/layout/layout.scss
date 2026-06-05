@@ -346,6 +346,7 @@
     padding-bottom: calc(70px + env(safe-area-inset-bottom));
     padding-top: 64px; // ← chừa chỗ cho topbar
     background: var(--color-main) !important;
+    overscroll-behavior: none;
   }
 
   // ── Mobile Topbar ──
