@@ -33,6 +33,7 @@ const sosController = {
       // Lưu hình ảnh nếu có
       if (req.files && req.files.length > 0) {
         const imageUrls = req.files.map((file) => file.path);
+        //file.path lúc này là URL Cloudinary, không phải đường dẫn local
         await sosModel.saveImages(sosId, imageUrls);
       }
 
@@ -190,8 +191,7 @@ const sosController = {
     }
   },
 
-  // Huỷ SOS (citizen)
-  cancel: async (req, res, next) => {
+  delete: async (req, res, next) => {
     try {
       const sos = await sosModel.findById(req.params.id);
       if (!sos) {
@@ -199,20 +199,22 @@ const sosController = {
       }
 
       if (sos.user_id !== req.user.id) {
-        return errorResponse(res, "Bạn không có quyền huỷ yêu cầu này!", 403);
+        return errorResponse(res, "Bạn không có quyền xóa yêu cầu này!", 403);
       }
 
       if (sos.status !== "pending") {
         return errorResponse(
           res,
-          "Chỉ có thể huỷ yêu cầu đang chờ xử lý!",
+          "Chỉ có thể xóa yêu cầu đang chờ xử lý!",
           400,
         );
       }
 
-      await sosModel.cancel(req.params.id, req.user.id);
+      await pool.query("DELETE FROM sos_requests WHERE id = ?", [
+        req.params.id,
+      ]);
 
-      return successResponse(res, null, "Huỷ yêu cầu SOS thành công!");
+      return successResponse(res, null, "Xóa yêu cầu SOS thành công!");
     } catch (err) {
       next(err);
     }

@@ -12,13 +12,11 @@ router.post(
   authMiddleware,
   upload.array("images", 5),
   sosController.create,
-);
+); //upload.array("images", 5) chạy trước controller
+// Multer upload ảnh lên Cloudinary, rồi gắn URL vào req.files[].path để controller lưu vào DB.
 
 // Citizen — xem SOS của mình
 router.get("/my", authMiddleware, sosController.getMy);
-
-// Citizen — huỷ SOS của mình
-router.patch("/:id/cancel", authMiddleware, sosController.cancel);
 
 // Admin + Responder — xem tất cả SOS
 router.get(
@@ -84,6 +82,13 @@ router.patch(
       next(err);
     }
   },
+);
+
+router.delete(
+  "/:id",
+  authMiddleware,
+  authorizeRoles("citizen"),
+  sosController.delete,
 );
 
 module.exports = router;

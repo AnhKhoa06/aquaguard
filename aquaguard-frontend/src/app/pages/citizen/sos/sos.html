@@ -119,6 +119,7 @@
         <span class="material-symbols-outlined">my_location</span>
         <span>{{ locationError || gpsLabel }}</span>
         <button type="button" class="gps-retry" (click)="retryLocation()" [disabled]="locating">
+          <span class="sos-spinner" *ngIf="locating"></span>
           {{ locating ? 'Đang lấy...' : 'Lấy lại' }}
         </button>
       </div>
@@ -203,8 +204,9 @@
 
         <footer class="modal-actions">
           <button type="button" class="cancel-btn" (click)="closeForm()">Hủy</button>
-          <button type="submit" class="submit-btn">
-            <span class="material-symbols-outlined">sos</span>
+          <button type="submit" class="submit-btn" [disabled]="submitting">
+            <span class="sos-spinner" *ngIf="submitting"></span>
+            <span class="material-symbols-outlined" *ngIf="!submitting">sos</span>
             {{ submitting ? 'Đang gửi...' : 'Gửi yêu cầu cứu hộ' }}
           </button>
         </footer>

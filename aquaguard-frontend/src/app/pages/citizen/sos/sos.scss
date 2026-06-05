@@ -606,6 +606,11 @@
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s;
+  min-width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 
   &:disabled {
     opacity: 0.5;
@@ -877,6 +882,25 @@ input[type='text'] {
   &:hover {
     background: rgba(239, 68, 68, 0.2);
   }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sos-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  flex-shrink: 0;
 }
 
 @media (max-width: 768px) {
