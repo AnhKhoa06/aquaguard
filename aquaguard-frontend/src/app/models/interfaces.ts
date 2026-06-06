@@ -96,3 +96,7 @@ export interface ApiResponse<T> {
   message: string;
   data: T;
 }
+
+//Đây là file cấu trúc dữ liệu nền tảng của hệ thống, giúp định nghĩa tường tận
+// các đối tượng như người dùng, yêu cầu SOS, trạm trú ẩn, giúp code toàn dự án đồng bộ,
+// tránh gõ sai tên biến và tận dụng tối đa sức mạnh kiểm tra lỗi của TypeScript

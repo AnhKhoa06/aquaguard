@@ -39,7 +39,8 @@ const userModel = {
       VALUES (?, ?, ?, ?, ?, ?)`,
       [full_name, phone, password_hash, gender, formattedDate, role],
     );
-    return result.insertId;
+    return result.insertId; //trả về id của user vừa tạo, insertId chính là id đó,
+    // trả về cho controller.
   },
 
   // Cập nhật vị trí

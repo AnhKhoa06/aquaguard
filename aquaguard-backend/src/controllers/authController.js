@@ -11,6 +11,9 @@ const env = require("../config/env");
 
 const authController = {
   // Đăng ký
+  //req  ← chứa data từ frontend (body, params, headers...)
+  //res  ← dùng để trả kết quả về frontend
+  //next ← dùng khi có lỗi cần chuyển sang errorMiddleware
   register: async (req, res, next) => {
     try {
       let {

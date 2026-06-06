@@ -9,3 +9,9 @@ export class SafePipe implements PipeTransform {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 }
+
+//Nó sử dụng dịch vụ DomSanitizer của Angular để bỏ qua cơ chế chặn
+// bảo mật đối với các URL tài nguyên bên ngoài.
+// Pipe này cực kỳ hữu ích khi hệ thống của chúng ta cần nhúng các iframe như
+// Bản đồ vị trí cứu hộ (Google Maps) hoặc các tài nguyên media bên ngoài vào
+// ứng dụng mà không bị Angular chặn lại

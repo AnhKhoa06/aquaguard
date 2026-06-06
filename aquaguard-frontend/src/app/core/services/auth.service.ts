@@ -36,6 +36,7 @@ export class AuthService {
   register(data: any): Observable<ApiResponse<any>> {
     return this.http.post<ApiResponse<any>>(`${this.apiUrl}/auth/register`, data);
   }
+  //sử dụng HttpClient để thực hiện một yêu cầu HTTP POST đến địa chỉ API auth/register kèm dl
 
   logout(): void {
     const refreshToken = localStorage.getItem('refreshToken');

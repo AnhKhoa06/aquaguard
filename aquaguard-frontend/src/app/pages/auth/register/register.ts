@@ -101,7 +101,7 @@ export class RegisterComponent {
       gender: this.selectedGender,
       date_of_birth: this.step2Form.value.date_of_birth,
       role: this.selectedRole,
-      role_password: this.rolePassword,
+      role_password: this.rolePassword, //vai trò mk
     };
 
     this.authService.register(payload).subscribe({
