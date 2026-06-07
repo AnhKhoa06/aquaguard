@@ -3,12 +3,26 @@ const axios = require("axios");
 const floodDataModel = require("../models/floodDataModel");
 
 const locations = [
-  { name: "Đà Nẵng", lat: 16.047, lng: 108.206 },
+  // Duyên hải miền Trung
+  { name: "Quảng Bình", lat: 17.469, lng: 106.622 },
   { name: "Huế", lat: 16.463, lng: 107.59 },
+  { name: "Đà Nẵng", lat: 16.047, lng: 108.206 },
   { name: "Quảng Nam", lat: 15.879, lng: 108.335 },
   { name: "Quảng Ngãi", lat: 15.12, lng: 108.792 },
   { name: "Bình Định", lat: 13.782, lng: 109.219 },
-  { name: "Quảng Bình", lat: 17.469, lng: 106.622 },
+  { name: "Phú Yên", lat: 13.095, lng: 109.093 },
+  { name: "Khánh Hòa", lat: 12.239, lng: 109.197 },
+  { name: "Ninh Thuận", lat: 11.564, lng: 108.988 },
+  { name: "Bình Thuận", lat: 10.928, lng: 108.102 },
+
+  // Tây Nguyên
+  { name: "Gia Lai", lat: 13.983, lng: 108.025 },
+  { name: "Đắk Lắk", lat: 12.667, lng: 108.038 },
+  { name: "Lâm Đồng", lat: 11.94, lng: 108.458 },
+
+  // Miền Nam
+  { name: "TP. Hồ Chí Minh", lat: 10.823, lng: 106.63 },
+  { name: "Long An", lat: 10.536, lng: 106.41 },
 ];
 
 //TEST

@@ -445,10 +445,10 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
             this.floodLayers = [];
 
             const color: Record<string, string> = {
-              critical: '#ef4444',
-              high: '#f97316',
-              moderate: '#f59e0b',
-              safe: '#22c55e',
+              critical: 'rgb(168, 85, 247)', // tím
+              high: '#eb4b48', // đỏ
+              moderate: '#ff9800', // cam
+              safe: '#10b981', // xanh lá
             };
 
             const icons: Record<string, L.DivIcon> = {};
