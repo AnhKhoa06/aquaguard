@@ -340,13 +340,19 @@
     }
   }
 
+  .chatbot-input {
+    font-size: 16px;
+  }
+
   .chatbot-panel {
     position: fixed;
     top: 56px;
     left: 8px;
     right: 8px;
     width: unset;
-    height: 480px;
+    bottom: env(safe-area-inset-bottom); // ← thêm
+    height: auto; // ← đổi từ 480px sang auto
+    max-height: calc(100dvh - 56px - 16px); // ← giới hạn chiều cao
   }
 }
 
