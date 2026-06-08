@@ -32,6 +32,7 @@ export class ChatbotComponent implements OnInit {
 
   ngAfterViewChecked() {
     this.scrollToBottom();
+    if (this.isOpen) this.unreadCount = 0;
   }
 
   scrollToBottom() {
@@ -55,7 +56,6 @@ export class ChatbotComponent implements OnInit {
   toggleChat() {
     this.isOpen = !this.isOpen;
     if (this.isOpen) {
-      this.unreadCount = 0;
       setTimeout(() => {
         const input = document.querySelector('.chatbot-input') as HTMLInputElement;
         if (input) input.focus();
