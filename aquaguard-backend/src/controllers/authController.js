@@ -142,11 +142,11 @@ const authController = {
   // Refresh token
   refreshToken: async (req, res, next) => {
     try {
-      const { refreshToken } = req.body;
+      const { refreshToken } = req.body; //Lấy refreshToken từ request
 
       if (!refreshToken) {
         return errorResponse(res, "Không có refresh token!", 401);
-      }
+      } //không có thì trả lỗi luôn.
 
       // Kiểm tra refresh token trong database
       const tokenRecord = await refreshTokenModel.findByToken(refreshToken);
@@ -158,7 +158,7 @@ const authController = {
         );
       }
 
-      // Verify refresh token
+      // giải mã refreshToken lấy thông tin user (id, role), dùng đó tạo accessToken mới.
       const decoded = verifyRefreshToken(refreshToken);
 
       // Tạo access token mới
@@ -176,6 +176,7 @@ const authController = {
       );
     } catch (err) {
       if (err.name === "TokenExpiredError") {
+        //refreshToken cũng hết hạn
         return errorResponse(
           res,
           "Refresh token đã hết hạn, vui lòng đăng nhập lại!",

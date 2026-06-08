@@ -14,9 +14,9 @@ const refreshTokenModel = {
   findByToken: async (token) => {
     const [rows] = await db.query(
       "SELECT * FROM refresh_tokens WHERE token = ? AND is_revoked = FALSE", //tìm token còn hiệu lực
-      [token],
+      [token], //token phải chưa bị thu hồi
     );
-    return rows[0];
+    return rows[0]; // lấy record đầu tiên
   },
 
   // Revoke token (đăng xuất)

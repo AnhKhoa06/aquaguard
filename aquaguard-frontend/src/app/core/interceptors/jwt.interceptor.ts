@@ -5,7 +5,7 @@ import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
-  console.log('Interceptor:', req.method, req.url); // ← thêm dòng này
+  console.log('Interceptor:', req.method, req.url);
   const authService = inject(AuthService);
   const router = inject(Router);
 
@@ -22,19 +22,18 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
     : req; //không có token thì giữ nguyên request gốc không kèm token
 
   return next(cloned).pipe(
-    //cho phép request /auth/register(không kèm token) bay xuống Server Backend
-    //request cần xác thực thì nó sẽ gửi đi bản sao đã có token
     catchError((err: HttpErrorResponse) => {
-      // Bỏ qua refresh-token và logout để tránh loop vô hạn
       const isAuthRequest =
         req.url.includes('/auth/refresh-token') || req.url.includes('/auth/logout');
+
       //Biến isAuthRequest sẽ trả về true nếu request bị lỗi chính là
-      // API gia hạn (refresh-token) hoặc API đăng xuất (logout).
+      // API refresh-token hoặc API đx(logout)
+      //Lỗi 401 unauthorized token hết hạn hoặc không hợp lệ
 
       if (err.status === 401 && !isAuthRequest) {
         return authService.refreshToken().pipe(
           switchMap((res) => {
-            //hủy bỏ request bị lỗi 401 ban đầu và thay thế bằng một request hoàn toàn mới
+            //nhận token mới từ res
             const newToken = res.data.accessToken;
             const retried = req.clone({
               headers: req.headers.set('Authorization', `Bearer ${newToken}`), //tạo ra một bản sao
@@ -49,8 +48,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
           }),
         );
       }
-      return throwError(() => err); //nếu một trong hai (hoặc cả hai) điều kiện trên bị sai thì
-      //thì đoạn này sẽ xl
+      return throwError(() => err); //(500, 404...)
     }),
   );
 };

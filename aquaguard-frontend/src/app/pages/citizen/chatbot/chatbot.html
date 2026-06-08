@@ -1,0 +1,87 @@
+<div class="chatbot-wrap">
+  <!-- Button mở chat -->
+  <button class="chatbot-btn" (click)="toggleChat()">
+    <span class="material-symbols-outlined">{{ isOpen ? 'close' : 'chat' }}</span>
+    <span class="chatbot-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+  </button>
+
+  <!-- Chat panel -->
+  <div class="chatbot-panel" [class.open]="isOpen">
+    <!-- Header -->
+    <div class="chatbot-header">
+      <div class="chatbot-header-left">
+        <div class="chatbot-avatar">
+          <span class="material-symbols-outlined">smart_toy</span>
+        </div>
+        <div>
+          <div class="chatbot-title">AquaGuard AI</div>
+          <div class="chatbot-status">
+            <span class="status-dot"></span>
+            Online · Sẵn sàng hỗ trợ
+          </div>
+        </div>
+      </div>
+      <button class="chatbot-close" (click)="closeChat()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Messages -->
+    <div class="chatbot-messages" #messagesContainer>
+      <div
+        class="message"
+        *ngFor="let msg of messages"
+        [class.message-user]="msg.role === 'user'"
+        [class.message-bot]="msg.role === 'assistant'"
+      >
+        <div class="message-avatar" *ngIf="msg.role === 'assistant'">
+          <span class="material-symbols-outlined">smart_toy</span>
+        </div>
+        <div class="message-content">
+          <div class="message-bubble">{{ msg.content }}</div>
+          <div class="message-time">{{ msg.time }}</div>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div class="message message-bot" *ngIf="isLoading">
+        <div class="message-avatar">
+          <span class="material-symbols-outlined">smart_toy</span>
+        </div>
+        <div class="message-content">
+          <div class="message-bubble loading-bubble"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Suggested questions -->
+    <div class="chatbot-suggestions" *ngIf="messages.length <= 1">
+      <button
+        class="suggestion-chip"
+        *ngFor="let q of suggestedQuestions"
+        (click)="askSuggested(q)"
+      >
+        {{ q }}
+      </button>
+    </div>
+
+    <!-- Input -->
+    <div class="chatbot-input-wrap">
+      <input
+        type="text"
+        class="chatbot-input"
+        placeholder="Nhập tin nhắn..."
+        [(ngModel)]="inputText"
+        (keydown)="onKeyDown($event)"
+        [disabled]="isLoading"
+      />
+      <button
+        class="chatbot-send"
+        (click)="sendMessage()"
+        [disabled]="!inputText.trim() || isLoading"
+      >
+        <span class="material-symbols-outlined">send</span>
+      </button>
+    </div>
+  </div>
+</div>

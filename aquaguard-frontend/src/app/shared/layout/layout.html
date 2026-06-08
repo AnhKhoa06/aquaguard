@@ -1,8 +1,9 @@
 <div class="app-shell" [class.collapsed]="collapsed">
   <!-- Mobile Topbar -->
   <div class="mobile-topbar">
-    <div style="width: 32px"></div>
-    <!-- ← placeholder bên trái -->
+    <!-- Chatbot button thay placeholder -->
+    <app-chatbot *ngIf="currentUser?.role === 'citizen'"></app-chatbot>
+    <div style="width: 32px" *ngIf="currentUser?.role !== 'citizen'"></div>
     <img [src]="getLogoSrc()" alt="AquaGuard" class="mobile-logo" />
     <div class="mobile-avatar-wrap">
       <button class="mobile-avatar-btn" (click)="toggleUserMenu()">
@@ -112,4 +113,7 @@
       </a>
     </ng-container>
   </nav>
+
+  <!-- Chatbot — chỉ hiện cho citizen -->
+  <app-chatbot *ngIf="currentUser?.role === 'citizen'" class="chatbot-desktop"> </app-chatbot>
 </div>

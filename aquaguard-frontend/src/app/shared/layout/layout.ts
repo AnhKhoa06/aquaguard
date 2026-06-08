@@ -4,6 +4,7 @@ import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/rou
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../core/services/auth.service';
 import { User } from '../../models/interfaces';
+import { ChatbotComponent } from '../../pages/citizen/chatbot/chatbot';
 
 interface NavItem {
   icon: string;
@@ -15,7 +16,14 @@ interface NavItem {
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, MatIconModule],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    MatIconModule,
+    ChatbotComponent,
+  ],
   templateUrl: './layout.html',
   styleUrls: ['./layout.scss'],
 })

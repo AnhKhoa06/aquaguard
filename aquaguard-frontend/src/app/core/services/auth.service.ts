@@ -66,14 +66,13 @@ export class AuthService {
     return user ? user.role : null;
   }
 
-  // auth.service.ts — sửa lại đúng URL
   refreshToken(): Observable<any> {
-    const refreshToken = localStorage.getItem('refreshToken');
+    const refreshToken = localStorage.getItem('refreshToken'); //lấy r.t từ localstorage
     return this.http.post<any>(`${this.apiUrl}/auth/refresh-token`, { refreshToken }).pipe(
       tap((res) => {
+        //nhận res
         if (res.success) {
-          localStorage.setItem('accessToken', res.data.accessToken);
-          // refreshToken không đổi nên không cần set lại
+          localStorage.setItem('accessToken', res.data.accessToken); //lưu a.t vào local storage
         }
       }),
     );
