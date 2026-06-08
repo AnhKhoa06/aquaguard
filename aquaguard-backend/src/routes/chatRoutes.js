@@ -35,7 +35,7 @@ router.post("/", authMiddleware, async (req, res) => {
             - Nếu không biết thì nói thẳng "AquaGuard hiện chưa có tính năng này"
             - Trả lời tiếng Việt, thân thiện
 
-            Phạm vi: lũ lụt, cứu hộ, an toàn mùa mưa, tính năng AquaGuard. Ngoài phạm vi thì từ chối lịch sự trong 1 câu.`,
+            Phạm vi: Ưu tiên trả lời về lũ lụt, cứu hộ, an toàn mùa mưa và tính năng AquaGuard. Các câu hỏi tự do khác cũng có thể trả lời nếu trong khả năng.`,
           },
           ...messages, //ghép lịch sử chat vào sau kịch bản vai diễn thành 1 mảng phẳng
         ],
