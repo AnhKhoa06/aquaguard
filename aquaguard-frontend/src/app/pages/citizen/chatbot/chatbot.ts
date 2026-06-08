@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -22,7 +22,6 @@ export class ChatbotComponent implements OnInit {
   isLoading = false;
   inputText = '';
   messages: Message[] = [];
-  unreadCount = 0;
 
   suggestedQuestions = ['AquaGuard là gì?', 'Làm gì khi gặp lũ lụt?', 'Cách gửi yêu cầu SOS?'];
 
@@ -32,7 +31,6 @@ export class ChatbotComponent implements OnInit {
 
   ngAfterViewChecked() {
     this.scrollToBottom();
-    if (this.isOpen) this.unreadCount = 0;
   }
 
   scrollToBottom() {
@@ -55,13 +53,6 @@ export class ChatbotComponent implements OnInit {
 
   toggleChat() {
     this.isOpen = !this.isOpen;
-    if (this.isOpen) {
-      this.unreadCount = 0;
-      setTimeout(() => {
-        const input = document.querySelector('.chatbot-input') as HTMLInputElement;
-        if (input) input.focus();
-      }, 300); // đợi animation xong rồi focus
-    }
   }
 
   closeChat() {
@@ -80,7 +71,6 @@ export class ChatbotComponent implements OnInit {
     this.messages.push({ role: 'user', content: text, time: this.getTime() }); //Hiển thị tin nhắn user lên chat
     this.inputText = ''; //xóa input
     this.isLoading = true; //bật load
-    setTimeout(() => this.scrollToBottom(), 50);
 
     const payload = this.messages
       .filter((m) => m.role === 'user' || m.role === 'assistant') //Lọc chỉ lấy user và assistant
@@ -95,10 +85,6 @@ export class ChatbotComponent implements OnInit {
             content: res.data,
             time: this.getTime(),
           });
-          if (!this.isOpen) {
-            this.unreadCount++;
-          }
-          setTimeout(() => this.scrollToBottom(), 50);
         }
         this.isLoading = false;
       },

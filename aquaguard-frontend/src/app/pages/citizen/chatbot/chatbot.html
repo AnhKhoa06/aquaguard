@@ -2,7 +2,6 @@
   <!-- Button mở chat -->
   <button class="chatbot-btn" (click)="toggleChat()">
     <span class="material-symbols-outlined">{{ isOpen ? 'close' : 'chat' }}</span>
-    <span class="chatbot-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
   </button>
 
   <!-- Chat panel -->
