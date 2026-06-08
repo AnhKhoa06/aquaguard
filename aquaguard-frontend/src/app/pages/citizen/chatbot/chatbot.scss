@@ -331,7 +331,7 @@
     height: 40px;
     border-radius: 50%;
     background: #1e293b; // dark mode
-    box-shadow: none;
+    box-shadow: none !important;
     color: var(--primary); // icon xanh
 
     .material-symbols-outlined {
@@ -350,9 +350,9 @@
     left: 8px;
     right: 8px;
     width: unset;
-    bottom: env(safe-area-inset-bottom); // ← thêm
-    height: auto; // ← đổi từ 480px sang auto
-    max-height: calc(100dvh - 56px - 16px); // ← giới hạn chiều cao
+    height: calc(100dvh - 56px - 70px - 16px); // trừ topbar + bottom nav + padding
+    max-height: calc(100dvh - 56px - 70px - 16px);
+    bottom: unset;
   }
 }
 
