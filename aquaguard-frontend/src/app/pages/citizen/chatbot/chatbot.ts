@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -56,6 +56,7 @@ export class ChatbotComponent implements OnInit {
   toggleChat() {
     this.isOpen = !this.isOpen;
     if (this.isOpen) {
+      this.unreadCount = 0;
       setTimeout(() => {
         const input = document.querySelector('.chatbot-input') as HTMLInputElement;
         if (input) input.focus();
@@ -79,6 +80,7 @@ export class ChatbotComponent implements OnInit {
     this.messages.push({ role: 'user', content: text, time: this.getTime() }); //Hiển thị tin nhắn user lên chat
     this.inputText = ''; //xóa input
     this.isLoading = true; //bật load
+    setTimeout(() => this.scrollToBottom(), 50);
 
     const payload = this.messages
       .filter((m) => m.role === 'user' || m.role === 'assistant') //Lọc chỉ lấy user và assistant
@@ -93,8 +95,10 @@ export class ChatbotComponent implements OnInit {
             content: res.data,
             time: this.getTime(),
           });
-          this.unreadCount++; // ← bỏ điều kiện !isOpen
-          console.log('unreadCount:', this.unreadCount);
+          if (!this.isOpen) {
+            this.unreadCount++;
+          }
+          setTimeout(() => this.scrollToBottom(), 50);
         }
         this.isLoading = false;
       },
