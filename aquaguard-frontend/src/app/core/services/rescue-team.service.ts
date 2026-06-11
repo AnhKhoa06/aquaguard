@@ -53,4 +53,14 @@ export class RescueTeamService {
   getMyJoinRequest(): Observable<ApiResponse<any>> {
     return this.http.get<ApiResponse<any>>(`${this.apiUrl}/rescue-teams/join-requests/mine`);
   }
+
+  leaveTeam(): Observable<ApiResponse<any>> {
+    return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/rescue-teams/leave`);
+  }
+
+  removeMember(teamId: number, userId: number): Observable<ApiResponse<any>> {
+    return this.http.delete<ApiResponse<any>>(
+      `${this.apiUrl}/rescue-teams/${teamId}/members/${userId}`,
+    );
+  }
 }

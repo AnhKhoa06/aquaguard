@@ -11,6 +11,7 @@ import { FloodService } from '../../../core/services/flood.service';
 import { SafePipe } from '../../../core/pipes/safe.pipe';
 import { RescueTeamService } from '../../../core/services/rescue-team.service';
 import 'leaflet.markercluster';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -69,6 +70,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
     private userService: UserService,
     private rescueTeamService: RescueTeamService,
     private cdr: ChangeDetectorRef,
+    private toastr: ToastrService,
   ) {}
 
   ngOnInit() {
@@ -258,7 +260,11 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
         if (res.success) {
           this.addMemberUserId = null;
           this.loadTeams();
+          this.toastr.success('Đã thêm thành viên!', 'Thành công');
         }
+      },
+      error: (err) => {
+        this.toastr.error(err.error?.message || 'Thêm thành viên thất bại!', 'Lỗi');
       },
     });
   }
@@ -289,6 +295,21 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit, OnDestroy
   getMemberName(userId: number): string {
     const user = this.responders.find((u) => u.id === userId);
     return user ? user.full_name : `User #${userId}`;
+  }
+
+  removeMember(teamId: number, userId: number): void {
+    if (!confirm('Xóa thành viên này khỏi đội?')) return;
+    this.rescueTeamService.removeMember(teamId, userId).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.loadTeams();
+          this.toastr.success('Đã xóa thành viên!', 'Thành công');
+        }
+      },
+      error: (err) => {
+        this.toastr.error(err.error?.message || 'Xóa thất bại!', 'Lỗi');
+      },
+    });
   }
 
   private initMap() {

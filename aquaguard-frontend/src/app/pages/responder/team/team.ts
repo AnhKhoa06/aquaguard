@@ -17,6 +17,7 @@ export class TeamComponent implements OnInit {
   currentUserId: number | null = null;
   myJoinRequest: any = null;
   joiningTeamId: number | null = null;
+  leaving = false;
 
   constructor(
     private rescueTeamService: RescueTeamService,
@@ -77,6 +78,20 @@ export class TeamComponent implements OnInit {
     if (!this.myJoinRequest) return null;
     if (this.myJoinRequest.team_id === teamId) return this.myJoinRequest.status;
     return null;
+  }
+
+  leaveTeam(): void {
+    if (!confirm('Bạn có chắc muốn rời đội không?')) return;
+    this.leaving = true;
+    this.rescueTeamService.leaveTeam().subscribe({
+      next: (res) => {
+        if (res.success) this.loadTeams();
+        this.leaving = false;
+      },
+      error: () => {
+        this.leaving = false;
+      },
+    });
   }
 
   get selectedTeam(): any {

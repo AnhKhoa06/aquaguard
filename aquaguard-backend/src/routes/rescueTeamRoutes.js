@@ -22,6 +22,20 @@ router.get(
 
 router.get("/my-team", authMiddleware, rescueTeamController.getMyTeam);
 
+router.delete(
+  "/leave",
+  authMiddleware,
+  authorizeRoles("responder"),
+  rescueTeamController.leaveTeam,
+);
+
+router.delete(
+  "/:id/members/:userId",
+  authMiddleware,
+  authorizeRoles("admin"),
+  rescueTeamController.removeMember,
+);
+
 // Admin + Responder — xem chi tiết 1 đội
 router.get(
   "/:id",

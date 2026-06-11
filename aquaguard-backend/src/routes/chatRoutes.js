@@ -51,7 +51,7 @@ router.post("/", authMiddleware, async (req, res) => {
     );
 
     const reply = response.data.choices[0].message.content; //Lấy nội dung trả lời từ Groq
-    res.json({ success: true, data: reply }); //Trả về cho frontend
+    res.json({ success: true, data: reply }); //Trả về cho fe
   } catch (err) {
     console.error("Groq error:", err.message);
     res.status(500).json({ success: false, message: "Lỗi AI, thử lại sau!" });

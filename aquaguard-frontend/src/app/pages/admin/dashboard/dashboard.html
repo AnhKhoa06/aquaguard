@@ -401,6 +401,9 @@
               <span class="health-badge" [ngClass]="getHealthClass(member.health_status)">
                 {{ getHealthLabel(member.health_status) }}
               </span>
+              <button class="btn-remove-member" (click)="removeMember(selectedTeam.id, member.id)">
+                <span class="material-symbols-outlined">person_remove</span>
+              </button>
             </div>
           </div>
         </div>

@@ -77,6 +77,19 @@ const rescueTeamController = {
         return errorResponse(res, "Không tìm thấy người dùng!", 404);
       }
 
+      // ← thêm: kiểm tra đã là thành viên chưa
+      const [existing] = await db.query(
+        `SELECT id FROM rescue_team_members WHERE team_id = ? AND user_id = ?`,
+        [req.params.id, user_id],
+      );
+      if (existing.length > 0) {
+        return errorResponse(
+          res,
+          `${user.full_name} đã là thành viên của đội này!`,
+          400,
+        );
+      }
+
       await rescueTeamModel.addMember(req.params.id, user_id);
 
       return successResponse(
@@ -100,6 +113,30 @@ const rescueTeamController = {
       await rescueTeamModel.delete(req.params.id);
 
       return successResponse(res, null, "Xoá đội cứu hộ thành công!");
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  removeMember: async (req, res, next) => {
+    try {
+      const { id: teamId, userId } = req.params;
+
+      const [rows] = await db.query(
+        `SELECT * FROM rescue_team_members WHERE team_id = ? AND user_id = ?`,
+        [teamId, userId],
+      );
+
+      if (rows.length === 0) {
+        return errorResponse(res, "Thành viên không tồn tại trong đội!", 404);
+      }
+
+      await db.query(
+        `DELETE FROM rescue_team_members WHERE team_id = ? AND user_id = ?`,
+        [teamId, userId],
+      );
+
+      return successResponse(res, null, "Đã xóa thành viên khỏi đội!");
     } catch (err) {
       next(err);
     }
@@ -222,6 +259,32 @@ const rescueTeamController = {
         { ...team, members },
         "Lấy thông tin đội thành công!",
       );
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  leaveTeam: async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+
+      const [rows] = await db.query(
+        `SELECT * FROM rescue_team_members WHERE user_id = ?`,
+        [userId],
+      );
+
+      if (rows.length === 0) {
+        return errorResponse(res, "Bạn chưa thuộc đội nào!", 400);
+      }
+
+      await db.query(`DELETE FROM rescue_team_members WHERE user_id = ?`, [
+        userId,
+      ]);
+
+      //xóa luôn join_request cũ
+      await db.query(`DELETE FROM join_requests WHERE user_id = ?`, [userId]);
+
+      return successResponse(res, null, "Đã rời đội thành công!");
     } catch (err) {
       next(err);
     }

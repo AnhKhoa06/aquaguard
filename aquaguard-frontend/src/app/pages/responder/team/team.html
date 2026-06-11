@@ -99,6 +99,16 @@
             {{ selectedTeam.area }}
           </p>
         </div>
+
+        <button
+          class="leave-btn"
+          *ngIf="isMyTeam(selectedTeam)"
+          [disabled]="leaving"
+          (click)="leaveTeam()"
+        >
+          <span class="material-symbols-outlined">logout</span>
+          {{ leaving ? 'Đang rời...' : 'Rời đội' }}
+        </button>
       </div>
 
       <!-- Thông tin đội -->
