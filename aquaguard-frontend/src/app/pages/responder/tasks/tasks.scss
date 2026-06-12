@@ -253,12 +253,24 @@
 // Grid
 .admin-sos-grid {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1.2fr 2fr;
   gap: 16px;
   align-items: start;
 }
 
-.list-panel,
+.list-panel {
+  max-height: calc(100vh - 135px);
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 4px;
+  }
+}
+
 .detail-panel {
   height: auto;
   overflow-y: visible;

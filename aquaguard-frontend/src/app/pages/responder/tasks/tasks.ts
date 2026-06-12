@@ -234,7 +234,7 @@ export class TasksComponent implements OnInit, OnDestroy {
   private updateLocation(): void {
     const activeTask = this.sosRequests.find((r) => r.status === 'in_progress');
     console.log('updateLocation called, activeTask:', activeTask); // ← thêm
-    if (!activeTask) return;
+    if (!activeTask) return; //← không có task in_progress thì return luôn
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {

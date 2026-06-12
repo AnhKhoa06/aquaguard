@@ -110,16 +110,17 @@ router.get("/reverse-geocode", authMiddleware, async (req, res) => {
   const { lat, lng } = req.query;
   try {
     const response = await axios.get(
-      `https://photon.komoot.io/reverse?lat=${lat}&lon=${lng}`,
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+      {
+        headers: {
+          "User-Agent": "AquaGuard/1.0", // Nominatim yêu cầu User-Agent
+        },
+      },
     );
-    const props = response.data.features[0]?.properties;
-    if (!props) return res.json({ success: false, address: null });
 
-    const parts = [props.name, props.county, props.state, props.country].filter(
-      Boolean,
-    );
+    const address = response.data.display_name;
+    if (!address) return res.json({ success: false, address: null });
 
-    const address = parts.join(", ");
     res.json({ success: true, address });
   } catch (err) {
     res.json({ success: false, address: null });

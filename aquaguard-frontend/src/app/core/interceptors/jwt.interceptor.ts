@@ -19,15 +19,13 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
         //tạo bản sao request
         headers: req.headers.set('Authorization', `Bearer ${token}`), //kẹp token vào
       })
-    : req; //không có token thì giữ nguyên request gốc không kèm token
+    : req; //kcó token thì giữ nguyên request gốc k kèm token
 
   return next(cloned).pipe(
     catchError((err: HttpErrorResponse) => {
       const isAuthRequest =
         req.url.includes('/auth/refresh-token') || req.url.includes('/auth/logout');
 
-      //Biến isAuthRequest sẽ trả về true nếu request bị lỗi chính là
-      // API refresh-token hoặc API đx(logout)
       //Lỗi 401 unauthorized token hết hạn hoặc không hợp lệ
 
       if (err.status === 401 && !isAuthRequest) {

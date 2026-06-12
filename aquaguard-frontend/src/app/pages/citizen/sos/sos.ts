@@ -758,6 +758,7 @@ export class SosComponent implements OnInit, OnDestroy {
 
       // Màu đường theo status
       const lineColor = this.activeSos.status === 'resolved' ? '#1a73e8' : '#f59e0b';
+      console.log('status:', this.activeSos.status, 'lineColor:', lineColor);
 
       const distance = this.trackingMap!.distance(
         [citizenLat, citizenLng],
