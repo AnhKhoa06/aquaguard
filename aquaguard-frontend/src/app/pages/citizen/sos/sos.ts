@@ -639,6 +639,8 @@ export class SosComponent implements OnInit, OnDestroy {
   private buildResponderPopup(): string {
     const responderName = this.escapeHtml(this.activeSos?.responder_name || 'Đội cứu hộ');
     const teamName = this.escapeHtml(this.activeSos?.team_name || '');
+    const isResolved = this.activeSos?.status === 'resolved';
+
     return `
     <div style="min-width: 200px; font-family: Inter, Arial, sans-serif; padding: 4px 0;">
       <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
@@ -650,8 +652,8 @@ export class SosComponent implements OnInit, OnDestroy {
         ${teamName}
       </div>
       <div style="display:flex; align-items:center; gap:6px; font-size:13px; color:#475569;">
-        <span class="material-symbols-outlined" style="font-size:16px;">local_shipping</span>
-        Đang đến ứng cứu
+        <span class="material-symbols-outlined" style="font-size:16px;">${isResolved ? 'check_circle' : 'local_shipping'}</span>
+        ${isResolved ? 'Đã ứng cứu xong' : 'Đang đến ứng cứu'}
       </div>
     </div>
   `;
