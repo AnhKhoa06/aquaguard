@@ -2,14 +2,15 @@ const jwt = require("jsonwebtoken");
 const env = require("./env");
 
 const generateAccessToken = (payload) => {
-  // thông tin nhúng vào token, thường là { id, role } của user
   return jwt.sign(payload, env.jwt.accessSecret, {
+    //tạo accessToken mới
     expiresIn: env.jwt.accessExpires,
   });
 };
 
 const generateRefreshToken = (payload) => {
   return jwt.sign(payload, env.jwt.refreshSecret, {
+    //ký bằng refreshSecret từ .env
     expiresIn: env.jwt.refreshExpires,
   });
 };
@@ -20,6 +21,8 @@ const verifyAccessToken = (token) => {
 
 const verifyRefreshToken = (token) => {
   return jwt.verify(token, env.jwt.refreshSecret);
+  //tính lại chữ ký từ header + payload của
+  //r ss vs signature đang có trong token và ktra hsd
 };
 
 module.exports = {

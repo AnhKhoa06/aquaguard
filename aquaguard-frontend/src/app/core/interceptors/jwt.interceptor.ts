@@ -9,9 +9,6 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  //Nhánh 1 (Đăng ký): Chưa có token → Gửi request gốc không kèm token (: req).
-  //Nhánh 2 (Các tính năng bên trong app): Đã có token → Tạo bản sao kẹp token vào Header (req.clone(...))
-  //rồi mới gửi đi.
   const token = authService.getToken(); //lấy token từ localStorage
 
   const cloned = token
@@ -31,11 +28,9 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
       if (err.status === 401 && !isAuthRequest) {
         return authService.refreshToken().pipe(
           switchMap((res) => {
-            //nhận token mới từ res
             const newToken = res.data.accessToken;
             const retried = req.clone({
-              headers: req.headers.set('Authorization', `Bearer ${newToken}`), //tạo ra một bản sao
-              // request mới
+              headers: req.headers.set('Authorization', `Bearer ${newToken}`), //tạora 1bảnsao requestmới
             });
             return next(retried);
           }),

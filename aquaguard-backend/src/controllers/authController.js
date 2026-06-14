@@ -10,10 +10,10 @@ const { successResponse, errorResponse } = require("../utils/response");
 const env = require("../config/env");
 
 const authController = {
-  // Đăng ký
-  //req  ← chứa data từ frontend (body, params, headers...)
-  //res  ← dùng để trả kết quả về frontend
-  //next ← dùng khi có lỗi cần chuyển sang errorMiddleware
+  //req chứa data từ fe (body, params, headers...)
+  //res dùng để trả kết quả về fe
+  //next dùng khi có lỗi cần chuyển sang errorMiddleware
+
   register: async (req, res, next) => {
     try {
       let {
@@ -106,18 +106,15 @@ const authController = {
         );
       }
 
-      // Tạo payload
       const payload = { id: user.id, role: user.role };
 
-      // Tạo access token và refresh token
       const accessToken = generateAccessToken(payload);
       const refreshToken = generateRefreshToken(payload);
 
-      // Tính thời gian hết hạn refresh token (7 ngày)
-      const expiresAt = new Date();
+      const expiresAt = new Date(); // lấy thời điểm hiện tại
       expiresAt.setDate(expiresAt.getDate() + 7);
 
-      // Lưu refresh token vào database
+      // Lưu refresh token vào db
       await refreshTokenModel.create(user.id, refreshToken, expiresAt);
 
       return successResponse(
@@ -146,9 +143,9 @@ const authController = {
 
       if (!refreshToken) {
         return errorResponse(res, "Không có refresh token!", 401);
-      } //không có thì trả lỗi luôn.
+      }
 
-      // Kiểm tra refresh token trong database
+      // Ktra refresh token trong db
       const tokenRecord = await refreshTokenModel.findByToken(refreshToken);
       if (!tokenRecord) {
         return errorResponse(

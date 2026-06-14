@@ -151,17 +151,16 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadWeatherAlerts() {
     const locations = [
-      { name: 'Đà Nẵng', lat: 16.047, lng: 108.206 },
-      { name: 'Huế', lat: 16.463, lng: 107.59 },
       { name: 'Quảng Nam', lat: 15.879, lng: 108.335 },
       { name: 'Quảng Ngãi', lat: 15.12, lng: 108.792 },
       { name: 'Bình Định', lat: 13.782, lng: 109.219 },
-      { name: 'Quảng Bình', lat: 17.469, lng: 106.622 },
+      { name: 'Phú Yên', lat: 13.095, lng: 109.093 },
+      { name: 'Khánh Hòa', lat: 12.239, lng: 109.197 },
     ];
 
     const requests = locations.map((loc) =>
       this.http.get<any>(
-        `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lng}&current=precipitation,rain,showers,windspeed_10m,weathercode&forecast_days=1`,
+        `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lng}&current=precipitation,rain,windspeed_10m,weathercode&forecast_days=1`,
       ),
     );
 
@@ -173,23 +172,20 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
           const current = data.current;
           const name = locations[i].name;
 
-          if (
-            current.rain > 0 ||
-            current.showers > 0 ||
-            current.precipitation > 0 ||
-            (current.weathercode >= 61 && current.weathercode <= 82)
-          ) {
+          // Cảnh báo mưa
+          if (current.rain > 0 || current.precipitation > 0) {
             autoAlerts.push({
               id: Math.floor(Math.random() * -1000),
               created_by: 0,
               title: `Mưa lớn tại ${name}`,
-              message: `Lượng mưa ${current.rain || current.showers || current.precipitation}mm/h, nguy cơ ngập lụt cao.`,
-              severity: current.rain > 30 || current.showers > 30 ? 'critical' : 'danger',
+              message: `Lượng mưa ${current.rain || current.precipitation}mm/h, nguy cơ ngập lụt cao.`,
+              severity: current.rain > 30 ? 'critical' : 'danger',
               created_at: new Date().toISOString(),
             });
           }
 
-          if (current.windspeed_10m > -1) {
+          // Cảnh báo gió
+          if (current.windspeed_10m > 10) {
             autoAlerts.push({
               id: Math.floor(Math.random() * -1000),
               created_by: 0,
@@ -200,13 +196,26 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
             });
           }
 
-          if (current.precipitation > 0) {
+          // Cảnh báo lũ lụt
+          if (current.precipitation > 0.05) {
             autoAlerts.push({
               id: Math.floor(Math.random() * -1000),
               created_by: 0,
-              title: `Lượng mưa cao tại ${name}`,
-              message: `Tổng lượng mưa ${current.precipitation}mm, theo dõi tình hình lũ.`,
-              severity: 'warning',
+              title: `Nguy cơ lũ lụt tại ${name}`,
+              message: `Lượng mưa tích lũy ${current.precipitation}mm, nguy cơ lũ lụt rất cao.`,
+              severity: 'critical',
+              created_at: new Date().toISOString(),
+            });
+          }
+
+          // Cảnh báo dông bão
+          if (current.weathercode >= 95 && current.weathercode <= 1) {
+            autoAlerts.push({
+              id: Math.floor(Math.random() * -1000),
+              created_by: 0,
+              title: `Dông bão tại ${name}`,
+              message: `Đang có dông bão, hạn chế ra ngoài và tránh xa khu vực nguy hiểm.`,
+              severity: current.weathercode >= 97 ? 'critical' : 'danger',
               created_at: new Date().toISOString(),
             });
           }

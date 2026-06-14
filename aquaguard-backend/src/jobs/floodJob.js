@@ -42,7 +42,7 @@ const getRiskLevel = (precipitation) => {
 // };
 
 const fetchAndSave = async () => {
-  console.log("🌊 Running flood data job...");
+  console.log("Running flood data job...");
   for (const loc of locations) {
     try {
       const res = await axios.get("https://api.open-meteo.com/v1/forecast", {

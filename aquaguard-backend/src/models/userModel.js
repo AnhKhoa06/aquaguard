@@ -6,7 +6,7 @@ const userModel = {
     const [rows] = await db.query("SELECT * FROM users WHERE phone = ?", [
       phone,
     ]);
-    return rows[0];
+    return rows[0]; //undefined or lấy bản ghi đầu tiên
   },
 
   // Tìm user theo id
@@ -30,7 +30,7 @@ const userModel = {
     date_of_birth,
     role = "citizen",
   }) => {
-    // Lấy thẳng string YYYY-MM-DD, không qua new Date()
+    //"2000-05-15T00:00:00.000Z"
     const formattedDate = date_of_birth ? date_of_birth.split("T")[0] : null;
 
     const [result] = await db.query(
@@ -40,7 +40,6 @@ const userModel = {
       [full_name, phone, password_hash, gender, formattedDate, role],
     );
     return result.insertId; //trả về id của user vừa tạo, insertId chính là id đó,
-    // trả về cho controller.
   },
 
   // Cập nhật vị trí

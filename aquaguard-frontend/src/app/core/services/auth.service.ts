@@ -36,7 +36,7 @@ export class AuthService {
   register(data: any): Observable<ApiResponse<any>> {
     return this.http.post<ApiResponse<any>>(`${this.apiUrl}/auth/register`, data);
   }
-  //sử dụng HttpClient để thực hiện một yêu cầu HTTP POST đến địa chỉ API auth/register kèm dl
+  //sd HttpClient để ... HTTP POST đến địa chỉ API auth/register kèm dl
 
   logout(): void {
     const refreshToken = localStorage.getItem('refreshToken');
@@ -70,7 +70,6 @@ export class AuthService {
     const refreshToken = localStorage.getItem('refreshToken'); //lấy r.t từ localstorage
     return this.http.post<any>(`${this.apiUrl}/auth/refresh-token`, { refreshToken }).pipe(
       tap((res) => {
-        //nhận res
         if (res.success) {
           localStorage.setItem('accessToken', res.data.accessToken); //lưu a.t vào local storage
         }
