@@ -26,8 +26,8 @@ export class AuthService {
         if (res.success) {
           localStorage.setItem('accessToken', res.data.accessToken);
           localStorage.setItem('refreshToken', res.data.refreshToken);
-          localStorage.setItem('user', JSON.stringify(res.data.user));
-          this.currentUserSubject.next(res.data.user);
+          localStorage.setItem('user', JSON.stringify(res.data.user)); //để duy trì tt đăng nhập
+          this.currentUserSubject.next(res.data.user); //cập nhật gtri user hiện tại trong..
         }
       }),
     );

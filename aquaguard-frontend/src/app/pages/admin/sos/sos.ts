@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgTemplateOutlet } from '@angular/common';
 import { SosService } from '../../../core/services/sos.service';
 import { SosRequest } from '../../../models/interfaces';
 import { FormsModule } from '@angular/forms';
@@ -9,7 +9,7 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-admin-sos',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgTemplateOutlet],
   templateUrl: './sos.html',
   styleUrl: './sos.scss',
 })

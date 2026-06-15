@@ -127,177 +127,188 @@
         <p>Không có yêu cầu phù hợp</p>
       </div>
 
-      <article
-        class="sos-row"
-        *ngFor="let req of filteredRequests"
-        [class.active]="selectedId === req.id"
-        (click)="selectRequest(req)"
-      >
-        <div class="row-top">
-          <div class="row-info">
-            <div class="row-name-row">
-              <strong>{{ req.citizen_name || 'Ẩn danh' }}</strong>
-              <span style="margin-left: auto"></span>
-              <span class="urgency-badge urgency-{{ req.urgency_level }}">
-                {{ getUrgencyLabel(req.urgency_level) }}
-              </span>
-              <span class="status-pill" [ngClass]="getStatusTone(req.status)">
-                {{ getStatusLabel(req.status) }}
-              </span>
-            </div>
-            <p class="row-time">{{ getTimeAgo(req.created_at) }}</p>
-            <p class="row-address" *ngIf="req.address">
-              <span class="material-symbols-outlined">location_on</span>
-              {{ req.address }}
-            </p>
-            <p class="row-desc" *ngIf="req.description">{{ req.description }}</p>
-            <div class="row-meta-row">
-              <span class="row-team" *ngIf="req.team_name">
-                <span class="material-symbols-outlined">groups</span>
-                {{ req.team_name }}
-              </span>
-              <span *ngIf="req.responder_name">
-                Được giao cho:
-                <span style="color: var(--color-text)">{{ req.responder_name }}</span>
-              </span>
-              <span *ngIf="!req.responder_name">
-                Được giao cho: <span style="color: var(--color-text)">Chưa giao</span>
-              </span>
+      <ng-container *ngFor="let req of filteredRequests">
+        <article
+          class="sos-row"
+          [class.active]="selectedId === req.id"
+          (click)="selectRequest(req)"
+        >
+          <div class="row-top">
+            <div class="row-info">
+              <div class="row-name-row">
+                <strong>{{ req.citizen_name || 'Ẩn danh' }}</strong>
+                <span style="margin-left: auto"></span>
+                <span class="urgency-badge urgency-{{ req.urgency_level }}">
+                  {{ getUrgencyLabel(req.urgency_level) }}
+                </span>
+                <span class="status-pill" [ngClass]="getStatusTone(req.status)">
+                  {{ getStatusLabel(req.status) }}
+                </span>
+              </div>
+              <p class="row-time">{{ getTimeAgo(req.created_at) }}</p>
+              <p class="row-address" *ngIf="req.address">
+                <span class="material-symbols-outlined">location_on</span>
+                {{ req.address }}
+              </p>
+              <p class="row-desc" *ngIf="req.description">{{ req.description }}</p>
+              <div class="row-meta-row">
+                <span class="row-team" *ngIf="req.team_name">
+                  <span class="material-symbols-outlined">groups</span>
+                  {{ req.team_name }}
+                </span>
+                <span *ngIf="req.responder_name">
+                  Được giao cho:
+                  <span style="color: var(--color-text)">{{ req.responder_name }}</span>
+                </span>
+                <span *ngIf="!req.responder_name">
+                  Được giao cho: <span style="color: var(--color-text)">Chưa giao</span>
+                </span>
+              </div>
             </div>
           </div>
-        </div>
-      </article>
+        </article>
+
+        <!-- Detail mobile: hiện ngay dưới row đang chọn -->
+        <aside
+          class="detail-panel panel detail-inline-mobile"
+          *ngIf="selectedId === req.id && selectedRequest"
+        >
+          <ng-container *ngTemplateOutlet="detailContent"></ng-container>
+        </aside>
+      </ng-container>
     </section>
 
-    <!-- Detail -->
+    <!-- Detail (desktop) -->
     <aside class="detail-panel panel" *ngIf="selectedRequest; else noSelection">
-      <div class="detail-hero">
-        <div class="detail-hero-info">
-          <h2>{{ selectedRequest.citizen_name || 'Ẩn danh' }}</h2>
-          <p class="detail-time">
-            {{ selectedRequest.created_at | date: 'HH:mm:ss d/M/yyyy' : '+0700' }}
-          </p>
-        </div>
-        <div class="detail-badges">
-          <span class="urgency-badge urgency-{{ selectedRequest.urgency_level }}">
-            {{ getUrgencyLabel(selectedRequest.urgency_level) }}
-          </span>
-          <span class="status-pill" [ngClass]="getStatusTone(selectedRequest.status)">
-            {{ getStatusLabel(selectedRequest.status) }}
-          </span>
-        </div>
+      <ng-container *ngTemplateOutlet="detailContent"></ng-container>
+    </aside>
+  </div>
+
+  <ng-template #noSelection>
+    <aside class="detail-panel panel">
+      <div class="empty-detail">
+        <span class="material-symbols-outlined">sos</span>
+        <h3>Chọn một yêu cầu SOS</h3>
+        <p>Chi tiết và thao tác xử lý sẽ hiện ở đây.</p>
+      </div>
+    </aside>
+  </ng-template>
+
+  <!-- Template nội dung detail, dùng chung cho cả desktop và mobile -->
+  <ng-template #detailContent>
+    <div class="detail-hero">
+      <div class="detail-hero-info">
+        <h2>{{ selectedRequest!.citizen_name || 'Ẩn danh' }}</h2>
+        <p class="detail-time">
+          {{ selectedRequest!.created_at | date: 'HH:mm:ss d/M/yyyy' : '+0700' }}
+        </p>
+      </div>
+      <div class="detail-badges">
+        <span class="urgency-badge urgency-{{ selectedRequest!.urgency_level }}">
+          {{ getUrgencyLabel(selectedRequest!.urgency_level) }}
+        </span>
+        <span class="status-pill" [ngClass]="getStatusTone(selectedRequest!.status)">
+          {{ getStatusLabel(selectedRequest!.status) }}
+        </span>
+      </div>
+    </div>
+
+    <div class="detail-stack">
+      <div class="detail-row" *ngIf="selectedRequest!.address">
+        <span class="material-symbols-outlined detail-row-icon location">location_on</span>
+        <span>{{ selectedRequest!.address }}</span>
       </div>
 
-      <div class="detail-stack">
-        <div class="detail-row" *ngIf="selectedRequest!.address">
-          <span class="material-symbols-outlined detail-row-icon location">location_on</span>
-          <span>{{ selectedRequest!.address }}</span>
-        </div>
-
-        <div class="detail-row">
-          <span class="material-symbols-outlined detail-row-icon" style="color: var(--primary)"
-            >local_fire_department</span
-          >
-          <span
-            >Được giao cho:
-            <strong>{{ selectedRequest!.responder_name || 'Chưa phân công' }}</strong></span
-          >
-        </div>
-
-        <div class="detail-row" *ngIf="selectedRequest!.description">
-          <span class="detail-row-text">{{ selectedRequest!.description }}</span>
-        </div>
-
-        <div
-          class="detail-row"
-          *ngIf="selectedRequest!.citizen_phone || selectedRequest!.citizen_dob"
+      <div class="detail-row">
+        <span class="material-symbols-outlined detail-row-icon" style="color: var(--primary)"
+          >local_fire_department</span
         >
-          <span class="material-symbols-outlined detail-row-icon person">person</span>
-          <span class="detail-row-meta">
-            <span *ngIf="selectedRequest!.citizen_dob"
-              >{{ getAge(selectedRequest!.citizen_dob) }} tuổi</span
-            >
-            <span *ngIf="selectedRequest!.citizen_phone">
-              • {{ selectedRequest!.citizen_phone }}</span
-            >
-          </span>
-        </div>
-
-        <div class="detail-row" *ngIf="selectedRequest!.latitude">
-          <span class="material-symbols-outlined detail-row-icon" style="color: #22c55e"
-            >my_location</span
-          >
-          <span style="color: #22c55e; font-size: 12px; font-weight: 500"
-            >GPS: {{ selectedRequest!.latitude }}, {{ selectedRequest!.longitude }}</span
-          >
-        </div>
-
-        <div
-          class="detail-row"
-          *ngIf="selectedRequest!.images && selectedRequest!.images.length > 0"
+        <span
+          >Được giao cho:
+          <strong>{{ selectedRequest!.responder_name || 'Chưa phân công' }}</strong></span
         >
-          <div class="detail-images">
-            <a *ngFor="let img of selectedRequest!.images" [href]="img.image_url" target="_blank">
-              <img [src]="getImageUrl(img.image_url)" alt="Ảnh hiện trường" class="detail-thumb" />
-            </a>
-          </div>
-        </div>
+      </div>
+
+      <div class="detail-row" *ngIf="selectedRequest!.description">
+        <span class="detail-row-text">{{ selectedRequest!.description }}</span>
       </div>
 
       <div
-        class="actions"
-        style="justify-content: flex-end; gap: 8px; display: flex; flex-direction: column"
+        class="detail-row"
+        *ngIf="selectedRequest!.citizen_phone || selectedRequest!.citizen_dob"
       >
-        <div class="assign-row">
-          <div
-            class="detail-row"
-            *ngIf="
-              selectedRequest!.status === 'in_progress' || selectedRequest!.status === 'resolved'
-            "
+        <span class="material-symbols-outlined detail-row-icon person">person</span>
+        <span class="detail-row-meta">
+          <span *ngIf="selectedRequest!.citizen_dob"
+            >{{ getAge(selectedRequest!.citizen_dob) }} tuổi</span
           >
-            <span class="material-symbols-outlined detail-row-icon person">person</span>
-            <span *ngIf="selectedRequest!.status === 'in_progress'">
-              Đang được xử lý bởi:
-              <strong>{{ selectedRequest!.responder_name || 'Chưa rõ' }}</strong>
-            </span>
-            <span *ngIf="selectedRequest!.status === 'resolved'">
-              Đã được xử lý bởi: <strong>{{ selectedRequest!.responder_name || 'Chưa rõ' }}</strong>
-            </span>
-          </div>
-          <div class="assign-select-wrap" *ngIf="selectedRequest!.status === 'pending'">
-            <select class="assign-select" [(ngModel)]="selectedResponderId">
-              <option [ngValue]="null">-- Chọn người cứu hộ --</option>
-              <option *ngFor="let r of responders" [ngValue]="r.id">
-                {{ r.full_name || r.phone }}
-              </option>
-            </select>
-            <button class="assign-btn" (click)="assignResponder()">
-              <span class="material-symbols-outlined">person_add</span>
-              Phân công
-            </button>
-          </div>
-        </div>
-
-        <button
-          class="assign-btn"
-          style="background: #10b981; align-self: flex-end"
-          *ngIf="selectedRequest!.status === 'in_progress'"
-          (click)="resolveTask(selectedRequest!.id)"
-        >
-          <span class="material-symbols-outlined">check_circle</span>
-          Xác nhận hoàn thành
-        </button>
+          <span *ngIf="selectedRequest!.citizen_phone">
+            • {{ selectedRequest!.citizen_phone }}</span
+          >
+        </span>
       </div>
-    </aside>
 
-    <ng-template #noSelection>
-      <aside class="detail-panel panel">
-        <div class="empty-detail">
-          <span class="material-symbols-outlined">sos</span>
-          <h3>Chọn một yêu cầu SOS</h3>
-          <p>Chi tiết và thao tác xử lý sẽ hiện ở đây.</p>
+      <div class="detail-row" *ngIf="selectedRequest!.latitude">
+        <span class="material-symbols-outlined detail-row-icon" style="color: #22c55e"
+          >my_location</span
+        >
+        <span style="color: #22c55e; font-size: 12px; font-weight: 500"
+          >GPS: {{ selectedRequest!.latitude }}, {{ selectedRequest!.longitude }}</span
+        >
+      </div>
+
+      <div class="detail-row" *ngIf="selectedRequest!.images && selectedRequest!.images.length > 0">
+        <div class="detail-images">
+          <a *ngFor="let img of selectedRequest!.images" [href]="img.image_url" target="_blank">
+            <img [src]="getImageUrl(img.image_url)" alt="Ảnh hiện trường" class="detail-thumb" />
+          </a>
         </div>
-      </aside>
-    </ng-template>
-  </div>
+      </div>
+    </div>
+
+    <div
+      class="actions"
+      style="justify-content: flex-end; gap: 8px; display: flex; flex-direction: column"
+    >
+      <div class="assign-row">
+        <div
+          class="detail-row"
+          *ngIf="
+            selectedRequest!.status === 'in_progress' || selectedRequest!.status === 'resolved'
+          "
+        >
+          <span class="material-symbols-outlined detail-row-icon person">person</span>
+          <span *ngIf="selectedRequest!.status === 'in_progress'">
+            Đang được xử lý bởi:
+            <strong>{{ selectedRequest!.responder_name || 'Chưa rõ' }}</strong>
+          </span>
+          <span *ngIf="selectedRequest!.status === 'resolved'">
+            Đã được xử lý bởi: <strong>{{ selectedRequest!.responder_name || 'Chưa rõ' }}</strong>
+          </span>
+        </div>
+        <div class="assign-select-wrap" *ngIf="selectedRequest!.status === 'pending'">
+          <select class="assign-select" [(ngModel)]="selectedResponderId">
+            <option [ngValue]="null">-- Chọn người cứu hộ --</option>
+            <option *ngFor="let r of responders" [ngValue]="r.id">
+              {{ r.full_name || r.phone }}
+            </option>
+          </select>
+          <button class="assign-btn" (click)="assignResponder()">
+            <span class="material-symbols-outlined">person_add</span>
+            Phân công
+          </button>
+        </div>
+      </div>
+
+      <button
+        class="assign-btn"
+        style="background: #10b981; align-self: flex-end"
+        *ngIf="selectedRequest!.status === 'in_progress'"
+        (click)="resolveTask(selectedRequest!.id)"
+      >
+        <span class="material-symbols-outlined">check_circle</span>
+        Xác nhận hoàn thành
+      </button>
+    </div>
+  </ng-template>
 </div>

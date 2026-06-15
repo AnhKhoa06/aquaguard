@@ -457,6 +457,7 @@
 
 .list-panel.panel {
   background: var(--color-main);
+  min-width: 0;
 }
 
 .panel-head {
@@ -1018,5 +1019,32 @@
 
   .actions {
     width: 100%;
+  }
+}
+
+.detail-inline-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .detail-panel.panel:not(.detail-inline-mobile) {
+    display: none;
+  }
+
+  .detail-inline-mobile {
+    display: block;
+    margin: -4px 0 8px;
+    animation: slideDown 0.2s ease;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
