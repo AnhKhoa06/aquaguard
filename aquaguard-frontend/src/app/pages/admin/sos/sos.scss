@@ -458,6 +458,23 @@
 .list-panel.panel {
   background: var(--color-main);
   min-width: 0;
+  max-height: calc(100vh - 125px);
+  overflow-y: auto;
+
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 999px;
+    &:hover {
+      background: var(--color-text-muted);
+    }
+  }
 }
 
 .panel-head {
